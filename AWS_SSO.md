@@ -10,7 +10,7 @@ aws configure set region <new_region_code> --profile <profile_name>
 
 # Example:
 aws configure set region us-east-1 --profile dev-profile
-aws configure set region eu-central-1 --profile ts_terrasacha_admin_access
+aws configure set region us-east-1 --profile ts_terrasacha_admin_access
 
 ```
 
