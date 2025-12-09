@@ -147,7 +147,7 @@ export default function Header() {
               </li>
               <li>
                 <a
-                  href="https://marketplace.suan.global/"
+                  href="https://marketplace.terrasacha.com/"
                   target="_blank"
                   rel="noreferrer"
                 >
