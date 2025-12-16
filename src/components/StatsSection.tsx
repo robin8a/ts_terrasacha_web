@@ -4,9 +4,10 @@ interface StatCardProps {
   number: number;
   label: string;
   description: string;
+  accentColor?: string;
 }
 
-function StatCard({ number, label, description }: StatCardProps) {
+const StatCard = ({ number, label, description, accentColor = 'primary' }: StatCardProps) => {
   const [count, setCount] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -41,20 +42,29 @@ function StatCard({ number, label, description }: StatCardProps) {
     return () => observer.disconnect();
   }, [number, hasAnimated]);
 
+  const colorClasses = {
+    primary: 'text-primary',
+    pradera: 'text-secondary-pradera',
+    claro: 'text-secondary-claro',
+    'amarillo-tierra': 'text-secondary-[amarillo-tierra]',
+  };
+
   return (
-    <div ref={ref} className="text-center">
-      <h1 className="text-5xl md:text-6xl font-light text-primary mb-4">{count}</h1>
-      <h3 className="text-xl font-semibold mb-2">{label}</h3>
-      <p className="text-gray-600">{description}</p>
+    <div ref={ref} className="text-center bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+      <h1 className={`text-5xl md:text-6xl font-light mb-4 ${colorClasses[accentColor as keyof typeof colorClasses] || colorClasses.primary}`}>
+        {count}
+      </h1>
+      <h3 className="text-xl font-semibold mb-2 text-secondary-[bosques-nublados]">{label}</h3>
+      <p className="text-gray-600 text-sm">{description}</p>
     </div>
   );
-}
+};
 
-export default function StatsSection() {
+const StatsSection = () => {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-gradient-to-b from-secondary-claro/20 to-white">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl md:text-5xl text-center mb-16">
+        <h1 className="text-4xl md:text-5xl text-center mb-16 font-primary text-secondary-[bosques-nublados]">
           Vamos a <span className="text-primary">impactar</span>
         </h1>
         <div
@@ -65,13 +75,15 @@ export default function StatsSection() {
             backgroundPosition: 'center',
           }}
         >
-          <StatCard number={2} label="Departamentos" description="Meta y Arauca" />
-          <StatCard number={4} label="Municipios" description="Tame, Arauca, Puerto López, Puerto Gaitán" />
-          <StatCard number={400} label="Hectáreas" description="Plantaciones Forestales Comerciales" />
-          <StatCard number={1630} label="Hectáreas" description="Bosques" />
+          <StatCard number={2} label="Departamentos" description="Meta y Arauca" accentColor="primary" />
+          <StatCard number={4} label="Municipios" description="Tame, Arauca, Puerto López, Puerto Gaitán" accentColor="pradera" />
+          <StatCard number={400} label="Hectáreas" description="Plantaciones Forestales Comerciales" accentColor="claro" />
+          <StatCard number={1630} label="Hectáreas" description="Bosques" accentColor="amarillo-tierra" />
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default StatsSection;
 

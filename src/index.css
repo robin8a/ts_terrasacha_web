@@ -5,12 +5,27 @@
 @layer base {
   body {
     @apply bg-gray-50 text-gray-900;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
 
 @layer utilities {
   .video-overlay {
     background-color: rgba(110, 108, 53, 0.62);
+  }
+  
+  .font-slogan {
+    font-family: 'Champagne & Limousines', cursive;
+    font-weight: 700;
+    letter-spacing: 0.5em;
+  }
+  
+  .font-primary {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
 
