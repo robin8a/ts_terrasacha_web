@@ -12,14 +12,6 @@ const Nosotros = () => {
     { name: 'Colectividad', description: 'Trabajo conjunto por un objetivo común' },
   ];
 
-  const secondaryColors = [
-    'secondary-pradera',
-    'primary',
-    'secondary-claro',
-    'secondary-amarillo-tierra',
-    'secondary-[bosques-nublados]',
-  ];
-
   return (
     <main className="font-primary">
       {/* Hero Section */}
