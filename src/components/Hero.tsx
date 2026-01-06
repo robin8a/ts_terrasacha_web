@@ -23,7 +23,7 @@ const Hero = () => {
 
       {/* Content con mejor separación del header */}
       <div className="relative z-10 container mx-auto px-4 text-center">
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-slogan text-white mb-8 drop-shadow-2xl">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-primary text-white mb-8 drop-shadow-2xl font-bold uppercase">
           PIONEROS DEL MAÑANA
         </h1>
         <p className="text-lg md:text-xl text-white/95 max-w-2xl mx-auto font-primary drop-shadow-lg">

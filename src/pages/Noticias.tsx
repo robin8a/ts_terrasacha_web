@@ -74,8 +74,8 @@ const Noticias = () => {
     <main className="font-primary bg-gray-50 min-h-screen">
       <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
         {/* Título de página */}
-        <h1 className="text-4xl sm:text-5xl lg:text-5xl font-black text-gray-900 mb-10 sm:mb-12 tracking-tight">
-          NOTICIAS
+        <h1 className="text-4xl sm:text-5xl lg:text-5xl font-black mb-10 sm:mb-12 tracking-tight">
+          <span className="text-primary">NOTICIAS</span>
         </h1>
 
         {/* Sección superior: destacada + sidebar */}
@@ -129,8 +129,9 @@ const Noticias = () => {
 
           {/* Sidebar Más Noticias */}
           <aside className="lg:col-span-4 bg-white rounded-xl sm:rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100 flex flex-col h-full">
-            <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-5 sm:mb-6 uppercase tracking-wide">
-              MÁS NOTICIAS
+            <h3 className="text-sm sm:text-base md:text-lg font-bold mb-5 sm:mb-6 uppercase tracking-wide">
+              <span className="text-secondary-[bosques-nublados]">MÁS</span>{' '}
+              <span className="text-secondary-pradera">NOTICIAS</span>
             </h3>
             <div className="space-y-5 sm:space-y-6 flex-grow">
               {sidebarItems.map((noticia) => (
@@ -160,8 +161,9 @@ const Noticias = () => {
 
         {/* Sección inferior: todas las noticias */}
         <section>
-          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-5 sm:mb-6 uppercase tracking-wide">
-            TODAS LAS NOTICIAS
+          <h3 className="text-sm sm:text-base md:text-lg font-bold mb-5 sm:mb-6 uppercase tracking-wide">
+            <span className="text-secondary-[bosques-nublados]">TODAS LAS</span>{' '}
+            <span className="text-primary">NOTICIAS</span>
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {remaining.map((noticia) => (

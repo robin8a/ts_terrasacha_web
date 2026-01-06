@@ -131,12 +131,12 @@ const Podcast = () => {
                 Sobre Nuestro Podcast
               </h2>
               <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed">
-                Escucha nuestros podcasts sobre descarbonización, sostenibilidad, tokenización de
+              Escucha nuestros podcasts sobre descarbonización, sostenibilidad, tokenización de
                 activos y mecanismos de inversión con enfoque de protección ambiental. Cada episodio explora
                 temas relevantes para el desarrollo sostenible de los Llanos Orientales, con entrevistas a expertos
                 y análisis de casos de éxito.
-              </p>
-            </div>
+            </p>
+              </div>
             {/* Mic Icon */}
             <div className="mt-2 md:mt-0 flex-shrink-0">
               <div className="h-16 w-16 sm:h-20 sm:w-20 text-primary bg-gray-100 rounded-full p-3 flex items-center justify-center">
@@ -261,8 +261,8 @@ const Podcast = () => {
                           <path d="M8 5v14l11-7z" />
                         </svg>
                       </button>
-                    </div>
-                  </div>
+        </div>
+      </div>
                 </article>
               );
             })}

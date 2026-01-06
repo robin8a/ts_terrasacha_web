@@ -5,11 +5,15 @@
 @layer base {
   body {
     @apply bg-gray-50 text-gray-900;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Primary Font: JOST */
+    /* Características: Clear, Modern, Friendly, Simple style, Highly legible */
+    /* Uso: Comunicaciones internas y externas */
+    font-family: 'Jost', system-ui, -apple-system, sans-serif;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Primary Font: JOST */
+    font-family: 'Jost', system-ui, -apple-system, sans-serif;
   }
 }
 
@@ -18,14 +22,109 @@
     background-color: rgba(110, 108, 53, 0.62);
   }
   
+  /* Secondary Font 1 según manual de marca: Champagne & Limousines Bold */
+  /* Tracking: 500pt (0.5em) */
+  /* Uso: Slogan y mensajes promocionales */
   .font-slogan {
     font-family: 'Champagne & Limousines', cursive;
     font-weight: 700;
-    letter-spacing: 0.5em;
+    letter-spacing: 0.5em; /* Tracking 500pt según manual */
   }
   
+  /* Primary Font: JOST */
+  /* Características: Clear, Modern, Friendly, Simple style, Highly legible */
+  /* Uso: Comunicaciones internas y externas */
   .font-primary {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Jost', system-ui, -apple-system, sans-serif;
+  }
+  
+  /* Secondary Font 2 según manual de marca: Futura Bold */
+  /* Uso: Títulos alternativos o acentos */
+  /* Fallback temporal: Montserrat hasta obtener Futura */
+  .font-accent {
+    font-family: 'Futura', 'Montserrat', 'Arial', sans-serif;
+    font-weight: 700;
+  }
+
+  /* Animaciones personalizadas */
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes expand {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+  }
+
+  .animate-expand {
+    animation: expand 1s ease-out forwards;
+  }
+
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .delay-500 {
+    animation-delay: 500ms;
+  }
+
+  .delay-700 {
+    animation-delay: 700ms;
+  }
+
+  .delay-1000 {
+    animation-delay: 1000ms;
   }
 }
 

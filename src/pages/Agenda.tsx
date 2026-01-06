@@ -102,7 +102,7 @@ const Agenda = () => {
         </div>
         {/* Overlay Text */}
         <div className="relative z-10 text-center px-4">
-          <h1 className="font-slogan uppercase mb-3 sm:mb-4 text-white drop-shadow-2xl text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] tracking-[0.08em]">
+          <h1 className="font-slogan uppercase mb-3 sm:mb-4 text-white drop-shadow-2xl text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] tracking-slogan">
             AGENDA
           </h1>
           <p className="text-sm sm:text-base md:text-lg font-light text-white max-w-2xl mx-auto drop-shadow-lg">

@@ -113,8 +113,9 @@ const AgendaSostenibilidad = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <div className="bg-secondary-claro/20 rounded-xl p-6 sm:p-8 shadow-sm">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4 font-primary">
-                Nuestro Compromiso
+              <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-primary">
+                <span className="text-secondary-[bosques-nublados]">Nuestro</span>{' '}
+                <span className="text-primary">Compromiso</span>
               </h2>
               <p className="text-gray-700 leading-relaxed font-primary text-sm sm:text-base">
                 La Agenda de Sostenibilidad de Terrasacha incluye iniciativas y proyectos enfocados
@@ -132,8 +133,9 @@ const AgendaSostenibilidad = () => {
       <section className="py-8 sm:py-10 md:py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 sm:mb-8 font-primary">
-              Nuestras Iniciativas
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 font-primary">
+              <span className="text-secondary-[bosques-nublados]">Nuestras</span>{' '}
+              <span className="text-secondary-pradera">Iniciativas</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -168,8 +170,9 @@ const AgendaSostenibilidad = () => {
       <section className="py-8 sm:py-10 md:py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 sm:mb-8 font-primary">
-              Objetivos de Sostenibilidad
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 font-primary">
+              <span className="text-primary">Objetivos</span>{' '}
+              <span className="text-secondary-pradera">de Sostenibilidad</span>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -209,8 +212,9 @@ const AgendaSostenibilidad = () => {
       <section className="py-8 sm:py-10 md:py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 font-primary">
-              Impacto Esperado
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 font-primary">
+              <span className="text-secondary-[bosques-nublados]">Impacto</span>{' '}
+              <span className="text-secondary-claro">Esperado</span>
             </h2>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
@@ -262,8 +266,9 @@ const AgendaSostenibilidad = () => {
       <section className="py-10 sm:py-12 md:py-16 bg-white border-t border-gray-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 font-primary">
-              Call to Action
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3 font-primary">
+              <span className="text-primary">Call to</span>{' '}
+              <span className="text-secondary-pradera">Action</span>
             </h2>
             <p className="text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto font-primary text-sm sm:text-base">
               Sé parte del cambio. Colabora y transforma el futuro con Terrasacha.

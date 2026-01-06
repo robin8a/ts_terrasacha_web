@@ -13,21 +13,21 @@ const blogPosts: BlogPost[] = [
     id: 1, 
     title: 'Descarbonización y Sostenibilidad', 
     excerpt: 'Exploramos las estrategias para reducir emisiones de carbono y promover prácticas sostenibles en la región.',
-    image: '/assets/images/ChatGPT Image 15 dic 2025, 09_00_33 p.m..png',
+    image: '/assets/images/Bosque drones IoT Satelites 1 (1).webp',
     color: 'secondary-pradera' 
   },
   { 
     id: 2, 
     title: 'Tokenización de Activos Ambientales', 
     excerpt: 'Conoce cómo la tecnología blockchain puede transformar la comercialización de activos ambientales.',
-    image: '/assets/images/ChatGPT Image 15 dic 2025, 09_02_55 p.m..png',
+    image: '/assets/images/ImagenLinkedIn2 (1).webp',
     color: 'primary' 
   },
   { 
     id: 3, 
     title: 'Reforestación con Biotecnología', 
     excerpt: 'Tecnologías emergentes aplicadas a la reforestación para maximizar el impacto ambiental positivo.',
-    image: '/assets/images/ChatGPT Image 15 dic 2025, 09_05_26 p.m..png',
+    image: '/assets/images/Bosque drones IoT Satelites 3 (1).webp',
     color: 'secondary-claro' 
   },
 ];
@@ -36,8 +36,9 @@ const BlogSection = () => {
   return (
     <section className="py-16 sm:py-20 md:py-24 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-secondary-[bosques-nublados] mb-12 sm:mb-16 uppercase tracking-wider text-center font-primary">
-          BLOG RECIENTE
+        <h2 className="text-3xl sm:text-4xl font-extrabold mb-12 sm:mb-16 uppercase tracking-wider text-center font-primary">
+          <span className="text-primary">BLOG</span>{' '}
+          <span className="text-secondary-pradera">RECIENTE</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {blogPosts.map((post) => (

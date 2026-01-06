@@ -32,7 +32,7 @@ const Nosotros = () => {
         </div>
         {/* Hero Content */}
         <div className="relative z-10 text-center px-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-bold text-white mb-4 tracking-wide uppercase font-slogan drop-shadow-lg">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-bold text-white mb-4 tracking-slogan uppercase font-slogan drop-shadow-lg">
             NOSOTROS
           </h1>
           <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto font-light font-primary">
