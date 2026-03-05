@@ -82,7 +82,10 @@ const Noticias = () => {
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-12 lg:mb-16">
           {/* Noticia destacada */}
           {featured && (
-            <article className="lg:col-span-8 bg-white rounded-xl sm:rounded-2xl shadow-sm overflow-hidden border border-gray-100 flex flex-col md:flex-row h-full">
+            <article
+              id={`noticia-${featured.id}`}
+              className="lg:col-span-8 bg-white rounded-xl sm:rounded-2xl shadow-sm overflow-hidden border border-gray-100 flex flex-col md:flex-row h-full"
+            >
               {/* Imagen */}
               {featured.image && (
                 <div className="md:w-1/2 relative h-56 sm:h-64 md:h-auto">
@@ -135,7 +138,11 @@ const Noticias = () => {
             </h3>
             <div className="space-y-5 sm:space-y-6 flex-grow">
               {sidebarItems.map((noticia) => (
-                <div key={noticia.id} className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                <div
+                  key={noticia.id}
+                  className="border-b border-gray-100 pb-4 last:border-0 last:pb-0"
+                  id={`noticia-${noticia.id}`}
+                >
                   <div className="flex items-center gap-2 sm:gap-3 mb-2">
                     {noticia.category && (
                       <span
@@ -169,6 +176,7 @@ const Noticias = () => {
             {remaining.map((noticia) => (
               <article
                 key={noticia.id}
+                id={`noticia-${noticia.id}`}
                 className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all"
               >
                 {noticia.image && (

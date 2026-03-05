@@ -6,6 +6,7 @@ interface BlogPost {
   excerpt: string;
   image?: string;
   color: string;
+  targetNoticiaId: number;
 }
 
 const blogPosts: BlogPost[] = [
@@ -14,21 +15,24 @@ const blogPosts: BlogPost[] = [
     title: 'Descarbonización y Sostenibilidad', 
     excerpt: 'Exploramos las estrategias para reducir emisiones de carbono y promover prácticas sostenibles en la región.',
     image: '/assets/images/Bosque drones IoT Satelites 1 (1).webp',
-    color: 'secondary-pradera' 
+    color: 'secondary-pradera',
+    targetNoticiaId: 3, // Relacionado con resultados de protección de cuencas y sostenibilidad
   },
   { 
     id: 2, 
     title: 'Tokenización de Activos Ambientales', 
     excerpt: 'Conoce cómo la tecnología blockchain puede transformar la comercialización de activos ambientales.',
     image: '/assets/images/ImagenLinkedIn2 (1).webp',
-    color: 'primary' 
+    color: 'primary',
+    targetNoticiaId: 2, // Coincide con la noticia de tokenización
   },
   { 
     id: 3, 
     title: 'Reforestación con Biotecnología', 
     excerpt: 'Tecnologías emergentes aplicadas a la reforestación para maximizar el impacto ambiental positivo.',
     image: '/assets/images/Bosque drones IoT Satelites 3 (1).webp',
-    color: 'secondary-claro' 
+    color: 'secondary-claro',
+    targetNoticiaId: 1, // Coincide con la noticia de avances en reforestación con biotecnología
   },
 ];
 
@@ -64,7 +68,7 @@ const BlogSection = () => {
                   {post.excerpt}
                 </p>
                 <Link
-                  to="/noticias"
+                  to={`/noticias#noticia-${post.targetNoticiaId}`}
                   className="text-primary font-semibold text-sm hover:underline mt-auto font-primary"
                 >
                   Leer más &gt;
