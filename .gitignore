@@ -44,3 +44,6 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+# Vídeos grandes (límite GitHub 100 MB)
+public/publicaciones/publicación 6/lv_0_20250401100513.mp4
