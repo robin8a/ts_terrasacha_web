@@ -1,0 +1,47 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="80" x2="1080" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#44482c"/>
+      <stop offset="0.55" stop-color="#6e6c35"/>
+      <stop offset="1" stop-color="#849b50"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(920 180) rotate(120) scale(420 420)">
+      <stop stop-color="#e8d79a" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#e8d79a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="800" rx="40" fill="url(#bg)"/>
+  <rect width="1200" height="800" rx="40" fill="url(#glow)"/>
+
+  <circle cx="1030" cy="150" r="120" fill="#b1c181" fill-opacity="0.16"/>
+  <circle cx="1085" cy="710" r="180" fill="#e8d79a" fill-opacity="0.12"/>
+  <circle cx="135" cy="705" r="120" fill="#b1c181" fill-opacity="0.12"/>
+
+  <rect x="80" y="88" width="138" height="42" rx="21" fill="#e8d79a"/>
+  <text x="149" y="116" text-anchor="middle" fill="#44482c" font-family="Jost, Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="2">VIDEO</text>
+
+  <g opacity="0.18" stroke="#f6f0d0" stroke-width="4">
+    <path d="M860 298L1000 220"/>
+    <path d="M860 298L1005 374"/>
+    <path d="M860 298L715 220"/>
+    <path d="M860 298L710 376"/>
+    <circle cx="860" cy="298" r="34" fill="#f6f0d0" fill-opacity="0.14"/>
+    <circle cx="1008" cy="216" r="26"/>
+    <circle cx="1008" cy="380" r="26"/>
+    <circle cx="712" cy="216" r="26"/>
+    <circle cx="712" cy="380" r="26"/>
+  </g>
+
+  <rect x="80" y="506" width="1040" height="2" fill="#f6f0d0" fill-opacity="0.2"/>
+
+  <text x="80" y="338" fill="white" font-family="Jost, Arial, sans-serif" font-size="62" font-weight="800">JORNADA DE INDUCCION</text>
+  <text x="80" y="414" fill="white" font-family="Jost, Arial, sans-serif" font-size="62" font-weight="800">EN MANEJO DE DRONES</text>
+  <text x="80" y="470" fill="#e8d79a" font-family="Jost, Arial, sans-serif" font-size="28" font-weight="600" letter-spacing="2">CAMPUS VILLAVICENCIO - TERRASACHA SGR005</text>
+
+  <text x="80" y="586" fill="#f6f0d0" font-family="Jost, Arial, sans-serif" font-size="24" font-weight="500">Capacitacion tecnica en operacion de drones</text>
+  <text x="80" y="624" fill="#f6f0d0" font-family="Jost, Arial, sans-serif" font-size="24" font-weight="500">WingtraOne Gen II, DJI Mavic 3 Multiespectral y DJI Agras T25</text>
+
+  <rect x="80" y="680" width="284" height="56" rx="28" fill="#ffffff" fill-opacity="0.1" stroke="#f6f0d0" stroke-opacity="0.24"/>
+  <text x="222" y="716" text-anchor="middle" fill="#f6f0d0" font-family="Jost, Arial, sans-serif" font-size="22" font-weight="700">18 Y 19 DE MARZO DE 2025</text>
+</svg>

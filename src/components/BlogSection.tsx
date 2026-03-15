@@ -68,7 +68,7 @@ const BlogSection = () => {
                   {post.excerpt}
                 </p>
                 <Link
-                  to={`/noticias#noticia-${post.targetNoticiaId}`}
+                  to={`/noticias/${post.targetNoticiaId}`}
                   className="text-primary font-semibold text-sm hover:underline mt-auto font-primary"
                 >
                   Leer más &gt;

@@ -1,55 +1,10 @@
-interface Noticia {
-  id: number;
-  title: string;
-  date: string;
-  excerpt: string;
-  image?: string;
-  category?: string;
-}
+import { useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { noticias } from '../data/noticias';
 
 const Noticias = () => {
-  const noticias: Noticia[] = [
-    {
-      id: 1,
-      title: 'Avances en Reforestación con Biotecnología en los Llanos Orientales',
-      date: '15 de Enero, 2024',
-      excerpt: 'El proyecto Terrasacha ha logrado importantes avances en la implementación de tecnologías emergentes para la reforestación de cuencas hidrográficas en los departamentos de Meta y Arauca.',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDs-JzHyDr_4LCCIM-uLyVIaAB1bbN-cog4lv4pE9tY_CXBaX71SkFllPs939tI7J3t5G41qXUvmpP1iJC4AqDE_0lLHg_n2ikjabhJwj8u68_1UymdZIbJDH5qD8_lAF5dEu5Hbl6Ug0_Y1X_LnOb67OLcUtRCWSFB4aQ98pyPnmAluNc-xoCJNYoQOWtphwOPxmFAvzId_-5tYdO_tKxZUg2C2scrDQGqLFN1Q3Mx7a8MLydAmV1pTRGe_KoPn8S7s-0QizC5qb4',
-      category: 'Tecnología',
-    },
-    {
-      id: 2,
-      title: 'Tokenización de Activos Ambientales: Nuevo Modelo de Comercialización',
-      date: '10 de Enero, 2024',
-      excerpt: 'Se implementa un modelo innovador de comercialización de activos ambientales estratégicos que permite la monetización de cultivos forestales comerciales.',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDWV1cWu-nIVbeRcQOJTCcsc7WjuXllcFBWUKDcjB-a3hqKdUKApWBXhR-oL11uQR39sn9Kdojpc42p5pOL0WshxnPfEkGKFwok2JDsgd-LfMS7ksge2zTF-MA50eMNx_LLVyytdpR2Nw5c9AHXYoRlvm70zNc8OMU2MHboeAqoFilsFC1baEeBtqE2I6381jz3HK21BVDqBleM50bxdC9IlEp4xVZidpC9hgo8XGFuKD75iSjRSpSAcQ6XXLc_iUfPjwvbNRwQzoQ',
-      category: 'Innovación',
-    },
-    {
-      id: 3,
-      title: 'Protección de Cuencas de Agua: Resultados del Primer Trimestre',
-      date: '5 de Enero, 2024',
-      excerpt: 'Los primeros resultados del proyecto muestran un impacto positivo en la protección de cuencas de agua y suelos mediante reforestación con tecnologías emergentes.',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDR-i7Y-bN4gphd6XWMf4NU3S6EU6bRIMfu4Wr3vln9v6VWz1dooGVebGhE28fbpnQCCp2x4ZcbL07yRYCAtDfxIq-mAgdACkjbV7NwKt5JEdMBqnfcEoNUYJqkPG_7nR2lwL5Ge4TwELoQVaF45U4Zs0yXXAwKrOVZ_lfC7NuQR-btMu9YmfNT1DcWm8p4GC7sW2ZqS_V8evT8ckB46gixcSawhDCpnm5Vx799K_5_lhEr6GWb6RyNGmjBQMlQr2L40EisO-xpfkM',
-      category: 'Sostenibilidad',
-    },
-    {
-      id: 4,
-      title: 'Alianza Estratégica: Universidad Cooperativa de Colombia y Sistema General de Regalías',
-      date: '28 de Diciembre, 2023',
-      excerpt: 'Se fortalece la alianza entre la Universidad Cooperativa de Colombia y el Sistema General de Regalías para continuar con el proyecto de protección ambiental.',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCUQeeHGKHSJdg0yBwel2k4G7yk4Jnd3rK0HDbUqQuqKNYUTuH9Kho9ulxvWitCVqWIxmbpazn_5LaMGuN3pilfAHVM8isEGtFvPd9CW6QvCxyY7mxTFJH6TYDlNkGNdTRy9Vy2C36LD5kU7uuvu7Arhj-EN91GjdmUvm2Cjk_g_A5UFQtuKSzf_CPl3OpHzXpGl9MBfnetfkTrIB-ogxmdxDdpHD5CWTeE0uPeA4AFXDX5D2sb7tfet62Y_gmLQV6euUBEK6mS2Qo',
-      category: 'Alianzas',
-    },
-    {
-      id: 5,
-      title: 'Impacto en 400 Hectáreas de Plantaciones Forestales Comerciales',
-      date: '20 de Diciembre, 2023',
-      excerpt: 'El proyecto ha logrado impactar positivamente en 400 hectáreas de plantaciones forestales comerciales en la región de los Llanos Orientales.',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBvoGkugf7XjCiZre_bCrBEW5xqKRHi87jRtyO9V9kD-zjxSyDEU-1n5WDOXrTJyXxfxpbF-QFd5GB7hLnuoprGwNJMKuzNtZo8yBPp9sR-562UxXtxgkbDiOww_b0z_g_WN0-J1XydyqmQh9IaYzJF_uhLGEf2CHMdBhTory27QiokQOo-Wdj3XJk_i119Gj5V8-cXgycX2CWp9Rf8LzYKD6YNV989RWfd7L8U1mD1Paz1J15ZhxI9lGIzIayKDxIfbM01G2DxEH4',
-      category: 'Impacto',
-    },
-  ];
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const [activeFeaturedImageIndex, setActiveFeaturedImageIndex] = useState(0);
 
   const formatDate = (dateString: string) => {
     return dateString;
@@ -69,6 +24,58 @@ const Noticias = () => {
   const featured = noticias[0];
   const sidebarItems = noticias.slice(1, 4);
   const remaining = noticias.slice(1); // Para \"Todas las noticias\" mostramos todas menos la destacada
+  const featuredImages = useMemo(() => {
+    if (!featured) {
+      return [];
+    }
+
+    const images = featured.gallery && featured.gallery.length > 0
+      ? featured.gallery
+      : featured.image
+        ? [featured.image]
+        : [];
+
+    return images.filter((image, index) => images.indexOf(image) === index);
+  }, [featured]);
+  const hasMultipleFeaturedImages = featuredImages.length > 1;
+
+  const handleCarouselNavigation = (direction: 'previous' | 'next') => {
+    if (!carouselRef.current) {
+      return;
+    }
+
+    const scrollAmount = carouselRef.current.clientWidth * 0.85;
+    const left = direction === 'next' ? scrollAmount : -scrollAmount;
+
+    carouselRef.current.scrollBy({
+      left,
+      behavior: 'smooth',
+    });
+  };
+
+  const handlePreviousFeaturedImage = () => {
+    if (!hasMultipleFeaturedImages) {
+      return;
+    }
+
+    setActiveFeaturedImageIndex((currentIndex) => (
+      currentIndex === 0 ? featuredImages.length - 1 : currentIndex - 1
+    ));
+  };
+
+  const handleNextFeaturedImage = () => {
+    if (!hasMultipleFeaturedImages) {
+      return;
+    }
+
+    setActiveFeaturedImageIndex((currentIndex) => (
+      currentIndex === featuredImages.length - 1 ? 0 : currentIndex + 1
+    ));
+  };
+
+  const handleSelectFeaturedImage = (selectedIndex: number) => {
+    setActiveFeaturedImageIndex(selectedIndex);
+  };
 
   return (
     <main className="font-primary bg-gray-50 min-h-screen">
@@ -84,83 +91,221 @@ const Noticias = () => {
           {featured && (
             <article
               id={`noticia-${featured.id}`}
-              className="lg:col-span-8 bg-white rounded-xl sm:rounded-2xl shadow-sm overflow-hidden border border-gray-100 flex flex-col md:flex-row h-full"
+              className="lg:col-span-8 bg-white rounded-xl sm:rounded-2xl shadow-sm overflow-hidden border border-gray-100 h-full"
             >
-              {/* Imagen */}
-              {featured.image && (
-                <div className="md:w-1/2 relative h-56 sm:h-64 md:h-auto">
-                  <img
-                    src={featured.image}
-                    alt={featured.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    loading="eager"
-                  />
+              {featuredImages.length > 0 && (
+                <div className="border-b border-gray-100 bg-gray-950/5">
+                  <div className="relative h-72 sm:h-80 lg:h-[26rem] overflow-hidden">
+                    <img
+                      src={featuredImages[activeFeaturedImageIndex]}
+                      alt={`${featured.title} - imagen ${activeFeaturedImageIndex + 1}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="eager"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/80 via-secondary-[bosques-nublados]/20 to-transparent" />
+                    <div className="absolute left-5 right-5 bottom-5 sm:left-6 sm:right-6 sm:bottom-6">
+                      {featured.category && (
+                        <span
+                          className={`inline-block px-3 py-1 text-[10px] sm:text-xs font-bold tracking-wider uppercase rounded-full ${getCategoryBadgeClasses(
+                            featured.category
+                          )}`}
+                        >
+                          {featured.category}
+                        </span>
+                      )}
+                    </div>
+
+                    {hasMultipleFeaturedImages && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={handlePreviousFeaturedImage}
+                          className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-secondary-[bosques-nublados] shadow-md transition-all hover:bg-white"
+                          aria-label="Ver imagen anterior de la noticia principal"
+                        >
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 19l-7-7 7-7"
+                            />
+                          </svg>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleNextFeaturedImage}
+                          className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-secondary-[bosques-nublados] shadow-md transition-all hover:bg-white"
+                          aria-label="Ver imagen siguiente de la noticia principal"
+                        >
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </button>
+
+                        <div className="absolute bottom-5 right-5 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white">
+                          {activeFeaturedImageIndex + 1} / {featuredImages.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {hasMultipleFeaturedImages && (
+                    <div className="scrollbar-hide flex gap-3 overflow-x-auto px-4 py-4 sm:px-6">
+                      {featuredImages.map((image, index) => {
+                        const isActive = index === activeFeaturedImageIndex;
+
+                        return (
+                          <button
+                            key={`${featured.id}-featured-thumbnail-${index}`}
+                            type="button"
+                            onClick={() => handleSelectFeaturedImage(index)}
+                            className={`relative h-20 w-24 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
+                              isActive
+                                ? 'border-primary shadow-md'
+                                : 'border-transparent opacity-80 hover:opacity-100'
+                            }`}
+                            aria-label={`Ver imagen ${index + 1} de la noticia principal`}
+                          >
+                            <img
+                              src={image}
+                              alt={`${featured.title} - miniatura ${index + 1}`}
+                              className="h-full w-full object-cover"
+                              loading="lazy"
+                            />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* Contenido */}
-              <div className="md:w-1/2 p-5 sm:p-6 md:p-8 flex flex-col justify-center">
-                {featured.category && (
-                  <div className="mb-3 sm:mb-4">
-                    <span
-                      className={`inline-block px-3 py-1 text-[10px] sm:text-xs font-bold tracking-wider uppercase rounded-full ${getCategoryBadgeClasses(
-                        featured.category
-                      )}`}
-                    >
-                      {featured.category}
-                    </span>
-                    <p className="mt-2 text-xs sm:text-sm text-gray-500 font-primary">
+              {(featured.content || featured.excerpt) && (
+                <div className="bg-gradient-to-b from-white to-gray-50/80 px-5 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8">
+                  <div className="border-b border-gray-100 pb-6">
+                    <p className="text-xs sm:text-sm text-gray-500 font-primary">
                       {formatDate(featured.date)}
                     </p>
+                    <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-black text-secondary-[bosques-nublados] leading-tight">
+                      {featured.title}
+                    </h2>
+                    <p className="mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-gray-700 font-primary max-w-4xl">
+                      {featured.excerpt}
+                    </p>
                   </div>
-                )}
-                {!featured.category && (
-                  <p className="text-xs sm:text-sm text-gray-500 mb-2 font-primary">
-                    {formatDate(featured.date)}
-                  </p>
-                )}
 
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-secondary-[bosques-nublados] mb-3 sm:mb-4 leading-tight">
-                  {featured.title}
-                </h2>
-                <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed font-primary">
-                  {featured.excerpt}
-                </p>
-              </div>
+                  {featured.content && (
+                    <div className="mt-6 space-y-4">
+                      {featured.content.map((paragraph, index) => (
+                        <p
+                          key={`${featured.id}-paragraph-${index}`}
+                          className="text-sm sm:text-base text-gray-700 leading-relaxed font-primary"
+                        >
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </article>
           )}
 
           {/* Sidebar Más Noticias */}
-          <aside className="lg:col-span-4 bg-white rounded-xl sm:rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100 flex flex-col h-full">
-            <h3 className="text-sm sm:text-base md:text-lg font-bold mb-5 sm:mb-6 uppercase tracking-wide">
-              <span className="text-secondary-[bosques-nublados]">MÁS</span>{' '}
-              <span className="text-secondary-pradera">NOTICIAS</span>
-            </h3>
-            <div className="space-y-5 sm:space-y-6 flex-grow">
+          <aside className="lg:col-span-4 rounded-xl sm:rounded-2xl border border-gray-100 bg-gradient-to-br from-white via-white to-secondary-claro/10 p-5 sm:p-6 shadow-sm flex flex-col h-full">
+            <div className="mb-5 sm:mb-6 border-b border-gray-100 pb-5">
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
+                Actualidad
+              </div>
+              <h3 className="mt-4 text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
+                <span className="text-secondary-[bosques-nublados]">MÁS</span>{' '}
+                <span className="text-secondary-pradera">NOTICIAS</span>
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-gray-600 font-primary">
+                Explora otras publicaciones recientes del proyecto Terrasacha y
+                accede a su detalle completo.
+              </p>
+            </div>
+
+            <div className="space-y-4 flex-grow">
               {sidebarItems.map((noticia) => (
-                <div
+                <Link
                   key={noticia.id}
-                  className="border-b border-gray-100 pb-4 last:border-0 last:pb-0"
-                  id={`noticia-${noticia.id}`}
+                  to={`/noticias/${noticia.id}`}
+                  className="group block overflow-hidden rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/20 hover:shadow-md"
                 >
-                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                    {noticia.category && (
-                      <span
-                        className={`px-3 py-1 text-[10px] sm:text-xs font-bold uppercase rounded-full ${getCategoryBadgeClasses(
-                          noticia.category
-                        )}`}
-                      >
-                        {noticia.category}
-                      </span>
+                  <div className="flex gap-3">
+                    {noticia.image && (
+                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl">
+                        <img
+                          src={noticia.image}
+                          alt={noticia.title}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </div>
                     )}
-                    <span className="text-[11px] sm:text-xs text-gray-500 font-primary">
-                      {formatDate(noticia.date)}
-                    </span>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-2 flex flex-wrap items-center gap-2">
+                        {noticia.category && (
+                          <span
+                            className={`px-3 py-1 text-[10px] sm:text-xs font-bold uppercase rounded-full ${getCategoryBadgeClasses(
+                              noticia.category
+                            )}`}
+                          >
+                            {noticia.category}
+                          </span>
+                        )}
+                        <span className="text-[11px] sm:text-xs text-gray-500 font-primary">
+                          {formatDate(noticia.date)}
+                        </span>
+                      </div>
+
+                      <p className="text-sm sm:text-[15px] font-bold text-secondary-[bosques-nublados] leading-snug transition-colors group-hover:text-primary">
+                        {noticia.title}
+                      </p>
+
+                      <p className="mt-2 line-clamp-2 text-xs sm:text-sm leading-relaxed text-gray-600 font-primary">
+                        {noticia.excerpt}
+                      </p>
+
+                      <div className="mt-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                        Ver detalle
+                        <svg
+                          className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-sm sm:text-base font-bold text-secondary-[bosques-nublados] leading-snug">
-                    {noticia.title}
-                  </p>
-                </div>
+                </Link>
               ))}
             </div>
           </aside>
@@ -168,16 +313,67 @@ const Noticias = () => {
 
         {/* Sección inferior: todas las noticias */}
         <section>
-          <h3 className="text-sm sm:text-base md:text-lg font-bold mb-5 sm:mb-6 uppercase tracking-wide">
-            <span className="text-secondary-[bosques-nublados]">TODAS LAS</span>{' '}
-            <span className="text-primary">NOTICIAS</span>
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-5 sm:mb-6">
+            <h3 className="text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
+              <span className="text-secondary-[bosques-nublados]">TODAS LAS</span>{' '}
+              <span className="text-primary">NOTICIAS</span>
+            </h3>
+
+            <div className="flex items-center gap-3 self-end sm:self-auto">
+              <button
+                type="button"
+                onClick={() => handleCarouselNavigation('previous')}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-secondary-[bosques-nublados] shadow-sm transition-all hover:border-primary hover:text-primary"
+                aria-label="Ver noticias anteriores"
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleCarouselNavigation('next')}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-secondary-[bosques-nublados] shadow-sm transition-all hover:border-primary hover:text-primary"
+                aria-label="Ver noticias siguientes"
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div
+            ref={carouselRef}
+            className="scrollbar-hide flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4"
+          >
             {remaining.map((noticia) => (
-              <article
+              <Link
                 key={noticia.id}
                 id={`noticia-${noticia.id}`}
-                className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all"
+                to={`/noticias/${noticia.id}`}
+                className="min-w-[280px] sm:min-w-[320px] lg:min-w-[340px] max-w-[340px] snap-start bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all"
               >
                 {noticia.image && (
                   <div className="h-40 sm:h-44 md:h-48 relative">
@@ -209,7 +405,7 @@ const Noticias = () => {
                     {noticia.excerpt}
                   </p>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </section>

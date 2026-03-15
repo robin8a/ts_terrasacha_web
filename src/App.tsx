@@ -5,11 +5,13 @@ import ContactButton from './components/ContactButton';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
 import Noticias from './pages/Noticias';
+import NoticiaDetalle from './pages/NoticiaDetalle';
 import Agenda from './pages/Agenda';
 import Contacto from './pages/Contacto';
 import AgendaSostenibilidad from './pages/AgendaSostenibilidad';
 import Podcast from './pages/Podcast';
 import Comunicados from './pages/Comunicados';
+import ComunicadoDetalle from './pages/ComunicadoDetalle';
 import Investigacion from './pages/Investigacion';
 import Oraculo from './pages/Oraculo';
 import AppPage from './pages/AppPage';
@@ -25,11 +27,13 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/nosotros" element={<Nosotros />} />
           <Route path="/noticias" element={<Noticias />} />
+          <Route path="/noticias/:id" element={<NoticiaDetalle />} />
           <Route path="/agenda" element={<Agenda />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/agenda-de-sostenibilidad" element={<AgendaSostenibilidad />} />
           <Route path="/podcast" element={<Podcast />} />
           <Route path="/comunicados" element={<Comunicados />} />
+          <Route path="/comunicados/:id" element={<ComunicadoDetalle />} />
           <Route path="/investigacion" element={<Investigacion />} />
           <Route path="/oraculo" element={<Oraculo />} />
           <Route path="/app" element={<AppPage />} />
