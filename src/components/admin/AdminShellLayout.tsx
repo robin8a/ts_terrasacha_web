@@ -127,6 +127,13 @@ const AdminShellLayout = ({ user, onSignOut }: AdminShellLayoutProps) => {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => void handleSignOut()}
+              className="hidden sm:inline-flex rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+            >
+              Cerrar sesión
+            </button>
             <div className="hidden sm:block">
               <p className="text-xs font-medium text-gray-500">Sesión</p>
               <p className="text-sm text-gray-900 truncate max-w-[240px]">{userEmail}</p>

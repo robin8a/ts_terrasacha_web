@@ -26,16 +26,12 @@ const AdminLogin = ({
       return;
     }
 
-    console.log('[AdminLogin] Submit, email:', email);
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      console.log('[AdminLogin] Llamando onLogin (irá a Cognito signIn)...');
       await onLogin(email, password);
-      console.log('[AdminLogin] onLogin OK');
     } catch (err) {
-      console.log('[AdminLogin] onLogin error:', err);
       setErrorMessage(err instanceof Error ? err.message : 'No se pudo iniciar sesión. Revisa tus datos.');
     } finally {
       setIsSubmitting(false);
@@ -66,7 +62,7 @@ const AdminLogin = ({
   };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-8rem)] items-center justify-center overflow-hidden px-4 py-12">
+    <div className="relative flex min-h-screen min-h-dvh items-center justify-center overflow-hidden px-4 py-12">
       {/* Video de fondo */}
       <div className="absolute inset-0 z-0 bg-secondary-bosques-nublados">
         <video

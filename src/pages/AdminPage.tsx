@@ -76,7 +76,7 @@ const AdminPage = () => {
 
   if (user === undefined) {
     return (
-      <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen min-h-dvh items-center justify-center bg-gray-50">
         <p className="text-sm text-gray-600">Verificando sesión...</p>
       </div>
     );
