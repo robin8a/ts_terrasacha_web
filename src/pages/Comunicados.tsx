@@ -1,9 +1,58 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { comunicados } from '../data/comunicados';
+import { listAnnouncements } from '../graphql/queries';
+import { Status } from '../API';
+import { getGraphqlClient } from '../lib/amplifySetup';
+import { mapAmplifyAnnouncementToPublic, type PublicAnnouncement } from '../lib/announcementMapper';
 
 const Comunicados = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
+  const [comunicados, setComunicados] = useState<PublicAnnouncement[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchAnnouncements = async () => {
+      setIsLoading(true);
+      try {
+        const client = getGraphqlClient();
+        const allItems: any[] = [];
+        let nextToken: string | null = null;
+
+        do {
+          const res: any = await client.graphql({
+            query: listAnnouncements,
+            variables: {
+              filter: { status: { eq: Status.PUBLISHED } },
+              limit: 1000,
+              nextToken,
+            },
+            authMode: 'apiKey',
+          });
+          const items = res?.data?.listAnnouncements?.items ?? [];
+          allItems.push(...items);
+          nextToken = res?.data?.listAnnouncements?.nextToken ?? null;
+        } while (nextToken);
+
+        const sorted = allItems.sort((a, b) => {
+          const aTime = new Date(a?.publishedAt ?? a?.createdAt ?? 0).getTime();
+          const bTime = new Date(b?.publishedAt ?? b?.createdAt ?? 0).getTime();
+          return bTime - aTime;
+        });
+
+        if (!cancelled) {
+          setComunicados(sorted.map(mapAmplifyAnnouncementToPublic));
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+    void fetchAnnouncements();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const featured = comunicados[0];
   const remaining = comunicados.slice(1);
 
@@ -65,15 +114,13 @@ const Comunicados = () => {
                 </p>
                 <div className="mt-5 grid grid-cols-2 gap-4">
                   <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
-                    <p className="text-2xl font-black text-[#e8d79a]">
-                      {comunicados.length}
-                    </p>
+                    <p className="text-2xl font-black text-[#e8d79a]">{comunicados.length}</p>
                     <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
                       Comunicados
                     </p>
                   </div>
                   <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
-                    <p className="text-2xl font-black text-[#e8d79a]">1</p>
+                    <p className="text-2xl font-black text-[#e8d79a]">{featured ? 1 : 0}</p>
                     <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
                       Destacado
                     </p>
@@ -104,7 +151,11 @@ const Comunicados = () => {
             </p>
           </div>
 
-          {featured && (
+          {isLoading ? (
+            <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
+              <p className="text-sm text-gray-600">Cargando comunicados...</p>
+            </div>
+          ) : featured ? (
             <article className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
               <Link
                 to={`/comunicados/${featured.id}`}
@@ -119,7 +170,7 @@ const Comunicados = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/85 via-secondary-[bosques-nublados]/30 to-transparent" />
                   <div className="absolute left-5 top-5 inline-flex rounded-full bg-secondary-[amarillo-tierra] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-secondary-[bosques-nublados]">
-                    Comunicado #{featured.number}
+                    Comunicado destacado
                   </div>
                 </div>
 
@@ -135,7 +186,7 @@ const Comunicados = () => {
                   </p>
                   <div className="mt-6 rounded-2xl border border-gray-100 bg-gray-50/80 p-4">
                     <p className="text-sm leading-relaxed text-gray-700">
-                      {featured.body[0]}
+                      {featured.body[0] ?? featured.excerpt}
                     </p>
                   </div>
 
@@ -158,6 +209,10 @@ const Comunicados = () => {
                 </div>
               </Link>
             </article>
+          ) : (
+            <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
+              <p className="text-sm text-gray-600">No hay comunicados publicados todavía.</p>
+            </div>
           )}
 
           <div className="mt-10 sm:mt-12">
@@ -237,7 +292,7 @@ const Comunicados = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/80 via-secondary-[bosques-nublados]/10 to-transparent" />
                     <div className="absolute left-4 top-4 inline-flex rounded-full bg-secondary-[amarillo-tierra] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-secondary-[bosques-nublados]">
-                      #{comunicado.number}
+                      Comunicado
                     </div>
                   </div>
 

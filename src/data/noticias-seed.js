@@ -1,16 +1,6 @@
-export interface Noticia {
-  id: string | number;
-  title: string;
-  date: string;
-  excerpt: string;
-  image?: string;
-  category?: string;
-  content?: string[];
-  gallery?: string[];
-  video?: string;
-}
+// Versión JavaScript de las noticias para seed en Amplify
 
-export const noticias: Noticia[] = [
+export const noticias = [
   {
     id: 1,
     title: 'DRONES Y EQUIPO TECNOLÓGICO PARA EL CENTRO DE INNOVACIÓN EN EL META',
@@ -209,5 +199,3 @@ export const noticias: Noticia[] = [
   },
 ];
 
-export const getNoticiaById = (id: string | number) =>
-  noticias.find((noticia) => String(noticia.id) === String(id));

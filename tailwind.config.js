@@ -4,19 +4,15 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  // Clases de colores de marca (valores hex) por si se usan dinámicamente
   safelist: [
-    // Forzar generación de clases de colores secondary con guiones usando valores arbitrarios
-    {
-      pattern: /bg-\[#(44482c|e8d79a|849b50|b1c181)\]/,
-      variants: ['hover', 'focus'],
-    },
-    {
-      pattern: /text-\[#(44482c|e8d79a|849b50|b1c181)\]/,
-      variants: ['hover', 'focus'],
-    },
-    {
-      pattern: /border-\[#(44482c|e8d79a|849b50|b1c181)\]/,
-    },
+    'bg-[#44482c]', 'bg-[#e8d79a]', 'bg-[#849b50]', 'bg-[#b1c181]',
+    'hover:bg-[#44482c]', 'hover:bg-[#e8d79a]', 'hover:bg-[#849b50]', 'hover:bg-[#b1c181]',
+    'focus:bg-[#44482c]', 'focus:bg-[#e8d79a]', 'focus:bg-[#849b50]', 'focus:bg-[#b1c181]',
+    'text-[#44482c]', 'text-[#e8d79a]', 'text-[#849b50]', 'text-[#b1c181]',
+    'hover:text-[#44482c]', 'hover:text-[#e8d79a]', 'hover:text-[#849b50]', 'hover:text-[#b1c181]',
+    'focus:text-[#44482c]', 'focus:text-[#e8d79a]', 'focus:text-[#849b50]', 'focus:text-[#b1c181]',
+    'border-[#44482c]', 'border-[#e8d79a]', 'border-[#849b50]', 'border-[#b1c181]',
   ],
   theme: {
     extend: {

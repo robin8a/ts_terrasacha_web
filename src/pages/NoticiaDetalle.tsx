@@ -1,6 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getNoticiaById } from '../data/noticias';
+import { getNews } from '../graphql/queries';
+import { getGraphqlClient } from '../lib/amplifySetup';
+import { mapAmplifyNewsToNoticia } from '../lib/newsMapper';
+import type { Noticia } from '../data/noticias';
 
 const getCategoryBadgeClasses = (category?: string) => {
   const map: Record<string, string> = {
@@ -14,11 +17,109 @@ const getCategoryBadgeClasses = (category?: string) => {
   return map[category || ''] || 'bg-gray-700 text-white';
 };
 
+const HASHTAG_REGEX = /#[^\s#.,;:!?()[\]{}"']+/g;
+const HASHTAG_ONLY_LINE_REGEX = /^(?:#[^\s#.,;:!?()[\]{}"']+\s*)+$/;
+
 const NoticiaDetalle = () => {
   const { id } = useParams();
-  const noticiaId = Number(id);
-  const noticia = Number.isNaN(noticiaId) ? undefined : getNoticiaById(noticiaId);
+  const noticiaId = id ?? '';
+  const [noticia, setNoticia] = useState<Noticia | null | undefined>(undefined);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [showAllTags, setShowAllTags] = useState(false);
+  const carouselImages = useMemo(() => {
+    if (!noticia) {
+      return [];
+    }
+
+    const images = [
+      ...(noticia.image ? [noticia.image] : []),
+      ...(noticia.gallery ?? []),
+    ];
+
+    return images.filter((image, index) => images.indexOf(image) === index);
+  }, [noticia]);
+
+  const hasMultipleImages = carouselImages.length > 1;
+  const detailContent = noticia?.content ?? [];
+  const parsedDetail = useMemo(() => {
+    const tagsSet = new Set<string>();
+
+    detailContent.forEach((paragraph) => {
+      const matches = paragraph.match(HASHTAG_REGEX) ?? [];
+      matches.forEach((tag) => tagsSet.add(tag));
+    });
+
+    const contentParagraphs = detailContent.filter((paragraph) => {
+      const normalized = paragraph.trim();
+      if (!normalized) return false;
+      return !HASHTAG_ONLY_LINE_REGEX.test(normalized);
+    });
+
+    return {
+      contentParagraphs,
+      tags: Array.from(tagsSet),
+    };
+  }, [detailContent]);
+  const visibleTags = showAllTags ? parsedDetail.tags : parsedDetail.tags.slice(0, 8);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchNoticia = async () => {
+      setNoticia(undefined);
+      try {
+        const client = getGraphqlClient();
+
+        if (!noticiaId) {
+          setNoticia(null);
+          return;
+        }
+
+        const res = await client.graphql({
+          query: getNews,
+          variables: { id: noticiaId },
+          authMode: 'apiKey',
+        });
+
+        const item = res?.data?.getNews ?? null;
+        if (!item) {
+          if (!cancelled) setNoticia(null);
+          return;
+        }
+
+        const mapped = mapAmplifyNewsToNoticia(item);
+        if (!cancelled) setNoticia(mapped);
+      } catch (err) {
+        if (!cancelled) setNoticia(null);
+      }
+    };
+
+    void fetchNoticia();
+    return () => {
+      cancelled = true;
+    };
+  }, [noticiaId]);
+
+  useEffect(() => {
+    setShowAllTags(false);
+  }, [noticiaId]);
+
+  if (noticia === undefined) {
+    return (
+      <main className="font-primary bg-gray-50 min-h-screen py-16">
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+            <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+              Noticias
+            </p>
+            <h1 className="mt-3 text-3xl font-bold text-secondary-[bosques-nublados]">
+              Cargando...
+            </h1>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   if (!noticia) {
     return (
@@ -45,18 +146,6 @@ const NoticiaDetalle = () => {
       </main>
     );
   }
-
-  const carouselImages = useMemo(() => {
-    const images = noticia.gallery && noticia.gallery.length > 0
-      ? noticia.gallery
-      : noticia.image
-        ? [noticia.image]
-        : [];
-
-    return images.filter((image, index) => images.indexOf(image) === index);
-  }, [noticia.gallery, noticia.image]);
-
-  const hasMultipleImages = carouselImages.length > 1;
 
   const handlePreviousImage = () => {
     if (!hasMultipleImages) {
@@ -207,13 +296,9 @@ const NoticiaDetalle = () => {
             <h1 className="mt-3 text-3xl sm:text-4xl font-black leading-tight text-secondary-[bosques-nublados]">
               {noticia.title}
             </h1>
-            <p className="mt-5 text-base sm:text-lg leading-relaxed text-gray-700">
-              {noticia.excerpt}
-            </p>
-
-            {noticia.content && noticia.content.length > 0 && (
+            {parsedDetail.contentParagraphs.length > 0 && (
               <div className="mt-8 space-y-4 border-t border-gray-100 pt-8">
-                {noticia.content.map((paragraph, index) => (
+                {parsedDetail.contentParagraphs.map((paragraph, index) => (
                   <p
                     key={`${noticia.id}-content-${index}`}
                     className="text-sm sm:text-base leading-relaxed text-gray-700"
@@ -221,6 +306,33 @@ const NoticiaDetalle = () => {
                     {paragraph}
                   </p>
                 ))}
+              </div>
+            )}
+
+            {parsedDetail.tags.length > 0 && (
+              <div className="mt-8 border-t border-gray-100 pt-8">
+                <h2 className="text-sm font-bold uppercase tracking-wide text-secondary-[bosques-nublados]">
+                  Etiquetas
+                </h2>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {visibleTags.map((tag) => (
+                    <span
+                      key={`${noticia.id}-${tag}`}
+                      className="inline-flex rounded-full border border-secondary-claro/40 bg-secondary-claro/15 px-3 py-1 text-xs font-semibold text-secondary-[bosques-nublados]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                {parsedDetail.tags.length > 8 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllTags((prev) => !prev)}
+                    className="mt-3 text-xs font-semibold text-primary hover:text-primary-dark"
+                  >
+                    {showAllTags ? 'Ver menos' : `Ver más (${parsedDetail.tags.length - 8})`}
+                  </button>
+                )}
               </div>
             )}
 

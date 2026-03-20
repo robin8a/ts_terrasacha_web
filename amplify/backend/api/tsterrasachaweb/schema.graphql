@@ -1,0 +1,157 @@
+enum Status {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EventType {
+  WEBINAR
+  WORKSHOP
+  ONSITE
+  ONLINE
+  OTHER
+}
+
+type News
+  @model
+  @auth(rules: [
+    { allow: public, provider: apiKey, operations: [read] }
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [create, update, delete, read] }
+  ])
+{
+  id: ID!
+  title: String!
+  slug: String! @index(name: "bySlug", queryField: "newsBySlug")
+  summary: String!
+  body: String!
+  category: String
+  tags: [String]
+  coverImageUrl: String
+  galleryImageUrls: [String]
+  videoUrl: String
+  status: Status! @default(value: "DRAFT")
+  highlight: Boolean! @default(value: "false")
+  authorName: String
+  publishedAt: AWSDateTime
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type Announcement
+  @model
+  @auth(rules: [
+    { allow: public, provider: apiKey, operations: [read] }
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [create, update, delete, read] }
+  ])
+{
+  id: ID!
+  title: String!
+  slug: String! @index(name: "bySlug", queryField: "announcementBySlug")
+  summary: String!
+  body: String!
+  type: String        # e.g. "INFORMATIVO", "CONVOCATORIA", "ALERTA"
+  targetAudience: String
+  category: String
+  tags: [String]
+  coverImageUrl: String
+  attachmentUrls: [String]  # PDFs, images, etc.
+  status: Status! @default(value: "DRAFT")
+  highlight: Boolean! @default(value: "false")
+  authorName: String
+  publishedAt: AWSDateTime
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type Event
+  @model
+  @auth(rules: [
+    { allow: public, provider: apiKey, operations: [read] }
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [create, update, delete, read] }
+  ])
+{
+  id: ID!
+  title: String!
+  description: String!
+  eventType: EventType
+  category: String          # e.g. "General", "Sustainability"
+  tags: [String]
+
+  startDateTime: AWSDateTime!
+  endDateTime: AWSDateTime
+  timezone: String
+
+  location: String
+  isOnline: Boolean! @default(value: "false")
+  onlineUrl: String
+
+  registrationUrl: String
+  capacity: Int
+
+  highlight: Boolean! @default(value: "false")
+  status: Status! @default(value: "DRAFT")
+  visible: Boolean! @default(value: "true")
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type PodcastEpisode
+  @model
+  @auth(rules: [
+    { allow: public, provider: apiKey, operations: [read] }
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [create, update, delete, read] }
+  ])
+{
+  id: ID!
+  title: String!
+  slug: String! @index(name: "bySlug", queryField: "podcastEpisodeBySlug")
+  episodeNumber: Int
+  seasonNumber: Int
+
+  description: String!
+  showNotes: String
+
+  audioUrl: String!        # audio file stored in S3
+  coverImageUrl: String
+  durationSeconds: Int
+
+  externalPlayerUrl: String # Spotify, YouTube, etc.
+
+  status: Status! @default(value: "DRAFT")
+  publishedAt: AWSDateTime
+  highlight: Boolean! @default(value: "false")
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type ResearchItem
+  @model
+  @auth(rules: [
+    { allow: public, provider: apiKey, operations: [read] }
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [create, update, delete, read] }
+  ])
+{
+  id: ID!
+  title: String!
+  slug: String! @index(name: "bySlug", queryField: "researchItemBySlug")
+  summary: String!
+  body: String!             # main text or abstract/full text
+  category: String          # e.g. "Report", "Article", "Policy brief"
+  tags: [String]
+
+  coverImageUrl: String
+  pdfUrl: String            # main research document
+  attachmentUrls: [String]  # extra docs, annexes, datasets, etc.
+  videoUrl: String          # optional explainer video / presentation
+
+  status: Status! @default(value: "DRAFT")
+  highlight: Boolean! @default(value: "false")
+  authorName: String
+  institution: String
+  publishedAt: AWSDateTime
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}

@@ -1,12 +1,58 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getComunicadoById } from '../data/comunicados';
+import { getAnnouncement } from '../graphql/queries';
+import { getGraphqlClient } from '../lib/amplifySetup';
+import { mapAmplifyAnnouncementToPublic, type PublicAnnouncement } from '../lib/announcementMapper';
 
 const ComunicadoDetalle = () => {
   const { id } = useParams();
-  const comunicadoId = Number(id);
-  const comunicado = Number.isNaN(comunicadoId)
-    ? undefined
-    : getComunicadoById(comunicadoId);
+  const comunicadoId = id ?? '';
+  const [comunicado, setComunicado] = useState<PublicAnnouncement | null | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchDetail = async () => {
+      setComunicado(undefined);
+      try {
+        if (!comunicadoId) {
+          if (!cancelled) setComunicado(null);
+          return;
+        }
+
+        const client = getGraphqlClient();
+        const res: any = await client.graphql({
+          query: getAnnouncement,
+          variables: { id: comunicadoId },
+          authMode: 'apiKey',
+        });
+        const item = res?.data?.getAnnouncement ?? null;
+        if (!item) {
+          if (!cancelled) setComunicado(null);
+          return;
+        }
+        if (!cancelled) setComunicado(mapAmplifyAnnouncementToPublic(item));
+      } catch {
+        if (!cancelled) setComunicado(null);
+      }
+    };
+    void fetchDetail();
+    return () => {
+      cancelled = true;
+    };
+  }, [comunicadoId]);
+
+  if (comunicado === undefined) {
+    return (
+      <main className="font-primary bg-gray-50 min-h-screen py-16">
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+            <p className="text-sm font-semibold uppercase tracking-wide text-primary">Comunicados</p>
+            <h1 className="mt-3 text-3xl font-black text-secondary-[bosques-nublados]">Cargando...</h1>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   if (!comunicado) {
     return (
@@ -33,6 +79,18 @@ const ComunicadoDetalle = () => {
       </main>
     );
   }
+
+  const normalizedExcerpt = comunicado.excerpt.trim().replace(/\s+/g, ' ');
+  const normalizedExcerptForCompare = normalizedExcerpt.replace(/[.\u2026]+$/g, '').trim();
+  const normalizedFirstParagraph = (comunicado.body[0] ?? '').trim().replace(/\s+/g, ' ');
+  const isExcerptDuplicatedInBody =
+    normalizedExcerptForCompare.length > 0
+      && normalizedFirstParagraph.length > 0
+      && (
+        normalizedFirstParagraph.toLowerCase() === normalizedExcerptForCompare.toLowerCase()
+        || normalizedFirstParagraph.toLowerCase().startsWith(normalizedExcerptForCompare.toLowerCase())
+      );
+  const detailParagraphs = isExcerptDuplicatedInBody ? comunicado.body.slice(1) : comunicado.body;
 
   return (
     <main className="font-primary bg-gray-50 min-h-screen py-16">
@@ -62,7 +120,7 @@ const ComunicadoDetalle = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/85 via-secondary-[bosques-nublados]/25 to-transparent" />
             <div className="absolute left-5 top-5 inline-flex rounded-full bg-secondary-[amarillo-tierra] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-secondary-[bosques-nublados]">
-              Comunicado #{comunicado.number}
+              Comunicado oficial
             </div>
           </div>
 
@@ -73,31 +131,14 @@ const ComunicadoDetalle = () => {
             <h1 className="mt-3 text-3xl sm:text-4xl font-black leading-tight text-secondary-[bosques-nublados]">
               {comunicado.title}
             </h1>
-            <p className="mt-5 text-base sm:text-lg leading-relaxed text-gray-700">
-              {comunicado.excerpt}
-            </p>
-
-            {comunicado.highlights && comunicado.highlights.length > 0 && (
-              <div className="mt-8 rounded-2xl border border-secondary-[amarillo-tierra]/40 bg-secondary-[amarillo-tierra]/10 p-5 sm:p-6">
-                <h2 className="text-sm sm:text-base font-bold uppercase tracking-wide text-secondary-[bosques-nublados]">
-                  Puntos clave
-                </h2>
-                <ul className="mt-4 space-y-3">
-                  {comunicado.highlights.map((highlight, index) => (
-                    <li
-                      key={`${comunicado.id}-highlight-${index}`}
-                      className="flex items-start gap-3 text-sm sm:text-base leading-relaxed text-gray-700"
-                    >
-                      <span className="mt-2 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-primary" />
-                      <span>{highlight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            {normalizedExcerpt && (
+              <p className="mt-5 text-base sm:text-lg leading-relaxed text-secondary-bosques-nublados">
+                {comunicado.excerpt}
+              </p>
             )}
 
             <div className="mt-8 space-y-5 border-t border-gray-100 pt-8">
-              {comunicado.body.map((paragraph, index) => (
+              {detailParagraphs.map((paragraph, index) => (
                 <p
                   key={`${comunicado.id}-paragraph-${index}`}
                   className="text-sm sm:text-base leading-relaxed text-gray-700"
@@ -116,13 +157,13 @@ const ComunicadoDetalle = () => {
                   <span className="font-semibold text-secondary-[bosques-nublados]">
                     Email:
                   </span>{' '}
-                  {comunicado.contactEmail}
+                  hola@terrasacha.com
                 </p>
                 <p>
                   <span className="font-semibold text-secondary-[bosques-nublados]">
                     Web:
                   </span>{' '}
-                  {comunicado.contactWeb}
+                  www.terrasacha.com
                 </p>
               </div>
             </div>

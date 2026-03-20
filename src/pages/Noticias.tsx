@@ -1,10 +1,16 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { noticias } from '../data/noticias';
+import type { Noticia } from '../data/noticias';
+import { listNews } from '../graphql/queries';
+import { getGraphqlClient } from '../lib/amplifySetup';
+import { mapAmplifyNewsToNoticia } from '../lib/newsMapper';
+import { Status } from '../API';
 
 const Noticias = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const [activeFeaturedImageIndex, setActiveFeaturedImageIndex] = useState(0);
+  const [noticias, setNoticias] = useState<Noticia[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const formatDate = (dateString: string) => {
     return dateString;
@@ -21,6 +27,66 @@ const Noticias = () => {
     return map[category || ''] || 'bg-gray-700 text-white';
   };
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchNews = async () => {
+      setIsLoading(true);
+      try {
+        const client = getGraphqlClient();
+
+        const allItems: any[] = [];
+        let nextToken: string | null = null;
+
+        do {
+          const res: any = await client.graphql({
+            query: listNews,
+            variables: {
+              filter: { status: { eq: Status.PUBLISHED } },
+              limit: 1000,
+              nextToken,
+            },
+            authMode: 'apiKey',
+          });
+
+          const items = res?.data?.listNews?.items ?? [];
+          allItems.push(...items);
+          nextToken = res?.data?.listNews?.nextToken ?? null;
+        } while (nextToken);
+
+        // Ordenamos para que la destacada sea la más reciente.
+        const sorted = allItems.sort((a, b) => {
+          const aTime = new Date(a?.publishedAt ?? a?.createdAt ?? 0).getTime();
+          const bTime = new Date(b?.publishedAt ?? b?.createdAt ?? 0).getTime();
+          return bTime - aTime;
+        });
+
+        const mapped = sorted.map(mapAmplifyNewsToNoticia);
+
+        if (!cancelled) setNoticias(mapped);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    void fetchNews();
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') void fetchNews();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') void fetchNews();
+    }, 30000);
+
+    return () => {
+      cancelled = true;
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
   const featured = noticias[0];
   const sidebarItems = noticias.slice(1, 4);
   const remaining = noticias.slice(1); // Para \"Todas las noticias\" mostramos todas menos la destacada
@@ -29,11 +95,10 @@ const Noticias = () => {
       return [];
     }
 
-    const images = featured.gallery && featured.gallery.length > 0
-      ? featured.gallery
-      : featured.image
-        ? [featured.image]
-        : [];
+    const images = [
+      ...(featured.image ? [featured.image] : []),
+      ...(featured.gallery ?? []),
+    ];
 
     return images.filter((image, index) => images.indexOf(image) === index);
   }, [featured]);
@@ -79,6 +144,11 @@ const Noticias = () => {
 
   return (
     <main className="font-primary bg-gray-50 min-h-screen">
+      {isLoading && noticias.length === 0 ? (
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+          <p className="text-sm text-gray-600">Cargando noticias...</p>
+        </section>
+      ) : (
       <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
         {/* Título de página */}
         <h1 className="text-4xl sm:text-5xl lg:text-5xl font-black mb-10 sm:mb-12 tracking-tight">
@@ -410,6 +480,7 @@ const Noticias = () => {
           </div>
         </section>
       </section>
+      )}
     </main>
   );
 };

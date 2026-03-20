@@ -10,6 +10,17 @@
       "StackName": "amplify-tsterrasachaweb-dev-e0836",
       "StackId": "arn:aws:cloudformation:us-east-1:879381245127:stack/amplify-tsterrasachaweb-dev-e0836/117afac0-d087-11f0-9377-12e7339a49dd",
       "AmplifyAppId": "d22wimtbrro6xs"
+    },
+    "categories": {
+      "auth": {
+        "tsterrasachawebbb5c3251": {}
+      },
+      "api": {
+        "tsterrasachaweb": {}
+      },
+      "storage": {
+        "s393c8064f": {}
+      }
     }
   }
 }

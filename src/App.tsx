@@ -1,4 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import AdminErrorBoundary from './components/AdminErrorBoundary';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ContactButton from './components/ContactButton';
@@ -18,31 +20,59 @@ import AppPage from './pages/AppPage';
 import Metodologia from './pages/Metodologia';
 import RutaFormacion from './pages/RutaFormacion';
 
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+
+const AppRoutes = () => {
+  const location = useLocation();
+  const firstPathSegment = location.pathname.split('/').filter(Boolean)[0]?.toLowerCase() ?? '';
+  const isAdminRoute = firstPathSegment === 'admin';
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      {!isAdminRoute && <Header />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/nosotros" element={<Nosotros />} />
+        <Route path="/noticias" element={<Noticias />} />
+        <Route path="/noticias/:id" element={<NoticiaDetalle />} />
+        <Route path="/agenda" element={<Agenda />} />
+        <Route path="/contacto" element={<Contacto />} />
+        <Route path="/agenda-de-sostenibilidad" element={<AgendaSostenibilidad />} />
+        <Route path="/podcast" element={<Podcast />} />
+        <Route path="/comunicados" element={<Comunicados />} />
+        <Route path="/comunicados/:id" element={<ComunicadoDetalle />} />
+        <Route path="/investigacion" element={<Investigacion />} />
+        <Route path="/oraculo" element={<Oraculo />} />
+        <Route path="/app" element={<AppPage />} />
+        <Route path="/metodologia" element={<Metodologia />} />
+        <Route path="/ruta-de-formacion" element={<RutaFormacion />} />
+        <Route
+          path="/admin"
+          element={
+            <AdminErrorBoundary>
+              <Suspense
+                fallback={
+                  <div className="flex min-h-[50vh] items-center justify-center text-gray-600">
+                    Cargando...
+                  </div>
+                }
+              >
+                <AdminPage />
+              </Suspense>
+            </AdminErrorBoundary>
+          }
+        />
+      </Routes>
+      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && <ContactButton />}
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/nosotros" element={<Nosotros />} />
-          <Route path="/noticias" element={<Noticias />} />
-          <Route path="/noticias/:id" element={<NoticiaDetalle />} />
-          <Route path="/agenda" element={<Agenda />} />
-          <Route path="/contacto" element={<Contacto />} />
-          <Route path="/agenda-de-sostenibilidad" element={<AgendaSostenibilidad />} />
-          <Route path="/podcast" element={<Podcast />} />
-          <Route path="/comunicados" element={<Comunicados />} />
-          <Route path="/comunicados/:id" element={<ComunicadoDetalle />} />
-          <Route path="/investigacion" element={<Investigacion />} />
-          <Route path="/oraculo" element={<Oraculo />} />
-          <Route path="/app" element={<AppPage />} />
-          <Route path="/metodologia" element={<Metodologia />} />
-          <Route path="/ruta-de-formacion" element={<RutaFormacion />} />
-        </Routes>
-        <Footer />
-        <ContactButton />
-      </div>
+      <AppRoutes />
     </Router>
   );
 }

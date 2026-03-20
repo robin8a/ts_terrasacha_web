@@ -1,0 +1,14 @@
+{
+  "resourceName": "s393c8064f",
+  "policyUUID": "93c8064f",
+  "bucketName": "tsterrasachaweb88c5fdb4fb864b5aa681984b5b33a548",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
