@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { getAnnouncement } from '../graphql/queries';
 import { getGraphqlClient } from '../lib/amplifySetup';
 import { mapAmplifyAnnouncementToPublic, type PublicAnnouncement } from '../lib/announcementMapper';
+import { isWithinPublicationWindow } from '../lib/publicationWindow';
+import RelatedPodcastSection from '../components/podcast/RelatedPodcastSection';
 
 const ComunicadoDetalle = () => {
   const { id } = useParams();
@@ -27,6 +29,10 @@ const ComunicadoDetalle = () => {
         });
         const item = res?.data?.getAnnouncement ?? null;
         if (!item) {
+          if (!cancelled) setComunicado(null);
+          return;
+        }
+        if (!isWithinPublicationWindow(item)) {
           if (!cancelled) setComunicado(null);
           return;
         }
@@ -167,6 +173,8 @@ const ComunicadoDetalle = () => {
                 </p>
               </div>
             </div>
+
+            <RelatedPodcastSection relationType="announcement" relatedId={comunicado.id} />
           </div>
         </article>
       </section>

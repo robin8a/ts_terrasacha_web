@@ -8,6 +8,7 @@ export interface Noticia {
   content?: string[];
   gallery?: string[];
   video?: string;
+  youtubeEmbedUrl?: string;
 }
 
 export const noticias: Noticia[] = [

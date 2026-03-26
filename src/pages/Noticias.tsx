@@ -4,11 +4,26 @@ import type { Noticia } from '../data/noticias';
 import { listNews } from '../graphql/queries';
 import { getGraphqlClient } from '../lib/amplifySetup';
 import { mapAmplifyNewsToNoticia } from '../lib/newsMapper';
+import { isWithinPublicationWindow } from '../lib/publicationWindow';
+import { extractYoutubeVideoId } from '../lib/youtube';
 import { Status } from '../API';
+
+type FeaturedMediaItem =
+  | {
+      kind: 'youtube';
+      embedUrl: string;
+      thumbnailUrl: string;
+      title: string;
+    }
+  | {
+      kind: 'image';
+      src: string;
+      title: string;
+    };
 
 const Noticias = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
-  const [activeFeaturedImageIndex, setActiveFeaturedImageIndex] = useState(0);
+  const [activeFeaturedMediaIndex, setActiveFeaturedMediaIndex] = useState(0);
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,7 +70,9 @@ const Noticias = () => {
         } while (nextToken);
 
         // Ordenamos para que la destacada sea la más reciente.
-        const sorted = allItems.sort((a, b) => {
+        const visibleItems = allItems.filter((item) => isWithinPublicationWindow(item));
+
+        const sorted = visibleItems.sort((a, b) => {
           const aTime = new Date(a?.publishedAt ?? a?.createdAt ?? 0).getTime();
           const bTime = new Date(b?.publishedAt ?? b?.createdAt ?? 0).getTime();
           return bTime - aTime;
@@ -90,7 +107,7 @@ const Noticias = () => {
   const featured = noticias[0];
   const sidebarItems = noticias.slice(1, 4);
   const remaining = noticias.slice(1); // Para \"Todas las noticias\" mostramos todas menos la destacada
-  const featuredImages = useMemo(() => {
+  const featuredMedia = useMemo<FeaturedMediaItem[]>(() => {
     if (!featured) {
       return [];
     }
@@ -98,11 +115,35 @@ const Noticias = () => {
     const images = [
       ...(featured.image ? [featured.image] : []),
       ...(featured.gallery ?? []),
-    ];
+    ].filter((image, index, current) => current.indexOf(image) === index);
 
-    return images.filter((image, index) => images.indexOf(image) === index);
+    const media: FeaturedMediaItem[] = [];
+    const youtubeVideoId = extractYoutubeVideoId(featured.youtubeEmbedUrl);
+
+    if (featured.youtubeEmbedUrl && youtubeVideoId) {
+      media.push({
+        kind: 'youtube',
+        embedUrl: featured.youtubeEmbedUrl,
+        thumbnailUrl: `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg`,
+        title: featured.title,
+      });
+    }
+
+    images.forEach((image) => {
+      media.push({
+        kind: 'image',
+        src: image,
+        title: featured.title,
+      });
+    });
+
+    return media;
   }, [featured]);
-  const hasMultipleFeaturedImages = featuredImages.length > 1;
+  const hasMultipleFeaturedMedia = featuredMedia.length > 1;
+
+  useEffect(() => {
+    setActiveFeaturedMediaIndex(0);
+  }, [featured?.id]);
 
   const handleCarouselNavigation = (direction: 'previous' | 'next') => {
     if (!carouselRef.current) {
@@ -118,28 +159,28 @@ const Noticias = () => {
     });
   };
 
-  const handlePreviousFeaturedImage = () => {
-    if (!hasMultipleFeaturedImages) {
+  const handlePreviousFeaturedMedia = () => {
+    if (!hasMultipleFeaturedMedia) {
       return;
     }
 
-    setActiveFeaturedImageIndex((currentIndex) => (
-      currentIndex === 0 ? featuredImages.length - 1 : currentIndex - 1
+    setActiveFeaturedMediaIndex((currentIndex) => (
+      currentIndex === 0 ? featuredMedia.length - 1 : currentIndex - 1
     ));
   };
 
-  const handleNextFeaturedImage = () => {
-    if (!hasMultipleFeaturedImages) {
+  const handleNextFeaturedMedia = () => {
+    if (!hasMultipleFeaturedMedia) {
       return;
     }
 
-    setActiveFeaturedImageIndex((currentIndex) => (
-      currentIndex === featuredImages.length - 1 ? 0 : currentIndex + 1
+    setActiveFeaturedMediaIndex((currentIndex) => (
+      currentIndex === featuredMedia.length - 1 ? 0 : currentIndex + 1
     ));
   };
 
-  const handleSelectFeaturedImage = (selectedIndex: number) => {
-    setActiveFeaturedImageIndex(selectedIndex);
+  const handleSelectFeaturedMedia = (selectedIndex: number) => {
+    setActiveFeaturedMediaIndex(selectedIndex);
   };
 
   return (
@@ -163,15 +204,27 @@ const Noticias = () => {
               id={`noticia-${featured.id}`}
               className="lg:col-span-8 bg-white rounded-xl sm:rounded-2xl shadow-sm overflow-hidden border border-gray-100 h-full"
             >
-              {featuredImages.length > 0 && (
+              {featuredMedia.length > 0 && (
                 <div className="border-b border-gray-100 bg-gray-950/5">
                   <div className="relative h-72 sm:h-80 lg:h-[26rem] overflow-hidden">
-                    <img
-                      src={featuredImages[activeFeaturedImageIndex]}
-                      alt={`${featured.title} - imagen ${activeFeaturedImageIndex + 1}`}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="eager"
-                    />
+                    {featuredMedia[activeFeaturedMediaIndex]?.kind === 'youtube' ? (
+                      <iframe
+                        className="absolute inset-0 h-full w-full"
+                        src={featuredMedia[activeFeaturedMediaIndex].embedUrl}
+                        title={`Video de YouTube de ${featured.title}`}
+                        loading="eager"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <img
+                        src={featuredMedia[activeFeaturedMediaIndex]?.kind === 'image' ? featuredMedia[activeFeaturedMediaIndex].src : ''}
+                        alt={`${featured.title} - imagen ${activeFeaturedMediaIndex + 1}`}
+                        className="absolute inset-0 h-full w-full object-cover"
+                        loading="eager"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/80 via-secondary-[bosques-nublados]/20 to-transparent" />
                     <div className="absolute left-5 right-5 bottom-5 sm:left-6 sm:right-6 sm:bottom-6">
                       {featured.category && (
@@ -185,13 +238,13 @@ const Noticias = () => {
                       )}
                     </div>
 
-                    {hasMultipleFeaturedImages && (
+                    {hasMultipleFeaturedMedia && (
                       <>
                         <button
                           type="button"
-                          onClick={handlePreviousFeaturedImage}
+                          onClick={handlePreviousFeaturedMedia}
                           className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-secondary-[bosques-nublados] shadow-md transition-all hover:bg-white"
-                          aria-label="Ver imagen anterior de la noticia principal"
+                          aria-label="Ver elemento anterior de la noticia principal"
                         >
                           <svg
                             className="h-5 w-5"
@@ -210,9 +263,9 @@ const Noticias = () => {
 
                         <button
                           type="button"
-                          onClick={handleNextFeaturedImage}
+                          onClick={handleNextFeaturedMedia}
                           className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-secondary-[bosques-nublados] shadow-md transition-all hover:bg-white"
-                          aria-label="Ver imagen siguiente de la noticia principal"
+                          aria-label="Ver elemento siguiente de la noticia principal"
                         >
                           <svg
                             className="h-5 w-5"
@@ -230,35 +283,48 @@ const Noticias = () => {
                         </button>
 
                         <div className="absolute bottom-5 right-5 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white">
-                          {activeFeaturedImageIndex + 1} / {featuredImages.length}
+                          {activeFeaturedMediaIndex + 1} / {featuredMedia.length}
                         </div>
                       </>
                     )}
                   </div>
 
-                  {hasMultipleFeaturedImages && (
+                  {hasMultipleFeaturedMedia && (
                     <div className="scrollbar-hide flex gap-3 overflow-x-auto px-4 py-4 sm:px-6">
-                      {featuredImages.map((image, index) => {
-                        const isActive = index === activeFeaturedImageIndex;
+                      {featuredMedia.map((media, index) => {
+                        const isActive = index === activeFeaturedMediaIndex;
 
                         return (
                           <button
                             key={`${featured.id}-featured-thumbnail-${index}`}
                             type="button"
-                            onClick={() => handleSelectFeaturedImage(index)}
+                            onClick={() => handleSelectFeaturedMedia(index)}
                             className={`relative h-20 w-24 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
                               isActive
                                 ? 'border-primary shadow-md'
                                 : 'border-transparent opacity-80 hover:opacity-100'
                             }`}
-                            aria-label={`Ver imagen ${index + 1} de la noticia principal`}
+                            aria-label={
+                              media.kind === 'youtube'
+                                ? `Ver video ${index + 1} de la noticia principal`
+                                : `Ver imagen ${index + 1} de la noticia principal`
+                            }
                           >
                             <img
-                              src={image}
+                              src={media.kind === 'youtube' ? media.thumbnailUrl : media.src}
                               alt={`${featured.title} - miniatura ${index + 1}`}
                               className="h-full w-full object-cover"
                               loading="lazy"
                             />
+                            {media.kind === 'youtube' && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/35">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-primary shadow-md">
+                                  <svg className="ml-0.5 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" />
+                                  </svg>
+                                </div>
+                              </div>
+                            )}
                           </button>
                         );
                       })}

@@ -20,6 +20,7 @@ export const getNews = /* GraphQL */ `query GetNews($id: ID!) {
     coverImageUrl
     galleryImageUrls
     videoUrl
+    youtubeUrl
     status
     highlight
     authorName
@@ -43,6 +44,7 @@ export const listNews = /* GraphQL */ `query ListNews($filter: ModelNewsFilterIn
       coverImageUrl
       galleryImageUrls
       videoUrl
+      youtubeUrl
       status
       highlight
       authorName
@@ -81,6 +83,7 @@ export const newsBySlug = /* GraphQL */ `query NewsBySlug(
       coverImageUrl
       galleryImageUrls
       videoUrl
+      youtubeUrl
       status
       highlight
       authorName
@@ -272,6 +275,9 @@ export const getPodcastEpisode = /* GraphQL */ `query GetPodcastEpisode($id: ID!
     audioUrl
     coverImageUrl
     durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
     externalPlayerUrl
     status
     publishedAt
@@ -302,6 +308,9 @@ export const listPodcastEpisodes = /* GraphQL */ `query ListPodcastEpisodes(
       audioUrl
       coverImageUrl
       durationSeconds
+      relatedNewsIds
+      relatedAnnouncementIds
+      relatedResearchIds
       externalPlayerUrl
       status
       publishedAt
@@ -343,6 +352,9 @@ export const podcastEpisodeBySlug = /* GraphQL */ `query PodcastEpisodeBySlug(
       audioUrl
       coverImageUrl
       durationSeconds
+      relatedNewsIds
+      relatedAnnouncementIds
+      relatedResearchIds
       externalPlayerUrl
       status
       publishedAt
@@ -369,6 +381,7 @@ export const getResearchItem = /* GraphQL */ `query GetResearchItem($id: ID!) {
     category
     tags
     coverImageUrl
+    sourceDocxUrl
     pdfUrl
     attachmentUrls
     videoUrl
@@ -401,6 +414,7 @@ export const listResearchItems = /* GraphQL */ `query ListResearchItems(
       category
       tags
       coverImageUrl
+      sourceDocxUrl
       pdfUrl
       attachmentUrls
       videoUrl
@@ -444,6 +458,7 @@ export const researchItemBySlug = /* GraphQL */ `query ResearchItemBySlug(
       category
       tags
       coverImageUrl
+      sourceDocxUrl
       pdfUrl
       attachmentUrls
       videoUrl

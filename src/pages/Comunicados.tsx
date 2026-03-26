@@ -4,6 +4,7 @@ import { listAnnouncements } from '../graphql/queries';
 import { Status } from '../API';
 import { getGraphqlClient } from '../lib/amplifySetup';
 import { mapAmplifyAnnouncementToPublic, type PublicAnnouncement } from '../lib/announcementMapper';
+import { isWithinPublicationWindow } from '../lib/publicationWindow';
 
 const Comunicados = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
@@ -34,7 +35,9 @@ const Comunicados = () => {
           nextToken = res?.data?.listAnnouncements?.nextToken ?? null;
         } while (nextToken);
 
-        const sorted = allItems.sort((a, b) => {
+        const visibleItems = allItems.filter((item) => isWithinPublicationWindow(item));
+
+        const sorted = visibleItems.sort((a, b) => {
           const aTime = new Date(a?.publishedAt ?? a?.createdAt ?? 0).getTime();
           const bTime = new Date(b?.publishedAt ?? b?.createdAt ?? 0).getTime();
           return bTime - aTime;

@@ -1,272 +1,478 @@
-interface Episodio {
-  id: number;
-  title: string;
-  description: string;
-  duration: string;
-  date: string;
-  category: 'sostenibilidad' | 'tecnologia' | 'inversion' | 'descarbonizacion';
-  featured?: boolean;
-  imageUrl?: string;
-}
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Status } from '../API';
+import { getGraphqlClient } from '../lib/amplifySetup';
+import { mapAmplifyPodcastToPublic, type PublicPodcast } from '../lib/podcastMapper';
+import { isWithinPublicationWindow } from '../lib/publicationWindow';
+
+const LIST_PUBLIC_PODCASTS = /* GraphQL */ `
+  query ListPublicPodcasts($filter: ModelPodcastEpisodeFilterInput, $limit: Int, $nextToken: String) {
+    listPodcastEpisodes(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        title
+        slug
+        description
+        audioUrl
+        coverImageUrl
+        publishedAt
+        createdAt
+        highlight
+        relatedNewsIds
+        relatedAnnouncementIds
+        relatedResearchIds
+      }
+      nextToken
+    }
+  }
+`;
 
 const Podcast = () => {
-  const episodios: Episodio[] = [
-    {
-      id: 1,
-      title: 'Descarbonización y Sostenibilidad: El Futuro de los Llanos Orientales',
-      description: 'Exploramos las estrategias de descarbonización y cómo la sostenibilidad puede transformar la región de los Llanos Orientales. Incluye entrevistas con expertos en protección ambiental.',
-      duration: '45 min',
-      date: '15 de Enero, 2024',
-      category: 'descarbonizacion',
-      featured: true,
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuDX-5uGiLIXFUFE4px-EOcBZeAF_KxJxaCLGMxg5UDBDNUIPrR7lufG4YxCwL8oxxpQs9rm98Ph4oqdnPSPXkFsiKi7VXkwAc2IO32atHfj1uc2okPt4oC0fVykcZmQdBSUDDg-RvkTkHLgAHYUKyGGGgwpgogI74AopA3KhCqkhQ56UaAbxpngjN9kWx3Wg56W1eRTppICdJ7CNLNKjaHg4Mo_O7MkVI1KhxOhNGxmNxT-JLKaOXJ324P5N_t0WAmm0u8vEjSkDKk',
-    },
-    {
-      id: 2,
-      title: 'Tokenización de Activos Ambientales: Oportunidades y Desafíos',
-      description: 'Análisis profundo sobre la tokenización de activos ambientales estratégicos y cómo este modelo innovador puede financiar proyectos de conservación.',
-      duration: '38 min',
-      date: '22 de Enero, 2024',
-      category: 'inversion',
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuBR203dcsTU8Oh5dZ2zmpWLkloBN5oxGJQCXVMH53F-bKTT_a2IB3XFSYtV60KamjE4u5W_v5nnITToXdYfcrnA-GdHO0S46tF6R8mvSFyOeIuoQiQrzMG5LBS1jBfsF8vCZ1xjmo4QcOMtK2ZAlMIaSsSTCtcG04F0ZWD9G9396Q4qRKvKy5d-QcXUY_eoj_H_pssI2_zuX2fvTxFIgJ7FCLXtaJnRb-37VgdAK5NRR3gyxZI5eQXyRmEMijyX-4MnGe2OnqMipbM',
-    },
-    {
-      id: 3,
-      title: 'Biotecnología Aplicada a la Reforestación',
-      description: 'Conoce cómo las tecnologías emergentes y la biotecnología están revolucionando los procesos de reforestación en los departamentos de Meta y Arauca.',
-      duration: '42 min',
-      date: '29 de Enero, 2024',
-      category: 'tecnologia',
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAGoyUKMtYMuVID0DF9QnsoQs6WSPZzfPOBdKxoncFWa5GKr-QhUFPuPDeALTd9NtMFXOiBjtg82duE022QLdabqu_NlwM_41by8GrFEjLsgtNuCd7MVpx6E0ilOVosBHVg9F_LtuP0AQFB0EVeUSBPUfGXT5LcyKM6RfmvAejG7-K7Mug1HHLPzSEqGth42e1nqvDnnQMGodTDjfcATp8xl7mS_KpDZCfXD7hNieIGrssbJV1shi_t7ZyD3dgkJeC5LiBhMeG8ICQ',
-    },
-    {
-      id: 4,
-      title: 'Mecanismos de Inversión Verde: Casos de Éxito',
-      description: 'Revisión de casos exitosos de inversión con enfoque de protección ambiental y cómo replicarlos en la región de los Llanos Orientales.',
-      duration: '35 min',
-      date: '5 de Febrero, 2024',
-      category: 'inversion',
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuCyfM2hltaoS5Pn6uIYSuFbsJf8AwiEOP1r7u_EHMFaSgNEGZu3IrcwPlhUCWAvGHhFSONbxxuyf9XdMz7uT0WYFut18sL9IvMvyRHo4ZDN3Bfx2p8j-6KDYVYXSN76qm1ZafLIndvK8eGo4bWM-emAEvaAJTJFzA-GEIMtrD_wpfgfBTmZDVHaRM2J5xG060DwgzRE9ShpeCyNyhpef6QrIzeHs-pONB_OsP99msxh_V3X-Mz6G5eVRcOZmlJeiCqj1FmNpQ6MC2Y',
-    },
-    {
-      id: 5,
-      title: 'Protección de Cuencas Hidrográficas: Estrategias Integrales',
-      description: 'Estrategias integrales para la conservación y protección de cuencas de agua, garantizando la disponibilidad del recurso hídrico para futuras generaciones.',
-      duration: '40 min',
-      date: '12 de Febrero, 2024',
-      category: 'sostenibilidad',
-      imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAGoyUKMtYMuVID0DF9QnsoQs6WSPZzfPOBdKxoncFWa5GKr-QhUFPuPDeALTd9NtMFXOiBjtg82duE022QLdabqu_NlwM_41by8GrFEjLsgtNuCd7MVpx6E0ilOVosBHVg9F_LtuP0AQFB0EVeUSBPUfGXT5LcyKM6RfmvAejG7-K7Mug1HHLPzSEqGth42e1nqvDnnQMGodTDjfcATp8xl7mS_KpDZCfXD7hNieIGrssbJV1shi_t7ZyD3dgkJeC5LiBhMeG8ICQ',
-    },
-    {
-      id: 6,
-      title: 'Comunidades Locales y Desarrollo Sostenible',
-      description: 'El papel de las comunidades locales en el desarrollo sostenible y cómo los proyectos ambientales pueden beneficiar directamente a las poblaciones.',
-      duration: '33 min',
-      date: '19 de Febrero, 2024',
-      category: 'sostenibilidad',
-    },
-  ];
+  const [podcasts, setPodcasts] = useState<PublicPodcast[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activePodcastId, setActivePodcastId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'highlighted'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const getCategoryColor = (category: string) => {
-    const colorMap: Record<string, { bg: string; border: string; text: string; badge: string }> = {
-      'descarbonizacion': {
-        bg: 'bg-secondary-pradera/10',
-        border: 'border-secondary-pradera',
-        text: 'text-secondary-pradera',
-        badge: 'bg-secondary-pradera',
-      },
-      'inversion': {
-        bg: 'bg-primary/10',
-        border: 'border-primary',
-        text: 'text-primary',
-        badge: 'bg-primary',
-      },
-      'tecnologia': {
-        bg: 'bg-secondary-claro/10',
-        border: 'border-secondary-claro',
-        text: 'text-secondary-claro',
-        badge: 'bg-secondary-claro',
-      },
-      'sostenibilidad': {
-        bg: 'bg-secondary-[amarillo-tierra]/10',
-        border: 'border-secondary-[amarillo-tierra]',
-        text: 'text-secondary-[amarillo-tierra]',
-        badge: 'bg-secondary-[amarillo-tierra]',
-      },
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchPodcasts = async () => {
+      setIsLoading(true);
+
+      try {
+        const client = getGraphqlClient();
+        const allItems: any[] = [];
+        let nextToken: string | null = null;
+
+        do {
+          const response: any = await client.graphql({
+            query: LIST_PUBLIC_PODCASTS,
+            variables: {
+              filter: { status: { eq: Status.PUBLISHED } },
+              limit: 1000,
+              nextToken,
+            },
+            authMode: 'apiKey',
+          });
+
+          const items = response?.data?.listPodcastEpisodes?.items ?? [];
+          allItems.push(...items);
+          nextToken = response?.data?.listPodcastEpisodes?.nextToken ?? null;
+        } while (nextToken);
+
+        const sorted = allItems
+          .filter((item) => isWithinPublicationWindow(item))
+          .map(mapAmplifyPodcastToPublic)
+          .sort((a, b) => {
+            const highlightDiff = Number(b.highlight) - Number(a.highlight);
+            if (highlightDiff !== 0) return highlightDiff;
+            const aTime = new Date(a.publishedAt ?? 0).getTime();
+            const bTime = new Date(b.publishedAt ?? 0).getTime();
+            return bTime - aTime;
+          });
+
+        if (!cancelled) {
+          setPodcasts(sorted);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
     };
-    return colorMap[category] || colorMap['sostenibilidad'];
+
+    void fetchPodcasts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const featuredPodcast = useMemo(
+    () => podcasts.find((item) => item.highlight) ?? podcasts[0],
+    [podcasts],
+  );
+
+  const activePodcast = useMemo(() => {
+    if (!activePodcastId) return featuredPodcast ?? null;
+    return podcasts.find((item) => item.id === activePodcastId) ?? featuredPodcast ?? null;
+  }, [activePodcastId, featuredPodcast, podcasts]);
+
+  useEffect(() => {
+    if (!featuredPodcast) return;
+    setActivePodcastId((currentId) => currentId ?? featuredPodcast.id);
+  }, [featuredPodcast]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, activeFilter]);
+
+  const formatPublishedDate = (value?: string | null): string => {
+    if (!value) return 'Sin fecha';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Sin fecha';
+    return date.toLocaleDateString('es-CO', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
   };
 
-  const getCategoryLabel = (category: string) => {
-    const labels: Record<string, string> = {
-      'descarbonizacion': 'Descarbonización',
-      'inversion': 'Inversión',
-      'tecnologia': 'Tecnología',
-      'sostenibilidad': 'Sostenibilidad',
-    };
-    return labels[category] || category;
-  };
+  const filteredPodcasts = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    return podcasts.filter((podcast) => {
+      if (activeFilter === 'highlighted' && !podcast.highlight) return false;
+      if (!normalizedSearch) return true;
 
-  const featuredEpisode = episodios.find(ep => ep.featured) || episodios[0];
-  const otherEpisodes = episodios.filter(ep => ep.id !== featuredEpisode.id);
+      const haystack = `${podcast.title} ${podcast.summary}`.toLowerCase();
+      return haystack.includes(normalizedSearch);
+    });
+  }, [activeFilter, podcasts, searchTerm]);
+
+  const pageSize = 9;
+  const totalPages = Math.max(1, Math.ceil(filteredPodcasts.length / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedPodcasts = useMemo(() => {
+    const start = (safeCurrentPage - 1) * pageSize;
+    return filteredPodcasts.slice(start, start + pageSize);
+  }, [filteredPodcasts, safeCurrentPage]);
+
+  const pageNumbers = useMemo(() => {
+    const pages: number[] = [];
+    for (let page = 1; page <= totalPages; page += 1) {
+      pages.push(page);
+    }
+    return pages;
+  }, [totalPages]);
 
   return (
-    <main className="font-primary bg-gray-50 min-h-screen">
-      <section className="container mx-auto px-4 md:px-8 py-10">
-        {/* Título de página */}
-        <h1 className="text-4xl sm:text-5xl font-extrabold mb-10 sm:mb-12 text-secondary-[bosques-nublados]">
-          PODCAST
-        </h1>
+    <main className="font-primary min-h-screen bg-gray-50 py-16">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl border border-[#44482c]/15 bg-[#f5f2e7] px-6 py-10 shadow-sm sm:px-8 sm:py-12 lg:px-12 lg:py-16">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(177,193,129,0.28),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(68,72,44,0.16),transparent_22%)]" />
+          <div className="absolute inset-0 opacity-10 [background-image:linear-gradient(rgba(68,72,44,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(68,72,44,0.1)_1px,transparent_1px)] [background-size:32px_32px]" />
 
-        {/* Intro Section */}
-        <section className="mb-10 sm:mb-12">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="max-w-3xl">
-              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wide mb-2 text-secondary-[bosques-nublados]">
-                Sobre Nuestro Podcast
-              </h2>
-              <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed">
-              Escucha nuestros podcasts sobre descarbonización, sostenibilidad, tokenización de
-                activos y mecanismos de inversión con enfoque de protección ambiental. Cada episodio explora
-                temas relevantes para el desarrollo sostenible de los Llanos Orientales, con entrevistas a expertos
-                y análisis de casos de éxito.
-            </p>
+          <div className="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#44482c]/15 bg-[#44482c] px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-[#e8d79a]">
+                Audio y conversación
               </div>
-            {/* Mic Icon */}
-            <div className="mt-2 md:mt-0 flex-shrink-0">
-              <div className="h-16 w-16 sm:h-20 sm:w-20 text-primary bg-gray-100 rounded-full p-3 flex items-center justify-center">
-                <svg
-                  className="h-10 w-10"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
-                  <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
-                </svg>
-              </div>
+
+              <h1 className="mt-5 text-4xl font-black tracking-tight text-[#44482c] sm:text-5xl lg:text-6xl">
+                Podcast
+              </h1>
+
+              <p className="mt-5 max-w-3xl text-sm leading-relaxed text-[#44482c]/90 sm:text-base md:text-lg">
+                Escucha episodios relacionados con noticias, comunicados e investigación del proyecto
+                Terrasacha. Cada publicación puede enlazar a sus podcasts asociados para ampliar el
+                contexto desde audio.
+              </p>
             </div>
-          </div>
-        </section>
 
-        {/* Featured Episode */}
-        <section className="mb-12 sm:mb-14">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col lg:flex-row hover:shadow-md transition-shadow">
-            {/* Imagen destacada */}
-            {featuredEpisode.imageUrl && (
-              <div className="relative h-64 lg:h-auto lg:w-3/5">
-                <img
-                  src={featuredEpisode.imageUrl}
-                  alt={featuredEpisode.title}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute top-4 left-4 bg-secondary-[bosques-nublados] text-white text-[10px] sm:text-xs font-bold px-3 py-1 rounded shadow-sm uppercase tracking-wider">
-                  Episodio Destacado
+            <div className="lg:col-span-4">
+              <div className="rounded-2xl border border-[#44482c]/12 bg-white/60 p-5 backdrop-blur-sm sm:p-6">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#44482c]">
+                  Panorama
+                </p>
+
+                <div className="mt-5 grid grid-cols-2 gap-4">
+                  <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
+                    <p className="text-2xl font-black text-[#e8d79a]">{podcasts.length}</p>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
+                      Episodios
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
+                    <p className="text-2xl font-black text-[#e8d79a]">
+                      {podcasts.filter((item) => item.highlight).length}
+                    </p>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
+                      Destacados
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-2xl border border-[#44482c]/10 bg-white/75 p-4">
+                  <p className="text-sm leading-relaxed text-[#44482c]/90">
+                    Los episodios se integran con el resto del contenido para ofrecer acceso cruzado
+                    desde cada sección del sitio.
+                  </p>
                 </div>
               </div>
-            )}
-
-            {/* Contenido destacado */}
-            <div className="p-6 sm:p-8 flex flex-col justify-center items-start lg:w-2/5">
-              {featuredEpisode && (() => {
-                const colors = getCategoryColor(featuredEpisode.category);
-                return (
-                  <>
-                    <span
-                      className={`${colors.badge} text-white text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase`}
-                    >
-                      {getCategoryLabel(featuredEpisode.category)}
-                    </span>
-                    <span className="text-gray-500 text-xs sm:text-sm font-medium mb-2">
-                      {featuredEpisode.date} • {featuredEpisode.duration}
-                    </span>
-                    <h3 className="text-2xl sm:text-3xl font-bold text-secondary-[bosques-nublados] mb-3 leading-tight">
-                      {featuredEpisode.title}
-                    </h3>
-                    <p className="text-gray-600 mb-6 leading-relaxed text-sm sm:text-base">
-                      {featuredEpisode.description}
-                    </p>
-                    <button className="bg-primary text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 shadow-md hover:bg-primary-dark transition-colors">
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Reproducir episodio
-                    </button>
-                  </>
-                );
-              })()}
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* All Episodes */}
-        <section>
-          <h2 className="text-lg sm:text-xl font-bold uppercase tracking-wide mb-6 text-secondary-[bosques-nublados]">
-            Todos los Episodios
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {otherEpisodes.map((episodio, index) => {
-              const colors = getCategoryColor(episodio.category);
-              return (
-                <article
-                  key={episodio.id}
-                  className="bg-white rounded-lg border border-gray-100 shadow-sm flex flex-col h-full hover:shadow-md transition-shadow"
-                >
-                  {episodio.imageUrl && index < 4 && (
-                    <div className="relative h-40 sm:h-48">
-                      <img
-                        src={episodio.imageUrl}
-                        alt={episodio.title}
-                        className="w-full h-full object-cover rounded-t-lg"
-                        loading="lazy"
-                      />
-                      <div className={`${colors.badge} absolute top-3 left-3 text-[10px] font-bold px-2 py-1 rounded uppercase text-white`}>
-                        {getCategoryLabel(episodio.category)}
-                      </div>
+        <section className="mt-10 sm:mt-12 lg:mt-14">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
+              <span className="text-secondary-[bosques-nublados]">REPRODUCTOR</span>{' '}
+              <span className="text-primary">PRINCIPAL</span>
+            </h2>
+          </div>
+
+          {isLoading ? (
+            <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
+              <p className="text-sm text-gray-600">Cargando episodios...</p>
+            </div>
+          ) : activePodcast ? (
+            <article className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+              <div className="grid grid-cols-1 lg:grid-cols-12">
+                <div className="relative min-h-[22rem] overflow-hidden lg:col-span-5">
+                  {activePodcast.coverImageUrl ? (
+                    <img
+                      src={activePodcast.coverImageUrl}
+                      alt={activePodcast.title}
+                      className="h-full w-full object-cover"
+                      loading="eager"
+                    />
+                  ) : (
+                    <div className="flex h-full min-h-[22rem] items-center justify-center bg-gradient-to-br from-secondary-claro/30 to-[#e8d79a]">
+                      <span className="text-sm font-semibold uppercase tracking-[0.2em] text-secondary-[bosques-nublados]">
+                        Podcast
+                      </span>
                     </div>
                   )}
-                  <div className="p-5 flex flex-col flex-1">
-                    <span className="text-xs text-gray-500 mb-2">
-                      {episodio.date} • {episodio.duration}
-                    </span>
-                    <h4 className="text-lg font-bold text-secondary-[bosques-nublados] mb-3 leading-snug line-clamp-2">
-                      {episodio.title}
-                    </h4>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-1">
-                      {episodio.description}
-                    </p>
-                    <div className="mt-auto pt-2">
-                      <button className="bg-secondary-[bosques-nublados] rounded-full p-2 hover:bg-primary transition-colors shadow-md">
-                        <svg
-                          className="w-5 h-5 text-white"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
+                  <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/80 via-secondary-[bosques-nublados]/20 to-transparent" />
+                  <div className="absolute left-5 top-5 inline-flex rounded-full bg-secondary-[amarillo-tierra] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-secondary-[bosques-nublados]">
+                    En reproducción
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-center bg-gradient-to-br from-white via-white to-secondary-claro/10 p-6 sm:p-8 lg:col-span-7 lg:p-10">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                    Podcast Terrasacha
+                  </p>
+                  <h3 className="mt-4 text-2xl font-black leading-tight text-secondary-[bosques-nublados] sm:text-3xl">
+                    {activePodcast.title}
+                  </h3>
+                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
+                    Publicado: {formatPublishedDate(activePodcast.publishedAt)}
+                  </p>
+                  <p className="mt-5 text-sm leading-relaxed text-gray-600 sm:text-base">
+                    {activePodcast.summary}
+                  </p>
+
+                  <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-4">
+                    <audio className="w-full" controls preload="metadata">
+                      <source src={activePodcast.audioUrl} />
+                      Tu navegador no soporta la reproducción de audio.
+                    </audio>
+                  </div>
+
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    {featuredPodcast && activePodcast.id !== featuredPodcast.id && (
+                      <button
+                        type="button"
+                        onClick={() => setActivePodcastId(featuredPodcast.id)}
+                        className="inline-flex items-center gap-2 rounded-full border border-primary px-5 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+                      >
+                        Volver al destacado
                       </button>
-        </div>
-      </div>
-                </article>
-              );
-            })}
+                    )}
+                  </div>
+                </div>
+              </div>
+            </article>
+          ) : (
+            <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
+              <p className="text-sm text-gray-600">No hay episodios de podcast publicados todavía.</p>
+            </div>
+          )}
+        </section>
+
+        <section className="mt-10 sm:mt-12">
+          <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+            <h2 className="text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
+              <span className="text-secondary-[bosques-nublados]">LISTA DE</span>{' '}
+              <span className="text-primary">EPISODIOS</span>
+            </h2>
+              <p className="mt-2 text-sm text-gray-600">
+                {isLoading
+                  ? 'Cargando catálogo...'
+                  : `${filteredPodcasts.length} episodio(s) disponibles para escuchar`}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Buscar por título o tema"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm shadow-sm sm:w-72"
+              />
+              <div className="inline-flex rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => setActiveFilter('all')}
+                  className={`rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+                    activeFilter === 'all'
+                      ? 'bg-primary text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Todos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveFilter('highlighted')}
+                  className={`rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+                    activeFilter === 'highlighted'
+                      ? 'bg-primary text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Destacados
+                </button>
+              </div>
+            </div>
           </div>
+
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                  <div className="h-5 w-32 animate-pulse rounded bg-gray-200" />
+                  <div className="mt-4 h-24 animate-pulse rounded bg-gray-100" />
+                </div>
+              ))}
+            </div>
+          ) : filteredPodcasts.length > 0 ? (
+            <div>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {paginatedPodcasts.map((podcast, index) => {
+                const isActive = podcast.id === activePodcast?.id;
+                const absoluteIndex = (safeCurrentPage - 1) * pageSize + index + 1;
+                return (
+                  <article
+                    key={podcast.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setActivePodcastId(podcast.id)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setActivePodcastId(podcast.id);
+                      }
+                    }}
+                    className={`flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition ${
+                      isActive
+                        ? 'border-primary/40 ring-2 ring-primary/15'
+                        : 'border-gray-100 hover:border-primary/30'
+                    } cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60`}
+                  >
+                    <div className="h-44 w-full overflow-hidden border-b border-gray-100 bg-gray-100">
+                        {podcast.coverImageUrl ? (
+                          <img
+                            src={podcast.coverImageUrl}
+                            alt={podcast.title}
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                            Podcast
+                          </div>
+                        )}
+                    </div>
+
+                    <div className="flex flex-1 flex-col p-4">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-flex rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-[11px] font-semibold text-gray-600">
+                          Episodio {String(absoluteIndex).padStart(2, '0')}
+                          </span>
+                          {podcast.highlight && (
+                            <span className="inline-flex rounded-full border border-secondary-claro/40 bg-secondary-claro/15 px-2.5 py-1 text-[11px] font-semibold text-secondary-[bosques-nublados]">
+                              Destacado
+                            </span>
+                          )}
+                        </div>
+
+                      <h3 className="mt-3 line-clamp-2 text-lg font-black leading-snug text-secondary-[bosques-nublados]">
+                          {podcast.title}
+                      </h3>
+                      <p className="mt-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                        {formatPublishedDate(podcast.publishedAt)}
+                      </p>
+                      <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-gray-600">{podcast.summary}</p>
+
+                      <div className="mt-auto pt-4 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setActivePodcastId(podcast.id);
+                          }}
+                          className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                            isActive
+                              ? 'bg-primary text-white'
+                              : 'border border-primary text-primary hover:bg-primary hover:text-white'
+                          }`}
+                        >
+                          {isActive ? 'Reproduciendo' : 'Reproducir'}
+                        </button>
+                        <Link
+                          to={`/podcast/${podcast.slug}`}
+                          onClick={(event) => event.stopPropagation()}
+                          className="inline-flex items-center justify-center rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-primary hover:text-primary"
+                        >
+                          Ver detalle
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    disabled={safeCurrentPage === 1}
+                    className="inline-flex rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition disabled:cursor-not-allowed disabled:opacity-50 hover:border-primary hover:text-primary"
+                  >
+                    Anterior
+                  </button>
+
+                  {pageNumbers.map((page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => setCurrentPage(page)}
+                      className={`inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-sm font-semibold transition ${
+                        page === safeCurrentPage
+                          ? 'bg-primary text-white'
+                          : 'border border-gray-300 text-gray-700 hover:border-primary hover:text-primary'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                    disabled={safeCurrentPage === totalPages}
+                    className="inline-flex rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition disabled:cursor-not-allowed disabled:opacity-50 hover:border-primary hover:text-primary"
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+              <p className="text-sm text-gray-600">
+                No encontramos episodios con esos filtros. Prueba con otra búsqueda o cambia la vista.
+              </p>
+            </div>
+          )}
         </section>
       </section>
     </main>
@@ -274,4 +480,3 @@ const Podcast = () => {
 };
 
 export default Podcast;
-

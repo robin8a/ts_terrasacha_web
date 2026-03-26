@@ -15,11 +15,11 @@
       "auth": {
         "tsterrasachawebbb5c3251": {}
       },
-      "api": {
-        "tsterrasachaweb": {}
-      },
       "storage": {
         "s393c8064f": {}
+      },
+      "api": {
+        "tsterrasachaweb": {}
       }
     }
   }

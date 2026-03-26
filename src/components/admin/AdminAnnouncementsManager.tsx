@@ -170,6 +170,13 @@ const getStatusBadgeClasses = (status: Status): string => {
   }
 };
 
+const isScheduledAnnouncement = (announcement: { publishedAt?: string | null }): boolean => {
+  if (!announcement.publishedAt) return false;
+  const scheduledTime = new Date(announcement.publishedAt).getTime();
+  if (Number.isNaN(scheduledTime)) return false;
+  return scheduledTime > Date.now();
+};
+
 const AdminAnnouncementsManager = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [items, setItems] = useState<AdminAnnouncement[]>([]);
@@ -195,6 +202,7 @@ const AdminAnnouncementsManager = () => {
   const [typeFilter, setTypeFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [highlightFilter, setHighlightFilter] = useState<HighlightFilter>('all');
+  const [showScheduledOnly, setShowScheduledOnly] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>(DEFAULT_SORT);
   const skipNextPageFetchRef = useRef(false);
   const didInitRef = useRef(false);
@@ -206,13 +214,14 @@ const AdminAnnouncementsManager = () => {
       const client = getGraphqlClient();
       const nextToken = pageTokensRef.current[targetPageIndex - 1] ?? null;
       const listFilter: ModelAnnouncementFilterInput | null =
-        debouncedTitleSearch.trim() || statusFilter || typeFilter || categoryFilter || highlightFilter !== 'all'
+        debouncedTitleSearch.trim() || statusFilter || typeFilter || categoryFilter || highlightFilter !== 'all' || showScheduledOnly
           ? {
             ...(debouncedTitleSearch.trim() ? { title: { contains: debouncedTitleSearch.trim() } } : {}),
             ...(statusFilter ? { status: { eq: statusFilter as Status } } : {}),
             ...(typeFilter.trim() ? { type: { contains: typeFilter.trim() } } : {}),
             ...(categoryFilter.trim() ? { category: { contains: categoryFilter.trim() } } : {}),
             ...(highlightFilter !== 'all' ? { highlight: { eq: highlightFilter === 'true' } } : {}),
+            ...(showScheduledOnly ? { publishedAt: { gt: new Date().toISOString() } } : {}),
           }
           : null;
 
@@ -241,7 +250,7 @@ const AdminAnnouncementsManager = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [categoryFilter, debouncedTitleSearch, highlightFilter, pageSize, sortOption, statusFilter, typeFilter]);
+  }, [categoryFilter, debouncedTitleSearch, highlightFilter, pageSize, showScheduledOnly, sortOption, statusFilter, typeFilter]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedTitleSearch(titleSearch), 400);
@@ -266,7 +275,7 @@ const AdminAnnouncementsManager = () => {
     setItems([]);
     setPageIndex(1);
     void fetchAnnouncements(1);
-  }, [categoryFilter, debouncedTitleSearch, fetchAnnouncements, highlightFilter, pageIndex, pageSize, sortOption, statusFilter, typeFilter]);
+  }, [categoryFilter, debouncedTitleSearch, fetchAnnouncements, highlightFilter, pageIndex, pageSize, showScheduledOnly, sortOption, statusFilter, typeFilter]);
 
   useEffect(() => {
     if (skipNextPageFetchRef.current) {
@@ -583,6 +592,7 @@ const AdminAnnouncementsManager = () => {
     setTypeFilter('');
     setCategoryFilter('');
     setHighlightFilter('all');
+    setShowScheduledOnly(false);
     setSortOption(DEFAULT_SORT);
     pageTokensRef.current = [null];
     setHasNextPage(false);
@@ -665,6 +675,19 @@ const AdminAnnouncementsManager = () => {
               </select>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowScheduledOnly((prev) => !prev)}
+                className={`rounded-lg px-3 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 ${
+                  showScheduledOnly
+                    ? 'border border-primary bg-primary text-white'
+                    : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                }`}
+                aria-pressed={showScheduledOnly}
+                aria-label={showScheduledOnly ? 'Ver todos los comunicados' : 'Ver comunicados programados'}
+              >
+                {showScheduledOnly ? 'Ver todas' : 'Ver programadas'}
+              </button>
               <span className="text-sm text-gray-600">Filas</span>
               <select
                 value={pageSize}
@@ -702,7 +725,9 @@ const AdminAnnouncementsManager = () => {
                   <tr><td colSpan={6} className="px-4 py-6 text-gray-600">Cargando comunicados...</td></tr>
                 ) : items.length === 0 ? (
                   <tr><td colSpan={6} className="px-4 py-6 text-gray-600">No hay comunicados con los filtros actuales.</td></tr>
-                ) : items.map((a) => (
+                ) : items.map((a) => {
+                  const isScheduled = isScheduledAnnouncement(a);
+                  return (
                   <tr key={a.id} className="group border-t border-gray-100 transition-colors hover:bg-gray-50/60">
                     <td className="px-4 py-4">
                       <div className="flex items-start gap-3">
@@ -726,6 +751,7 @@ const AdminAnnouncementsManager = () => {
                         </div>
                       </div>
                       {a.highlight && <span className="mt-1 inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">Destacada</span>}
+                      {isScheduled && <span className="mt-1 ml-2 inline-flex rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700">Programado</span>}
                     </td>
                     <td className="px-4 py-4 text-gray-700">{a.authorName?.trim() ? a.authorName : '-'}</td>
                     <td className="px-4 py-4 text-gray-700">{a.type ?? '-'}</td>
@@ -742,7 +768,7 @@ const AdminAnnouncementsManager = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>

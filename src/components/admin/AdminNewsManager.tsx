@@ -6,6 +6,7 @@ import type { CreateNewsInput, ModelNewsFilterInput, Status, UpdateNewsInput } f
 import { Status as NewsStatus } from '../../API';
 import { getGraphqlClient } from '../../lib/amplifySetup';
 import { buildS3PublicObjectUrl } from '../../lib/s3PublicUrl';
+import { normalizeYoutubeUrl } from '../../lib/youtube';
 
 type AdminNews = {
   id: string;
@@ -17,6 +18,7 @@ type AdminNews = {
   coverImageUrl?: string | null;
   galleryImageUrls?: Array<string | null> | null;
   videoUrl?: string | null;
+  youtubeUrl?: string | null;
   status: Status;
   highlight: boolean;
   authorName?: string | null;
@@ -71,7 +73,8 @@ type NewsFormState = {
 
   coverImageUrl: string | null;
   galleryImageUrls: string[];
-  videoUrl: string | null;
+  legacyVideoUrl: string | null;
+  youtubeUrl: string;
   mediaFiles: File[];
 };
 
@@ -86,7 +89,8 @@ const buildEmptyForm = (): NewsFormState => ({
   slug: '',
   coverImageUrl: null,
   galleryImageUrls: [],
-  videoUrl: null,
+  legacyVideoUrl: null,
+  youtubeUrl: '',
   mediaFiles: [],
 });
 
@@ -118,6 +122,13 @@ const getNewsTimeMs = (news: { publishedAt?: string | null; createdAt?: string |
   if (!iso) return 0;
   const ms = new Date(iso).getTime();
   return Number.isNaN(ms) ? 0 : ms;
+};
+
+const isScheduledNews = (news: { publishedAt?: string | null }): boolean => {
+  if (!news.publishedAt) return false;
+  const scheduledTime = new Date(news.publishedAt).getTime();
+  if (Number.isNaN(scheduledTime)) return false;
+  return scheduledTime > Date.now();
 };
 
 const getStatusLabel = (status: Status): string => {
@@ -170,6 +181,7 @@ const AdminNewsManager = () => {
   const [statusFilter, setStatusFilter] = useState<Status | ''>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [highlightFilter, setHighlightFilter] = useState<HighlightFilter>('all');
+  const [showScheduledOnly, setShowScheduledOnly] = useState(false);
 
   const [sortOption, setSortOption] = useState<SortOption>(DEFAULT_SORT);
 
@@ -184,7 +196,7 @@ const AdminNewsManager = () => {
       const nextToken = pageTokensRef.current[targetPageIndex - 1] ?? null;
 
       const listFilter: ModelNewsFilterInput | null =
-        debouncedTitleSearch.trim() || statusFilter || categoryFilter || highlightFilter !== 'all'
+        debouncedTitleSearch.trim() || statusFilter || categoryFilter || highlightFilter !== 'all' || showScheduledOnly
           ? {
             ...(debouncedTitleSearch.trim()
               ? { title: { contains: debouncedTitleSearch.trim() } }
@@ -192,6 +204,7 @@ const AdminNewsManager = () => {
             ...(statusFilter ? { status: { eq: statusFilter as Status } } : {}),
             ...(categoryFilter ? { category: { eq: categoryFilter } } : {}),
             ...(highlightFilter !== 'all' ? { highlight: { eq: highlightFilter === 'true' } } : {}),
+            ...(showScheduledOnly ? { publishedAt: { gt: new Date().toISOString() } } : {}),
           }
           : null;
 
@@ -231,7 +244,7 @@ const AdminNewsManager = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [categoryFilter, debouncedTitleSearch, highlightFilter, pageSize, sortOption, statusFilter]);
+  }, [categoryFilter, debouncedTitleSearch, highlightFilter, pageSize, showScheduledOnly, sortOption, statusFilter]);
 
   useEffect(() => {
     const handle = window.setTimeout(() => setDebouncedTitleSearch(titleSearch), 400);
@@ -259,7 +272,7 @@ const AdminNewsManager = () => {
     setItems([]);
     setPageIndex(1);
     void fetchNews(1);
-  }, [categoryFilter, debouncedTitleSearch, fetchNews, highlightFilter, pageIndex, pageSize, sortOption, statusFilter]);
+  }, [categoryFilter, debouncedTitleSearch, fetchNews, highlightFilter, pageIndex, pageSize, showScheduledOnly, sortOption, statusFilter]);
 
   useEffect(() => {
     if (skipNextPageFetchRef.current) {
@@ -316,7 +329,8 @@ const AdminNewsManager = () => {
           galleryImageUrls: Array.isArray(n.galleryImageUrls)
             ? (n.galleryImageUrls.filter((u): u is string => typeof u === 'string'))
             : [],
-          videoUrl: n.videoUrl ?? null,
+          legacyVideoUrl: n.videoUrl ?? null,
+          youtubeUrl: n.youtubeUrl ?? '',
           mediaFiles: [],
         });
         if (n.coverImageUrl) {
@@ -348,17 +362,16 @@ const AdminNewsManager = () => {
     setForm((prev) => {
       const existingCount =
         (prev.coverImageUrl ? 1 : 0) +
-        prev.galleryImageUrls.length +
-        (prev.videoUrl ? 1 : 0);
+        prev.galleryImageUrls.length;
       const remainingSlots = Math.max(0, MAX_MEDIA_FILES - existingCount - prev.mediaFiles.length);
       if (remainingSlots === 0) {
-        setErrorMessage(`Máximo ${MAX_MEDIA_FILES} archivos multimedia por noticia.`);
+        setErrorMessage(`Máximo ${MAX_MEDIA_FILES} imágenes por noticia.`);
         return prev;
       }
 
       const accepted = picked.slice(0, remainingSlots);
       if (accepted.length < picked.length) {
-        setErrorMessage(`Solo se agregaron ${accepted.length} archivo(s). Máximo ${MAX_MEDIA_FILES} por noticia.`);
+        setErrorMessage(`Solo se agregaron ${accepted.length} imagen(es). Máximo ${MAX_MEDIA_FILES} por noticia.`);
       } else {
         setErrorMessage(null);
       }
@@ -371,23 +384,22 @@ const AdminNewsManager = () => {
     event.preventDefault();
     const dropped = pickMatchingFiles(
       event.dataTransfer.files,
-      (file) => file.type.startsWith('image/') || file.type.startsWith('video/'),
+      (file) => file.type.startsWith('image/'),
     );
     if (dropped.length === 0) return;
     setForm((prev) => {
       const existingCount =
         (prev.coverImageUrl ? 1 : 0) +
-        prev.galleryImageUrls.length +
-        (prev.videoUrl ? 1 : 0);
+        prev.galleryImageUrls.length;
       const remainingSlots = Math.max(0, MAX_MEDIA_FILES - existingCount - prev.mediaFiles.length);
       if (remainingSlots === 0) {
-        setErrorMessage(`Máximo ${MAX_MEDIA_FILES} archivos multimedia por noticia.`);
+        setErrorMessage(`Máximo ${MAX_MEDIA_FILES} imágenes por noticia.`);
         return prev;
       }
 
       const accepted = dropped.slice(0, remainingSlots);
       if (accepted.length < dropped.length) {
-        setErrorMessage(`Solo se agregaron ${accepted.length} archivo(s). Máximo ${MAX_MEDIA_FILES} por noticia.`);
+        setErrorMessage(`Solo se agregaron ${accepted.length} imagen(es). Máximo ${MAX_MEDIA_FILES} por noticia.`);
       } else {
         setErrorMessage(null);
       }
@@ -409,8 +421,8 @@ const AdminNewsManager = () => {
     setPrincipalImageKey((prev) => (prev === `existing:${urlToRemove}` ? null : prev));
   }, []);
 
-  const handleRemoveVideoUrl = useCallback(() => {
-    setForm((prev) => ({ ...prev, videoUrl: null }));
+  const handleRemoveLegacyVideoUrl = useCallback(() => {
+    setForm((prev) => ({ ...prev, legacyVideoUrl: null }));
   }, []);
 
   const handleRemovePendingMediaFile = useCallback((keyToRemove: string) => {
@@ -477,6 +489,9 @@ const AdminNewsManager = () => {
     if (!title) return 'El título es obligatorio.';
     if (!content) return 'El contenido es obligatorio.';
     if (!form.slug) return 'El identificador URL no puede estar vacío.';
+    if (form.youtubeUrl.trim() && !normalizeYoutubeUrl(form.youtubeUrl)) {
+      return 'Ingresa un enlace válido de YouTube.';
+    }
     return null;
   }, [form]);
 
@@ -495,12 +510,12 @@ const AdminNewsManager = () => {
 
       const mediaPrefix = crypto.randomUUID();
       const publishedAt = toIsoFromDateTimeLocal(form.publishedAtLocal);
+      const normalizedYoutubeUrl = form.youtubeUrl.trim() ? normalizeYoutubeUrl(form.youtubeUrl) : null;
 
       let coverImageUrl = form.coverImageUrl;
       let galleryImageUrls = form.galleryImageUrls;
-      let videoUrl = form.videoUrl;
+      const legacyVideoUrl = normalizedYoutubeUrl ? null : form.legacyVideoUrl;
       const pendingImageFiles = form.mediaFiles.filter((file) => file.type.startsWith('image/'));
-      const pendingVideoFiles = form.mediaFiles.filter((file) => file.type.startsWith('video/'));
       const uploadedImageUrlByKey = new Map<string, string>();
 
       if (pendingImageFiles.length > 0) {
@@ -509,11 +524,6 @@ const AdminNewsManager = () => {
           const url = await uploadPublicFile(file, `news/${mediaPrefix}/images/${i}`);
           uploadedImageUrlByKey.set(getMediaFileKey(file), url);
         }
-      }
-
-      if (pendingVideoFiles.length > 0) {
-        const firstVideo = pendingVideoFiles[0];
-        videoUrl = await uploadPublicFile(firstVideo, `news/${mediaPrefix}/video`);
       }
 
       const existingImages = [
@@ -555,7 +565,8 @@ const AdminNewsManager = () => {
           tags: null,
           coverImageUrl,
           galleryImageUrls: galleryImageUrls.length > 0 ? galleryImageUrls : null,
-          videoUrl,
+          videoUrl: legacyVideoUrl,
+          youtubeUrl: normalizedYoutubeUrl,
           status: form.status,
           highlight: form.highlight,
           authorName: form.authorName.trim() ? form.authorName.trim() : null,
@@ -580,7 +591,8 @@ const AdminNewsManager = () => {
           tags: null,
           coverImageUrl,
           galleryImageUrls: galleryImageUrls.length > 0 ? galleryImageUrls : null,
-          videoUrl,
+          videoUrl: legacyVideoUrl,
+          youtubeUrl: normalizedYoutubeUrl,
           status: form.status,
           highlight: form.highlight,
           authorName: form.authorName.trim() ? form.authorName.trim() : null,
@@ -654,6 +666,7 @@ const AdminNewsManager = () => {
     setStatusFilter('');
     setCategoryFilter('');
     setHighlightFilter('all');
+    setShowScheduledOnly(false);
     setSortOption(DEFAULT_SORT);
     pageTokensRef.current = [null];
     setHasNextPage(false);
@@ -682,13 +695,16 @@ const AdminNewsManager = () => {
     if (highlightFilter !== 'all') {
       filters.push({ key: 'highlight', label: `Destacada: ${highlightFilter === 'true' ? 'Sí' : 'No'}`, onRemove: () => setHighlightFilter('all') });
     }
+    if (showScheduledOnly) {
+      filters.push({ key: 'scheduled', label: 'Programadas', onRemove: () => setShowScheduledOnly(false) });
+    }
     if (sortOption !== DEFAULT_SORT) {
       const labels: Record<SortOption, string> = { recent: 'Más recientes', old: 'Más antiguas', titleAsc: 'Título A-Z' };
       filters.push({ key: 'sort', label: `Orden: ${labels[sortOption]}`, onRemove: () => setSortOption(DEFAULT_SORT) });
     }
 
     return filters;
-  }, [categoryFilter, debouncedTitleSearch, highlightFilter, sortOption, statusFilter]);
+  }, [categoryFilter, debouncedTitleSearch, highlightFilter, showScheduledOnly, sortOption, statusFilter]);
 
   return (
     <section aria-label="Gestión de Noticias">
@@ -696,7 +712,7 @@ const AdminNewsManager = () => {
         <div>
           <h2 className="text-lg font-bold text-gray-900">Noticias</h2>
           <p className="text-sm text-gray-600">
-            Administra publicaciones. Las imágenes y video se suben a S3 y se guardan con URL pública.
+            Administra publicaciones. Las imágenes se suben a S3 y el video opcional se vincula desde YouTube.
           </p>
         </div>
         <button
@@ -824,6 +840,19 @@ const AdminNewsManager = () => {
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowScheduledOnly((prev) => !prev)}
+                  className={`rounded-lg px-3 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 ${
+                    showScheduledOnly
+                      ? 'border border-primary bg-primary text-white'
+                      : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+                  aria-pressed={showScheduledOnly}
+                  aria-label={showScheduledOnly ? 'Ver todas las noticias' : 'Ver noticias programadas'}
+                >
+                  {showScheduledOnly ? 'Ver todas' : 'Ver programadas'}
+                </button>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-gray-700">Filas</span>
                   <select
@@ -895,6 +924,7 @@ const AdminNewsManager = () => {
                   ) : (
                     items.map((n) => {
                       const dateValue = n.publishedAt ?? n.createdAt ?? n.updatedAt ?? null;
+                      const isScheduled = isScheduledNews(n);
                       return (
                         <tr
                           key={n.id}
@@ -922,6 +952,11 @@ const AdminNewsManager = () => {
                             {n.highlight && (
                               <div className="mt-1 inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
                                 Destacada
+                              </div>
+                            )}
+                            {isScheduled && (
+                              <div className="mt-1 inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700">
+                                Programada
                               </div>
                             )}
                           </td>
@@ -1154,8 +1189,44 @@ const AdminNewsManager = () => {
                     </div>
 
                     <div>
+                      <label htmlFor="youtubeUrl" className="mb-1 block text-sm font-medium text-gray-700">
+                        Enlace de YouTube (opcional)
+                      </label>
+                      <input
+                        id="youtubeUrl"
+                        type="url"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                        value={form.youtubeUrl}
+                        onChange={(e) => handleFormChange('youtubeUrl', e.target.value)}
+                        disabled={isSaving}
+                        placeholder="https://www.youtube.com/watch?v=..."
+                      />
+                      <p className="mt-1 text-xs text-gray-500">
+                        Acepta enlaces `youtube.com`, `youtu.be`, `shorts` o `embed`.
+                      </p>
+                    </div>
+
+                    {form.legacyVideoUrl && (
+                      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                          <p>
+                            Esta noticia tiene un video heredado en S3. Si guardas un enlace de YouTube, ese video dejará de usarse.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleRemoveLegacyVideoUrl}
+                            disabled={isSaving}
+                            className="rounded-md border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-900 hover:bg-amber-100"
+                          >
+                            Quitar video heredado
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div>
                       <label htmlFor="mediaFiles" className="mb-2 block text-sm font-medium text-gray-700">
-                        Multimedia (máximo {MAX_MEDIA_FILES} archivos)
+                        Imágenes (máximo {MAX_MEDIA_FILES} archivos)
                       </label>
                       <label
                         htmlFor="mediaFiles"
@@ -1166,7 +1237,7 @@ const AdminNewsManager = () => {
                         <input
                           id="mediaFiles"
                           type="file"
-                          accept="image/*,video/*"
+                          accept="image/*"
                           multiple
                           className="hidden"
                           onChange={(e) => handleMediaPick(e.target.files)}
@@ -1176,7 +1247,7 @@ const AdminNewsManager = () => {
                           Arrastra archivos aquí o haz clic para seleccionarlos
                         </p>
                         <p className="mt-1 text-xs text-gray-600">
-                          Puedes subir imágenes y video. Luego marca una imagen como principal.
+                          Puedes subir solo imágenes. Luego marca una imagen como principal.
                         </p>
                       </label>
                     </div>
@@ -1226,7 +1297,7 @@ const AdminNewsManager = () => {
                       </div>
                     )}
 
-                    {(form.coverImageUrl || form.galleryImageUrls.length > 0 || form.videoUrl || form.mediaFiles.length > 0) && (
+                    {(form.coverImageUrl || form.galleryImageUrls.length > 0 || form.mediaFiles.length > 0) && (
                       <div className="mt-3 space-y-2 rounded-lg border border-gray-200 bg-white p-2">
                         {form.coverImageUrl && (
                           <div className="flex items-center justify-between gap-2 rounded-md bg-gray-50 px-2 py-1">
@@ -1284,19 +1355,6 @@ const AdminNewsManager = () => {
                             </div>
                           </div>
                         ))}
-
-                        {form.videoUrl && (
-                          <div className="flex items-center justify-between gap-2 rounded-md bg-gray-50 px-2 py-1">
-                            <span className="truncate text-xs text-gray-700">Video actual</span>
-                            <button
-                              type="button"
-                              onClick={handleRemoveVideoUrl}
-                              className="rounded-md border border-red-200 bg-white px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
-                            >
-                              Quitar
-                            </button>
-                          </div>
-                        )}
 
                         {form.mediaFiles.map((file) => {
                           const fileKey = getMediaFileKey(file);

@@ -20,6 +20,7 @@ export const onCreateNews = /* GraphQL */ `subscription OnCreateNews($filter: Mo
     coverImageUrl
     galleryImageUrls
     videoUrl
+    youtubeUrl
     status
     highlight
     authorName
@@ -45,6 +46,7 @@ export const onUpdateNews = /* GraphQL */ `subscription OnUpdateNews($filter: Mo
     coverImageUrl
     galleryImageUrls
     videoUrl
+    youtubeUrl
     status
     highlight
     authorName
@@ -70,6 +72,7 @@ export const onDeleteNews = /* GraphQL */ `subscription OnDeleteNews($filter: Mo
     coverImageUrl
     galleryImageUrls
     videoUrl
+    youtubeUrl
     status
     highlight
     authorName
@@ -265,6 +268,9 @@ export const onCreatePodcastEpisode = /* GraphQL */ `subscription OnCreatePodcas
     audioUrl
     coverImageUrl
     durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
     externalPlayerUrl
     status
     publishedAt
@@ -292,6 +298,9 @@ export const onUpdatePodcastEpisode = /* GraphQL */ `subscription OnUpdatePodcas
     audioUrl
     coverImageUrl
     durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
     externalPlayerUrl
     status
     publishedAt
@@ -319,6 +328,9 @@ export const onDeletePodcastEpisode = /* GraphQL */ `subscription OnDeletePodcas
     audioUrl
     coverImageUrl
     durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
     externalPlayerUrl
     status
     publishedAt
@@ -344,6 +356,7 @@ export const onCreateResearchItem = /* GraphQL */ `subscription OnCreateResearch
     category
     tags
     coverImageUrl
+    sourceDocxUrl
     pdfUrl
     attachmentUrls
     videoUrl
@@ -373,6 +386,7 @@ export const onUpdateResearchItem = /* GraphQL */ `subscription OnUpdateResearch
     category
     tags
     coverImageUrl
+    sourceDocxUrl
     pdfUrl
     attachmentUrls
     videoUrl
@@ -402,6 +416,7 @@ export const onDeleteResearchItem = /* GraphQL */ `subscription OnDeleteResearch
     category
     tags
     coverImageUrl
+    sourceDocxUrl
     pdfUrl
     attachmentUrls
     videoUrl

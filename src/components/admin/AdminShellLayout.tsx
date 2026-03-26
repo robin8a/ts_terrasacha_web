@@ -4,6 +4,8 @@ import AdminDashboard, { type AdminTab } from '../../pages/AdminDashboard';
 import type { AdminUser } from '../../pages/AdminPage';
 import AdminNewsManager from './AdminNewsManager';
 import AdminAnnouncementsManager from './AdminAnnouncementsManager';
+import AdminPodcastManager from './AdminPodcastManager';
+import AdminResearchManager from './AdminResearchManager';
 
 type AdminShellLayoutProps = {
   user: AdminUser;
@@ -14,6 +16,7 @@ type TabConfig = {
   key: AdminTab;
   label: string;
   upcomingText: string;
+  isComingSoon?: boolean;
 };
 
 const getUserEmail = (user: AdminUser): string => user.attributes?.email ?? user.username;
@@ -33,9 +36,9 @@ const getInitials = (value: string): string => {
 const tabs: TabConfig[] = [
   { key: 'noticias', label: 'Noticias', upcomingText: 'Gestión de noticias.' },
   { key: 'comunicados', label: 'Comunicados', upcomingText: 'Gestión de comunicados.' },
-  { key: 'agenda', label: 'Agenda', upcomingText: 'Agenda disponible próximamente.' },
-  { key: 'podcast', label: 'Podcast', upcomingText: 'Podcast disponible próximamente.' },
-  { key: 'investigacion', label: 'Investigación', upcomingText: 'Investigación disponible próximamente.' },
+  { key: 'agenda', label: 'Agenda', upcomingText: 'Agenda disponible próximamente.', isComingSoon: true },
+  { key: 'podcast', label: 'Podcast', upcomingText: 'Gestión de podcast.' },
+  { key: 'investigacion', label: 'Investigación', upcomingText: 'Gestión de investigación.' },
 ];
 
 const AdminComingSoon = ({ text }: { text: string }): ReactNode => (
@@ -160,6 +163,14 @@ const AdminShellLayout = ({ user, onSignOut }: AdminShellLayoutProps) => {
             <AdminDashboard activeTab={activeTab}>
               <AdminAnnouncementsManager />
             </AdminDashboard>
+          ) : activeTab === 'investigacion' ? (
+            <AdminDashboard activeTab={activeTab}>
+              <AdminResearchManager />
+            </AdminDashboard>
+          ) : activeTab === 'podcast' ? (
+            <AdminDashboard activeTab={activeTab}>
+              <AdminPodcastManager />
+            </AdminDashboard>
           ) : (
             <AdminDashboard activeTab={activeTab}>
               <AdminComingSoon text={tabs.find((t) => t.key === activeTab)?.upcomingText ?? 'Contenido próximamente.'} />
@@ -219,7 +230,7 @@ const AdminShellLayout = ({ user, onSignOut }: AdminShellLayoutProps) => {
                       } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60`}
                     >
                       <span>{tab.label}</span>
-                      {tab.key !== 'noticias' && tab.key !== 'comunicados' && (
+                      {tab.isComingSoon && (
                         <span className="text-[10px] uppercase tracking-wide text-primary/70">Próximamente</span>
                       )}
                     </button>

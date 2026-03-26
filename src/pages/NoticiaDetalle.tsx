@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { getNews } from '../graphql/queries';
 import { getGraphqlClient } from '../lib/amplifySetup';
 import { mapAmplifyNewsToNoticia } from '../lib/newsMapper';
+import { isWithinPublicationWindow } from '../lib/publicationWindow';
+import RelatedPodcastSection from '../components/podcast/RelatedPodcastSection';
 import type { Noticia } from '../data/noticias';
 
 const getCategoryBadgeClasses = (category?: string) => {
@@ -83,6 +85,10 @@ const NoticiaDetalle = () => {
 
         const item = res?.data?.getNews ?? null;
         if (!item) {
+          if (!cancelled) setNoticia(null);
+          return;
+        }
+        if (!isWithinPublicationWindow(item)) {
           if (!cancelled) setNoticia(null);
           return;
         }
@@ -336,25 +342,41 @@ const NoticiaDetalle = () => {
               </div>
             )}
 
-            {noticia.video && (
+            {(noticia.youtubeEmbedUrl || noticia.video) && (
               <div className="mt-8 border-t border-gray-100 pt-8">
                 <h2 className="text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
                   <span className="text-secondary-[bosques-nublados]">VIDEO</span>{' '}
                   <span className="text-primary">DE LA PUBLICACIÓN</span>
                 </h2>
                 <div className="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-black shadow-sm">
-                  <video
-                    className="w-full"
-                    controls
-                    preload="metadata"
-                    poster={noticia.image}
-                  >
-                    <source src={noticia.video} type="video/mp4" />
-                    Tu navegador no soporta la reproducción de video.
-                  </video>
+                  {noticia.youtubeEmbedUrl ? (
+                    <div className="aspect-video w-full">
+                      <iframe
+                        className="h-full w-full"
+                        src={noticia.youtubeEmbedUrl}
+                        title={`Video de YouTube de ${noticia.title}`}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : (
+                    <video
+                      className="w-full"
+                      controls
+                      preload="metadata"
+                      poster={noticia.image}
+                    >
+                      <source src={noticia.video} type="video/mp4" />
+                      Tu navegador no soporta la reproducción de video.
+                    </video>
+                  )}
                 </div>
               </div>
             )}
+
+            <RelatedPodcastSection relationType="news" relatedId={String(noticia.id)} />
           </div>
         </article>
       </section>

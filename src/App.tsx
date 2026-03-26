@@ -12,9 +12,11 @@ import Agenda from './pages/Agenda';
 import Contacto from './pages/Contacto';
 import AgendaSostenibilidad from './pages/AgendaSostenibilidad';
 import Podcast from './pages/Podcast';
+import PodcastDetail from './pages/PodcastDetail';
 import Comunicados from './pages/Comunicados';
 import ComunicadoDetalle from './pages/ComunicadoDetalle';
 import Investigacion from './pages/Investigacion';
+import ResearchDetail from './pages/ResearchDetail';
 import Oraculo from './pages/Oraculo';
 import AppPage from './pages/AppPage';
 import Metodologia from './pages/Metodologia';
@@ -39,9 +41,11 @@ const AppRoutes = () => {
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/agenda-de-sostenibilidad" element={<AgendaSostenibilidad />} />
         <Route path="/podcast" element={<Podcast />} />
+        <Route path="/podcast/:slug" element={<PodcastDetail />} />
         <Route path="/comunicados" element={<Comunicados />} />
         <Route path="/comunicados/:id" element={<ComunicadoDetalle />} />
         <Route path="/investigacion" element={<Investigacion />} />
+        <Route path="/investigacion/:slug" element={<ResearchDetail />} />
         <Route path="/oraculo" element={<Oraculo />} />
         <Route path="/app" element={<AppPage />} />
         <Route path="/metodologia" element={<Metodologia />} />

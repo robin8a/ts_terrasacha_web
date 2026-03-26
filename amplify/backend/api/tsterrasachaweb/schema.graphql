@@ -29,6 +29,7 @@ type News
   coverImageUrl: String
   galleryImageUrls: [String]
   videoUrl: String
+  youtubeUrl: String
   status: Status! @default(value: "DRAFT")
   highlight: Boolean! @default(value: "false")
   authorName: String
@@ -115,6 +116,9 @@ type PodcastEpisode
   audioUrl: String!        # audio file stored in S3
   coverImageUrl: String
   durationSeconds: Int
+  relatedNewsIds: [ID]
+  relatedAnnouncementIds: [ID]
+  relatedResearchIds: [ID]
 
   externalPlayerUrl: String # Spotify, YouTube, etc.
 
@@ -142,6 +146,7 @@ type ResearchItem
   tags: [String]
 
   coverImageUrl: String
+  sourceDocxUrl: String      # source editorial document used for prefill / internal backup
   pdfUrl: String            # main research document
   attachmentUrls: [String]  # extra docs, annexes, datasets, etc.
   videoUrl: String          # optional explainer video / presentation

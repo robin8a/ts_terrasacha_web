@@ -1,5 +1,6 @@
 import type { Noticia } from '../data/noticias';
 import { stripPresignedQueryFromOurBucketUrl } from './s3PublicUrl';
+import { buildYoutubeEmbedUrl } from './youtube';
 
 const MONTHS_UTC_ES_LONG = [
   'Enero',
@@ -48,6 +49,7 @@ export const mapAmplifyNewsToNoticia = (news: any): Noticia => {
   const image = stripPresignedQueryFromOurBucketUrl(news?.coverImageUrl) ?? undefined;
   const galleryNormalized = gallery?.map((u) => stripPresignedQueryFromOurBucketUrl(u) ?? u);
   const video = stripPresignedQueryFromOurBucketUrl(news?.videoUrl) ?? news?.videoUrl ?? undefined;
+  const youtubeEmbedUrl = buildYoutubeEmbedUrl(news?.youtubeUrl) ?? undefined;
 
   return {
     id: idValue,
@@ -59,6 +61,7 @@ export const mapAmplifyNewsToNoticia = (news: any): Noticia => {
     content,
     gallery: galleryNormalized,
     video,
+    youtubeEmbedUrl,
   };
 };
 

@@ -23,6 +23,7 @@ export const createNews = /* GraphQL */ `mutation CreateNews(
     coverImageUrl
     galleryImageUrls
     videoUrl
+    youtubeUrl
     status
     highlight
     authorName
@@ -51,6 +52,7 @@ export const updateNews = /* GraphQL */ `mutation UpdateNews(
     coverImageUrl
     galleryImageUrls
     videoUrl
+    youtubeUrl
     status
     highlight
     authorName
@@ -79,6 +81,7 @@ export const deleteNews = /* GraphQL */ `mutation DeleteNews(
     coverImageUrl
     galleryImageUrls
     videoUrl
+    youtubeUrl
     status
     highlight
     authorName
@@ -287,6 +290,9 @@ export const createPodcastEpisode = /* GraphQL */ `mutation CreatePodcastEpisode
     audioUrl
     coverImageUrl
     durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
     externalPlayerUrl
     status
     publishedAt
@@ -315,6 +321,9 @@ export const updatePodcastEpisode = /* GraphQL */ `mutation UpdatePodcastEpisode
     audioUrl
     coverImageUrl
     durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
     externalPlayerUrl
     status
     publishedAt
@@ -343,6 +352,9 @@ export const deletePodcastEpisode = /* GraphQL */ `mutation DeletePodcastEpisode
     audioUrl
     coverImageUrl
     durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
     externalPlayerUrl
     status
     publishedAt
@@ -369,6 +381,7 @@ export const createResearchItem = /* GraphQL */ `mutation CreateResearchItem(
     category
     tags
     coverImageUrl
+    sourceDocxUrl
     pdfUrl
     attachmentUrls
     videoUrl
@@ -399,6 +412,7 @@ export const updateResearchItem = /* GraphQL */ `mutation UpdateResearchItem(
     category
     tags
     coverImageUrl
+    sourceDocxUrl
     pdfUrl
     attachmentUrls
     videoUrl
@@ -429,6 +443,7 @@ export const deleteResearchItem = /* GraphQL */ `mutation DeleteResearchItem(
     category
     tags
     coverImageUrl
+    sourceDocxUrl
     pdfUrl
     attachmentUrls
     videoUrl
