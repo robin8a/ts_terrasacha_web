@@ -359,7 +359,7 @@ const RutaFormacion = () => {
     <main className="font-primary min-h-screen bg-gradient-to-b from-white via-[#f7f4ea] to-white">
       {/* Hero: fondo paisaje, contenido centrado (código guía) */}
       <section
-        className="relative min-h-screen w-full flex flex-col overflow-hidden"
+        className="relative min-h-[72svh] sm:min-h-[82svh] lg:min-h-[90svh] w-full flex flex-col overflow-hidden"
         aria-label="Hero Ruta de Formación"
       >
         {/* Imagen de fondo: paisaje agroforestal */}
@@ -370,8 +370,9 @@ const RutaFormacion = () => {
           role="presentation"
           loading="eager"
         />
-        <div className="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-4 md:px-8 max-w-5xl mx-auto w-full pt-24 pb-16">
-          <h1 className="text-[4.5rem] md:text-7xl lg:text-[5.5rem] font-black text-[#2E3A1E] leading-tight mb-6 max-w-4xl mx-auto">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#2f331d]/25 via-[#2f331d]/10 to-[#2f331d]/35" />
+        <div className="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-4 md:px-8 max-w-5xl mx-auto w-full pt-20 sm:pt-24 pb-10 sm:pb-16">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[5rem] font-black text-[#2E3A1E] leading-[1.1] mb-4 sm:mb-6 max-w-4xl mx-auto">
             ¡Conéctate para la
             <br />
             transformación de tu
@@ -379,25 +380,25 @@ const RutaFormacion = () => {
             futuro...
           </h1>
           <p
-            className="text-lg md:text-xl text-white font-medium mb-8 max-w-3xl mx-auto text-shadow-md leading-relaxed"
+            className="text-sm sm:text-base md:text-lg lg:text-xl text-white font-medium mb-6 sm:mb-8 max-w-3xl mx-auto text-shadow-md leading-relaxed"
             style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.6)' }}
           >
             Ruta de formación en tecnología agroforestal para residentes de Meta y Arauca. Descubre los niveles Básico,
             Intermedio y Avanzado.
           </p>
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <span className="px-6 py-2 rounded-md bg-[#D9CA89] text-[#2C3A1F] font-semibold text-sm md:text-base shadow-sm">
+          <div className="flex flex-wrap justify-center gap-2.5 sm:gap-4 mb-8 sm:mb-12">
+            <span className="px-4 sm:px-6 py-2 rounded-md bg-[#D9CA89] text-[#2C3A1F] font-semibold text-xs sm:text-sm md:text-base shadow-sm">
               Residentes de Meta y Arauca
             </span>
-            <span className="px-6 py-2 rounded-md bg-[#D9CA89] text-[#2C3A1F] font-semibold text-sm md:text-base shadow-sm">
+            <span className="px-4 sm:px-6 py-2 rounded-md bg-[#D9CA89] text-[#2C3A1F] font-semibold text-xs sm:text-sm md:text-base shadow-sm">
               Formación gratuita
             </span>
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4">
+          <div className="flex w-full max-w-2xl flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-2 sm:mt-4">
             <div className="flex flex-col items-center gap-2">
               <a
                 href="#inscripcion"
-                className="px-8 py-3 rounded-lg bg-[#5C6836] hover:bg-[#4a532b] text-white font-semibold text-lg transition-colors shadow-lg border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2C3A1F] focus-visible:ring-offset-2"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 rounded-lg bg-[#5C6836] hover:bg-[#4a532b] text-white font-semibold text-base sm:text-lg transition-colors shadow-lg border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2C3A1F] focus-visible:ring-offset-2"
                 aria-label="Ir a inscripción"
               >
                 ¡Quiero Inscribirme ya!
@@ -409,7 +410,7 @@ const RutaFormacion = () => {
             <div className="flex flex-col items-center gap-2">
               <a
                 href="#explorar-ruta"
-                className="px-8 py-3 rounded-lg border-2 border-white bg-transparent text-white font-semibold text-lg hover:bg-white/10 transition-colors shadow-lg backdrop-blur-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 rounded-lg border-2 border-white bg-transparent text-white font-semibold text-base sm:text-lg hover:bg-white/10 transition-colors shadow-lg backdrop-blur-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                 aria-label="Explorar cursos de la ruta"
               >
                 Explorar cursos

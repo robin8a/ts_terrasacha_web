@@ -1,15 +1,29 @@
 const Nosotros = () => {
-  const coreValues = [
-    { name: 'Innovación', description: 'Exploración y liderazgo hacia el futuro' },
-    { name: 'Conciencia', description: 'Compromiso con la sostenibilidad ambiental' },
-    { name: 'Transformación', description: 'Cambio positivo para las comunidades' },
-    { name: 'Educación', description: 'Formación y conocimiento compartido' },
-    { name: 'Responsabilidad', description: 'Sostenibilidad para futuras generaciones' },
-    { name: 'Imaginación', description: 'Soluciones creativas e innovadoras' },
-    { name: 'Cambio', description: 'Transformación hacia un futuro mejor' },
-    { name: 'Inspiración', description: 'Motivación para la acción colectiva' },
-    { name: 'Esperanza', description: 'Visión positiva del mañana' },
-    { name: 'Colectividad', description: 'Trabajo conjunto por un objetivo común' },
+  const impactPillars = [
+    {
+      ods: 'ODS 9',
+      title: 'Industria, Innovación e Infraestructura',
+      description: 'Enfoque en la integración de tecnología blockchain.',
+      borderColor: 'border-secondary-pradera',
+    },
+    {
+      ods: 'ODS 13',
+      title: 'Acción por el Clima',
+      description: 'Acciones directas para la mitigación del cambio climático.',
+      borderColor: 'border-primary',
+    },
+    {
+      ods: 'ODS 15',
+      title: 'Vida de Ecosistemas Terrestres',
+      description: 'Gestión sostenible de bosques y protección de la biodiversidad.',
+      borderColor: 'border-secondary-claro',
+    },
+    {
+      ods: 'ODS 17',
+      title: 'Alianzas para lograr los Objetivos',
+      description: 'Construcción de modelos económicos colaborativos para la conservación.',
+      borderColor: 'border-secondary-[amarillo-tierra]',
+    },
   ];
 
   return (
@@ -75,47 +89,30 @@ const Nosotros = () => {
         </div>
       </section>
 
-      {/* Core Values Section */}
+      {/* Impact Pillars Section */}
       <section className="bg-gray-50 py-16 sm:py-20 md:py-24 lg:py-[100px]">
         <div className="container mx-auto px-4 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-secondary-[bosques-nublados] mb-8 sm:mb-12 font-primary">
-            Nuestros Valores
+            Pilares de Impacto Directo
           </h2>
-          {/* Grid Layout */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {coreValues.map((value, index) => {
-              const colorIndex = index % 5;
-              const borderColors = [
-                'border-secondary-pradera',
-                'border-primary',
-                'border-secondary-claro',
-                'border-secondary-[amarillo-tierra]',
-                'border-secondary-[bosques-nublados]',
-              ];
-              const borderColor = borderColors[colorIndex] || 'border-secondary-pradera';
-              
-              // Iconos emoji para cada valor
-              const icons = ['💡', '🌱', '🦋', '📚', '🛡️', '✨', '🔄', '🌟', '🌅', '🤝'];
-              const icon = icons[index] || '💚';
-              
-              return (
-                <div
-                  key={value.name}
-                  className={`bg-white p-6 rounded-lg shadow-md border-t-4 ${borderColor} hover:shadow-xl transition-shadow text-center`}
-                  style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.08)' }}
-                >
-                  <div className="w-[60px] h-[60px] mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center text-3xl">
-                    {icon}
-                  </div>
-                  <h3 className="font-bold text-gray-800 mb-2 font-primary text-base sm:text-lg">
-                    {value.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 font-primary leading-relaxed">
-                    {value.description}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
+            {impactPillars.map((pillar) => (
+              <article
+                key={pillar.ods}
+                className={`bg-white p-6 sm:p-7 rounded-2xl shadow-md border-t-4 ${pillar.borderColor} hover:shadow-xl transition-shadow`}
+                style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.08)' }}
+              >
+                <p className="text-sm font-bold text-secondary-[bosques-nublados] uppercase tracking-wide mb-2 font-primary">
+                  {pillar.ods}
+                </p>
+                <h3 className="font-bold text-gray-800 mb-3 font-primary text-lg sm:text-xl">
+                  {pillar.title}
+                </h3>
+                <p className="text-sm sm:text-base text-gray-600 font-primary leading-relaxed">
+                  {pillar.description}
+                </p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -150,13 +147,13 @@ const Nosotros = () => {
       </section>
 
       {/* Partners Section */}
+      {/*
       <section className="bg-gray-50 py-16 sm:py-20 md:py-24 lg:py-[100px]">
         <div className="container mx-auto px-4 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-secondary-[bosques-nublados] mb-8 sm:mb-12 font-primary">
             Nuestros Aliados
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Partner 1 */}
             <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center text-center border border-gray-200">
               <div className="w-16 h-16 mb-4 bg-secondary-pradera/10 rounded-full flex items-center justify-center">
                 <span className="text-2xl">🏛️</span>
@@ -167,14 +164,13 @@ const Nosotros = () => {
               <p className="text-gray-600 mb-6 flex-grow text-sm font-primary">
                 Ejecutor del proyecto
               </p>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="inline-block text-white px-6 py-2 rounded-full font-semibold hover:bg-primary-dark transition-colors bg-primary text-xs sm:text-sm"
               >
                 Conocer Más
               </a>
             </div>
-            {/* Partner 2 */}
             <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center text-center border border-gray-200">
               <div className="w-16 h-16 mb-4 bg-primary/10 rounded-full flex items-center justify-center">
                 <span className="text-2xl">💰</span>
@@ -185,14 +181,13 @@ const Nosotros = () => {
               <p className="text-gray-600 mb-6 flex-grow text-sm font-primary">
                 Financiador principal
               </p>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="inline-block text-white px-6 py-2 rounded-full font-semibold hover:bg-primary-dark transition-colors bg-primary text-xs sm:text-sm"
               >
                 Conocer Más
               </a>
             </div>
-            {/* Partner 3 */}
             <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center text-center border border-gray-200">
               <div className="w-16 h-16 mb-4 bg-secondary-claro/10 rounded-full flex items-center justify-center">
                 <span className="text-2xl">🗺️</span>
@@ -203,8 +198,8 @@ const Nosotros = () => {
               <p className="text-gray-600 mb-6 flex-grow text-sm font-primary">
                 Región de impacto
               </p>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="inline-block text-white px-6 py-2 rounded-full font-semibold hover:bg-primary-dark transition-colors bg-primary text-xs sm:text-sm"
               >
                 Conocer Más
@@ -213,6 +208,7 @@ const Nosotros = () => {
           </div>
         </div>
       </section>
+      */}
     </main>
   );
 };

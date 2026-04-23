@@ -7,27 +7,14 @@ import { isWithinPublicationWindow } from '../lib/publicationWindow';
 import RelatedPodcastSection from '../components/podcast/RelatedPodcastSection';
 import type { Noticia } from '../data/noticias';
 
-const getCategoryBadgeClasses = (category?: string) => {
-  const map: Record<string, string> = {
-    'Tecnología': 'bg-primary text-white',
-    'Innovación': 'bg-secondary-pradera text-white',
-    'Sostenibilidad': 'bg-secondary-claro text-white',
-    'Alianzas': 'bg-secondary-[amarillo-tierra] text-white',
-    'Impacto': 'bg-secondary-[bosques-nublados] text-white',
-  };
-
-  return map[category || ''] || 'bg-gray-700 text-white';
-};
-
-const HASHTAG_REGEX = /#[^\s#.,;:!?()[\]{}"']+/g;
 const HASHTAG_ONLY_LINE_REGEX = /^(?:#[^\s#.,;:!?()[\]{}"']+\s*)+$/;
+const EMOJI_REGEX = /\p{Extended_Pictographic}/gu;
 
 const NoticiaDetalle = () => {
   const { id } = useParams();
   const noticiaId = id ?? '';
   const [noticia, setNoticia] = useState<Noticia | null | undefined>(undefined);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [showAllTags, setShowAllTags] = useState(false);
   const carouselImages = useMemo(() => {
     if (!noticia) {
       return [];
@@ -44,13 +31,6 @@ const NoticiaDetalle = () => {
   const hasMultipleImages = carouselImages.length > 1;
   const detailContent = noticia?.content ?? [];
   const parsedDetail = useMemo(() => {
-    const tagsSet = new Set<string>();
-
-    detailContent.forEach((paragraph) => {
-      const matches = paragraph.match(HASHTAG_REGEX) ?? [];
-      matches.forEach((tag) => tagsSet.add(tag));
-    });
-
     const contentParagraphs = detailContent.filter((paragraph) => {
       const normalized = paragraph.trim();
       if (!normalized) return false;
@@ -58,11 +38,11 @@ const NoticiaDetalle = () => {
     });
 
     return {
-      contentParagraphs,
-      tags: Array.from(tagsSet),
+      contentParagraphs: contentParagraphs
+        .map((paragraph) => paragraph.replace(EMOJI_REGEX, '').trim())
+        .filter((paragraph) => paragraph.length > 0),
     };
   }, [detailContent]);
-  const visibleTags = showAllTags ? parsedDetail.tags : parsedDetail.tags.slice(0, 8);
 
   useEffect(() => {
     let cancelled = false;
@@ -104,10 +84,6 @@ const NoticiaDetalle = () => {
     return () => {
       cancelled = true;
     };
-  }, [noticiaId]);
-
-  useEffect(() => {
-    setShowAllTags(false);
   }, [noticiaId]);
 
   if (noticia === undefined) {
@@ -182,16 +158,8 @@ const NoticiaDetalle = () => {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           to="/noticias"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary-dark"
+          className="inline-flex items-center text-sm font-semibold text-primary transition-colors hover:text-primary-dark"
         >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
           Volver a noticias
         </Link>
 
@@ -205,16 +173,6 @@ const NoticiaDetalle = () => {
                   className="h-full w-full object-cover"
                   loading="eager"
                 />
-                {noticia.category && (
-                  <span
-                    className={`absolute left-5 top-5 inline-flex rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider ${getCategoryBadgeClasses(
-                      noticia.category
-                    )}`}
-                  >
-                    {noticia.category}
-                  </span>
-                )}
-
                 {hasMultipleImages && (
                   <>
                     <button
@@ -223,19 +181,7 @@ const NoticiaDetalle = () => {
                       className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-secondary-[bosques-nublados] shadow-md transition-all hover:bg-white"
                       aria-label="Ver imagen anterior"
                     >
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 19l-7-7 7-7"
-                        />
-                      </svg>
+                      <span className="text-[10px] font-bold uppercase tracking-wide">Ant</span>
                     </button>
 
                     <button
@@ -244,19 +190,7 @@ const NoticiaDetalle = () => {
                       className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-secondary-[bosques-nublados] shadow-md transition-all hover:bg-white"
                       aria-label="Ver imagen siguiente"
                     >
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
+                      <span className="text-[10px] font-bold uppercase tracking-wide">Sig</span>
                     </button>
 
                     <div className="absolute bottom-5 right-5 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white">
@@ -312,33 +246,6 @@ const NoticiaDetalle = () => {
                     {paragraph}
                   </p>
                 ))}
-              </div>
-            )}
-
-            {parsedDetail.tags.length > 0 && (
-              <div className="mt-8 border-t border-gray-100 pt-8">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-secondary-[bosques-nublados]">
-                  Etiquetas
-                </h2>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {visibleTags.map((tag) => (
-                    <span
-                      key={`${noticia.id}-${tag}`}
-                      className="inline-flex rounded-full border border-secondary-claro/40 bg-secondary-claro/15 px-3 py-1 text-xs font-semibold text-secondary-[bosques-nublados]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                {parsedDetail.tags.length > 8 && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllTags((prev) => !prev)}
-                    className="mt-3 text-xs font-semibold text-primary hover:text-primary-dark"
-                  >
-                    {showAllTags ? 'Ver menos' : `Ver más (${parsedDetail.tags.length - 8})`}
-                  </button>
-                )}
               </div>
             )}
 

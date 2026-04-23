@@ -21,6 +21,13 @@ type FeaturedMediaItem =
       title: string;
     };
 
+const EMOJI_REGEX = /\p{Extended_Pictographic}/gu;
+
+const sanitizeNewsText = (value?: string) => {
+  if (!value) return '';
+  return value.replace(EMOJI_REGEX, '').replace(/\s{2,}/g, ' ').trim();
+};
+
 const Noticias = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const [activeFeaturedMediaIndex, setActiveFeaturedMediaIndex] = useState(0);
@@ -29,17 +36,6 @@ const Noticias = () => {
 
   const formatDate = (dateString: string) => {
     return dateString;
-  };
-
-  const getCategoryBadgeClasses = (category?: string) => {
-    const map: Record<string, string> = {
-      'Tecnología': 'bg-primary text-white',
-      'Innovación': 'bg-secondary-pradera text-white',
-      'Sostenibilidad': 'bg-secondary-claro text-white',
-      'Alianzas': 'bg-secondary-[amarillo-tierra] text-white',
-      'Impacto': 'bg-secondary-[bosques-nublados] text-white',
-    };
-    return map[category || ''] || 'bg-gray-700 text-white';
   };
 
   useEffect(() => {
@@ -226,18 +222,6 @@ const Noticias = () => {
                       />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/80 via-secondary-[bosques-nublados]/20 to-transparent" />
-                    <div className="absolute left-5 right-5 bottom-5 sm:left-6 sm:right-6 sm:bottom-6">
-                      {featured.category && (
-                        <span
-                          className={`inline-block px-3 py-1 text-[10px] sm:text-xs font-bold tracking-wider uppercase rounded-full ${getCategoryBadgeClasses(
-                            featured.category
-                          )}`}
-                        >
-                          {featured.category}
-                        </span>
-                      )}
-                    </div>
-
                     {hasMultipleFeaturedMedia && (
                       <>
                         <button
@@ -343,7 +327,7 @@ const Noticias = () => {
                       {featured.title}
                     </h2>
                     <p className="mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-gray-700 font-primary max-w-4xl">
-                      {featured.excerpt}
+                      {sanitizeNewsText(featured.excerpt)}
                     </p>
                   </div>
 
@@ -354,7 +338,7 @@ const Noticias = () => {
                           key={`${featured.id}-paragraph-${index}`}
                           className="text-sm sm:text-base text-gray-700 leading-relaxed font-primary"
                         >
-                          {paragraph}
+                          {sanitizeNewsText(paragraph)}
                         </p>
                       ))}
                     </div>
@@ -367,9 +351,6 @@ const Noticias = () => {
           {/* Sidebar Más Noticias */}
           <aside className="lg:col-span-4 rounded-xl sm:rounded-2xl border border-gray-100 bg-gradient-to-br from-white via-white to-secondary-claro/10 p-5 sm:p-6 shadow-sm flex flex-col h-full">
             <div className="mb-5 sm:mb-6 border-b border-gray-100 pb-5">
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
-                Actualidad
-              </div>
               <h3 className="mt-4 text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
                 <span className="text-secondary-[bosques-nublados]">MÁS</span>{' '}
                 <span className="text-secondary-pradera">NOTICIAS</span>
@@ -401,15 +382,6 @@ const Noticias = () => {
 
                     <div className="min-w-0 flex-1">
                       <div className="mb-2 flex flex-wrap items-center gap-2">
-                        {noticia.category && (
-                          <span
-                            className={`px-3 py-1 text-[10px] sm:text-xs font-bold uppercase rounded-full ${getCategoryBadgeClasses(
-                              noticia.category
-                            )}`}
-                          >
-                            {noticia.category}
-                          </span>
-                        )}
                         <span className="text-[11px] sm:text-xs text-gray-500 font-primary">
                           {formatDate(noticia.date)}
                         </span>
@@ -423,21 +395,8 @@ const Noticias = () => {
                         {noticia.excerpt}
                       </p>
 
-                      <div className="mt-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                      <div className="mt-3 inline-flex items-center text-xs font-semibold uppercase tracking-wide text-primary">
                         Ver detalle
-                        <svg
-                          className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
                       </div>
                     </div>
                   </div>
@@ -462,19 +421,7 @@ const Noticias = () => {
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-secondary-[bosques-nublados] shadow-sm transition-all hover:border-primary hover:text-primary"
                 aria-label="Ver noticias anteriores"
               >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
+                <span className="text-[10px] font-bold uppercase tracking-wide">Ant</span>
               </button>
 
               <button
@@ -483,19 +430,7 @@ const Noticias = () => {
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-secondary-[bosques-nublados] shadow-sm transition-all hover:border-primary hover:text-primary"
                 aria-label="Ver noticias siguientes"
               >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                <span className="text-[10px] font-bold uppercase tracking-wide">Sig</span>
               </button>
             </div>
           </div>
@@ -519,15 +454,6 @@ const Noticias = () => {
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
-                    {noticia.category && (
-                      <span
-                        className={`absolute top-3 left-3 px-3 py-1 text-[10px] sm:text-xs font-bold uppercase rounded-full ${getCategoryBadgeClasses(
-                          noticia.category
-                        )}`}
-                      >
-                        {noticia.category}
-                      </span>
-                    )}
                   </div>
                 )}
                 <div className="p-5 flex flex-col flex-grow">

@@ -201,6 +201,8 @@ export const createEvent = /* GraphQL */ `mutation CreateEvent(
     onlineUrl
     registrationUrl
     capacity
+    coverImageUrl
+    publishedAt
     highlight
     status
     visible
@@ -232,6 +234,8 @@ export const updateEvent = /* GraphQL */ `mutation UpdateEvent(
     onlineUrl
     registrationUrl
     capacity
+    coverImageUrl
+    publishedAt
     highlight
     status
     visible
@@ -263,6 +267,8 @@ export const deleteEvent = /* GraphQL */ `mutation DeleteEvent(
     onlineUrl
     registrationUrl
     capacity
+    coverImageUrl
+    publishedAt
     highlight
     status
     visible

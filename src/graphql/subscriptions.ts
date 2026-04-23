@@ -186,6 +186,8 @@ export const onCreateEvent = /* GraphQL */ `subscription OnCreateEvent($filter: 
     onlineUrl
     registrationUrl
     capacity
+    coverImageUrl
+    publishedAt
     highlight
     status
     visible
@@ -214,6 +216,8 @@ export const onUpdateEvent = /* GraphQL */ `subscription OnUpdateEvent($filter: 
     onlineUrl
     registrationUrl
     capacity
+    coverImageUrl
+    publishedAt
     highlight
     status
     visible
@@ -242,6 +246,8 @@ export const onDeleteEvent = /* GraphQL */ `subscription OnDeleteEvent($filter: 
     onlineUrl
     registrationUrl
     capacity
+    coverImageUrl
+    publishedAt
     highlight
     status
     visible

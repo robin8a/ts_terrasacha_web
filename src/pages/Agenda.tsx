@@ -1,96 +1,154 @@
-interface Evento {
-  id: number;
-  title: string;
-  date: string;
-  time?: string;
-  location: string;
-  description: string;
-  type?: 'workshop' | 'conference' | 'field' | 'meeting';
-  image?: string;
-}
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { EventType as EventTypeEnum, Status } from '../API';
+import type { EventType } from '../API';
+import { listEvents } from '../graphql/queries';
+import { getGraphqlClient } from '../lib/amplifySetup';
+import {
+  formatEventDateRangeEs,
+  getEventCardAccentClasses,
+  getEventTypeLabelEs,
+  isPublicAgendaEvent,
+  mapAmplifyEventToPublic,
+  truncatePlainText,
+  type PublicAgendaEvent,
+} from '../lib/eventMapper';
+
+type ModalityFilter = 'all' | 'online' | 'onsite';
+
+const EVENT_TYPE_FILTERS: Array<{ value: EventType | ''; label: string }> = [
+  { value: '', label: 'Todos los tipos' },
+  { value: EventTypeEnum.WORKSHOP, label: 'Taller' },
+  { value: EventTypeEnum.WEBINAR, label: 'Webinar' },
+  { value: EventTypeEnum.ONSITE, label: 'Presencial' },
+  { value: EventTypeEnum.ONLINE, label: 'En línea' },
+  { value: EventTypeEnum.OTHER, label: 'Otro' },
+];
+
+const sortAgendaEvents = (list: PublicAgendaEvent[]): PublicAgendaEvent[] => {
+  const now = Date.now();
+  return [...list].sort((a, b) => {
+    const ta = new Date(a.startDateTime).getTime();
+    const tb = new Date(b.startDateTime).getTime();
+    const aPast = ta < now;
+    const bPast = tb < now;
+    if (aPast !== bPast) return aPast ? 1 : -1;
+    return ta - tb;
+  });
+};
 
 const Agenda = () => {
-  const eventos: Evento[] = [
-    {
-      id: 1,
-      title: 'Taller de Reforestación con Biotecnología',
-      date: '15 de Febrero, 2024',
-      time: '9:00 AM - 5:00 PM',
-      location: 'Puerto López, Meta',
-      description: 'Taller práctico sobre la implementación de tecnologías emergentes en reforestación. Incluye demostración de técnicas de biotecnología aplicada y visita a plantaciones forestales comerciales.',
-      type: 'workshop',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBl3OoPDGU3r7Ccf1MClOOw5-Q0B37o05cLb7E_RXGVj-1t8xtVIRLV5bP7v3R_TxwgwshMsPzybhjKiRQT40NWR11nfoWNyosbNJ1WsuV7IF2h7NkbrbLcIvUMnlgQ4Ez764l0TOHrfZoT9Cq_5F3n6DZurfzlJ15Dg_ViYLMHzg4EMqU7YGGwkn5g91Eh8BniAaFwVIKKLVRjqvp-64mAcp1ZPN1LCMEkPDQqg69F-NdBsWoI-sOi7u-9QQMCGm3xx79dEPrybeg',
-    },
-    {
-      id: 2,
-      title: 'Conferencia: Tokenización de Activos Ambientales',
-      date: '20 de Marzo, 2024',
-      time: '2:00 PM - 6:00 PM',
-      location: 'Arauca, Arauca',
-      description: 'Conferencia sobre modelos innovadores de comercialización de activos ambientales estratégicos. Presentación de casos de éxito y oportunidades de inversión verde.',
-      type: 'conference',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBk2q7GjZACYyhhEZkS54h3PPrfjk0k0oTwF6OR8Vinl43DvQfM2CnHmMurydKTLfEiGNibqM0WE5AYnmfN06LmeG25x1xW3qHgQ7EstZYMU41GicIS9PQlofshVnfhTYPOy6qKeEsS0CtmlPEgKtRwcvKUTUfTFOEmM8_PciJTYtXWdCe6akgueZy6hE16nKJr5l1u7ekrhQYFRRvKrN99hKF2Rv6HuRDKMHQ8-on7ZdRqRvuD8zVfUHtxoUfYQcQh8yaaRfOCO9M',
-    },
-    {
-      id: 3,
-      title: 'Visita de Campo: Protección de Cuencas Hidrográficas',
-      date: '5 de Abril, 2024',
-      time: '8:00 AM - 4:00 PM',
-      location: 'Puerto Gaitán, Meta',
-      description: 'Visita guiada a las zonas de protección de cuencas de agua implementadas por el proyecto. Observación de resultados y técnicas aplicadas en campo.',
-      type: 'field',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBq6aILqNU8AMkBEZVtAqt4g90L5myb71xIewfdFFwTYTmFfN72dr2sabgMooJ2E4iS_NAK3gjXIZrILVa673HWOrVtw7mB--orhYFNqXL8ReuxEz4m1gGH5i4328IPKyD-tInD128DtL2NN1XToO89tV0Q5_gp6Iyic9a_p-cLc5ymRUAXAekNDp3loHsX7jMIGDaDpGNsvJtgtrewFD44VndoaVjTy8EarZnNwTSuikpByD99tVJcJ8vlwbvQbaK5v3NjM3ApcyM',
-    },
-    {
-      id: 4,
-      title: 'Reunión de Aliados Estratégicos',
-      date: '12 de Mayo, 2024',
-      time: '10:00 AM - 2:00 PM',
-      location: 'Villavicencio, Meta',
-      description: 'Reunión con representantes de la Universidad Cooperativa de Colombia, Sistema General de Regalías y autoridades locales para revisar avances del proyecto.',
-      type: 'meeting',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA746AcNkQvtwBycTDbq9iKsva21ZBaPeJGMDKHfio8ak7tcx2P7hQFqR7XTEr8A_JpDSSguwYU74XQg9kwOC_pHT25ySsIR5pcQqwStq8laBc8aHapVAWkuKMhy5_SpDQm9dlno3D_39eYVd0vxjivY5LZnb7ClFoaRjDiDaNYgctHipYqeOMbcixWHtaX07_AJscJUleFsWtY6ykmcn1JKlWyYIjeh6ifQyuZoGwlIOJfoaaTWyXMp-DVLyT7qLuNI8iOaGLuJG0',
-    },
-    {
-      id: 5,
-      title: 'Seminario: Mecanismos de Inversión Verde',
-      date: '25 de Junio, 2024',
-      time: '9:00 AM - 1:00 PM',
-      location: 'Tame, Arauca',
-      description: 'Seminario sobre oportunidades de inversión con enfoque en protección ambiental. Presentación de modelos de monetización de cultivos forestales comerciales.',
-      type: 'conference',
-    },
-  ];
+  const [events, setEvents] = useState<PublicAgendaEvent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState<EventType | ''>('');
+  const [modalityFilter, setModalityFilter] = useState<ModalityFilter>('all');
+  /** Por defecto true: si no, los eventos de prueba con fecha pasada no aparecen y la agenda parece vacía. */
+  const [includePast, setIncludePast] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState<PublicAgendaEvent | null>(null);
 
-  const getEventTypeColor = (type?: string) => {
-    const colorMap: Record<string, string> = {
-      'workshop': 'bg-secondary-pradera/20 text-secondary-pradera border-secondary-pradera',
-      'conference': 'bg-primary/20 text-primary border-primary',
-      'field': 'bg-secondary-claro/20 text-secondary-claro border-secondary-claro',
-      'meeting': 'bg-secondary-[amarillo-tierra]/20 text-secondary-[amarillo-tierra] border-secondary-[amarillo-tierra]',
+  const loadEvents = useCallback(async () => {
+    setIsLoading(true);
+    setLoadError(null);
+    try {
+      const client = getGraphqlClient();
+      const allItems: unknown[] = [];
+      let nextToken: string | null = null;
+      do {
+        const res: unknown = await client.graphql({
+          query: listEvents,
+          variables: {
+            filter: {
+              status: { eq: Status.PUBLISHED },
+            },
+            limit: 1000,
+            nextToken,
+          },
+          authMode: 'apiKey',
+        });
+        const gqlErr = (res as { errors?: Array<{ message?: string } | null> | null }).errors;
+        if (Array.isArray(gqlErr) && gqlErr.length > 0) {
+          const msg = gqlErr.map((e) => e?.message).filter(Boolean).join(' · ');
+          if (msg) {
+            setLoadError(msg);
+            setEvents([]);
+            return;
+          }
+        }
+        const data = res as {
+          data?: { listEvents?: { items?: unknown[] | null; nextToken?: string | null } | null };
+        };
+        const items = data?.data?.listEvents?.items ?? [];
+        allItems.push(...items.filter(Boolean));
+        nextToken = data?.data?.listEvents?.nextToken ?? null;
+      } while (nextToken);
+
+      type RawEvent = Parameters<typeof mapAmplifyEventToPublic>[0] & {
+        status: Status;
+        visible: boolean;
+        publishedAt?: string | null;
+      };
+      const published = (allItems as RawEvent[]).filter((row) => row && isPublicAgendaEvent(row));
+      const mapped = published.map((row) => mapAmplifyEventToPublic(row));
+
+      setEvents(sortAgendaEvents(mapped));
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : typeof err === 'object' &&
+              err !== null &&
+              'errors' in err &&
+              Array.isArray((err as { errors: { message?: string }[] }).errors)
+            ? (err as { errors: { message?: string }[] }).errors.map((e) => e?.message).filter(Boolean).join(' · ')
+            : 'No se pudo cargar la agenda.';
+      setLoadError(msg);
+      setEvents([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadEvents();
+  }, [loadEvents]);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void loadEvents();
     };
-    return colorMap[type || ''] || 'bg-gray-100 text-gray-700 border-gray-300';
-  };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [loadEvents]);
 
-  const getEventTypeLabel = (type?: string) => {
-    const labelMap: Record<string, string> = {
-      'workshop': 'Taller',
-      'conference': 'Conferencia',
-      'field': 'Visita de Campo',
-      'meeting': 'Reunión',
+  const filteredEvents = useMemo(() => {
+    const now = Date.now();
+    const q = search.trim().toLowerCase();
+    return events.filter((ev) => {
+      if (!includePast && new Date(ev.startDateTime).getTime() < now) return false;
+      if (typeFilter && ev.eventType !== typeFilter) return false;
+      if (modalityFilter === 'online' && !ev.isOnline) return false;
+      if (modalityFilter === 'onsite' && ev.isOnline) return false;
+      if (!q) return true;
+      const hay = `${ev.title} ${ev.description} ${ev.location ?? ''} ${ev.category ?? ''} ${ev.tags.join(' ')}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }, [events, includePast, modalityFilter, search, typeFilter]);
+
+  const handleCloseModal = useCallback(() => setSelectedEvent(null), []);
+
+  useEffect(() => {
+    if (!selectedEvent) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedEvent(null);
     };
-    return labelMap[type || ''] || 'Evento';
-  };
-
-  const formatDate = (dateString: string) => {
-    return dateString;
-  };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectedEvent]);
 
   return (
     <main className="font-primary bg-gray-50 min-h-screen">
-      {/* Hero Section */}
-      <section className="relative w-full flex items-center justify-center overflow-hidden h-[320px] sm:h-[360px] md:h-[400px] bg-secondary-[bosques-nublados]">
-        {/* Background Image */}
+      <section className="relative w-full flex items-center justify-center overflow-hidden h-[320px] sm:h-[360px] md:h-[400px] bg-secondary-bosquesNublados">
         <div className="absolute inset-0">
           <img
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBfQ0n8xHH295DYRfaoDi9YuisSdVJz3OcK25N9XZlrEenPdsNp0bIIJb5drdB4wY9oj_sZL5zqXh2K4gFNHokA8aGDetHJ5mH1srrUogHiqmgCgAehxuDehGRMlXYwM_AlTbD2oua9zgueMUIBLzHlWeNzbClnUrOZMJUMSxU3lS_I247_cIrZiHOT4dyyIj2z77l6nAbJNzpIwSYck1F7xZHwT5kYbqTXgpsWNmlUOLDOhtkC6l_LxGw4ZQHS-_Qcs1caMUU4fQ"
@@ -100,7 +158,6 @@ const Agenda = () => {
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>
-        {/* Overlay Text */}
         <div className="relative z-10 text-center px-4">
           <h1 className="font-slogan uppercase mb-3 sm:mb-4 text-white drop-shadow-2xl text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] tracking-slogan">
             AGENDA
@@ -111,232 +168,224 @@ const Agenda = () => {
         </div>
       </section>
 
-      {/* Filtros (solo visuales) */}
-      <section className="bg-white border-b border-gray-200 py-4 shadow-sm">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-            {/* Tipo de evento */}
-            <div className="relative w-full md:w-auto">
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+          <div className="mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-secondary-bosquesNublados">Próximas actividades</h2>
+            <p className="mt-1 text-sm text-gray-600">Filtra por tipo, modalidad o palabra clave.</p>
+          </div>
+
+          <div className="mb-8 flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
+            <label className="flex min-w-[200px] flex-1 flex-col gap-1 text-xs font-semibold text-secondary-bosquesNublados">
+              Buscar
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="rounded-xl border border-secondary-claro/50 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm"
+                placeholder="Título, lugar, tema…"
+                aria-label="Buscar en la agenda"
+              />
+            </label>
+            <label className="flex w-full max-w-[220px] flex-col gap-1 text-xs font-semibold text-secondary-bosquesNublados">
+              Tipo
               <select
-                className="w-full md:w-48 border border-gray-300 rounded-md py-2 pl-3 pr-8 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 font-primary"
+                value={typeFilter}
+                onChange={(e) => setTypeFilter((e.target.value as EventType | '') || '')}
+                className="rounded-xl border border-secondary-claro/50 bg-white px-3 py-2 text-sm shadow-sm"
                 aria-label="Filtrar por tipo de evento"
               >
-                <option>Filtrar por tipo</option>
-                <option>Educación</option>
-                <option>Innovación</option>
-                <option>Campo</option>
-                <option>Reuniones</option>
+                {EVENT_TYPE_FILTERS.map((opt) => (
+                  <option key={String(opt.value) + opt.label} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
               </select>
-            </div>
-            {/* Fecha */}
-            <div className="relative w-full md:w-auto">
+            </label>
+            <label className="flex w-full max-w-[200px] flex-col gap-1 text-xs font-semibold text-secondary-bosquesNublados">
+              Modalidad
               <select
-                className="w-full md:w-48 border border-gray-300 rounded-md py-2 pl-3 pr-8 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 font-primary"
-                aria-label="Filtrar por fecha"
+                value={modalityFilter}
+                onChange={(e) => setModalityFilter(e.target.value as ModalityFilter)}
+                className="rounded-xl border border-secondary-claro/50 bg-white px-3 py-2 text-sm shadow-sm"
+                aria-label="Filtrar por modalidad"
               >
-                <option>Fecha</option>
-                <option>Esta semana</option>
-                <option>Este mes</option>
+                <option value="all">Todas</option>
+                <option value="online">En línea</option>
+                <option value="onsite">Presencial / territorio</option>
               </select>
-            </div>
-            {/* Ubicación */}
-            <div className="relative w-full md:w-auto">
-              <select
-                className="w-full md:w-48 border border-gray-300 rounded-md py-2 pl-3 pr-8 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 font-primary"
-                aria-label="Filtrar por ubicación"
-              >
-                <option>Ubicación</option>
-                <option>Meta</option>
-                <option>Arauca</option>
-                <option>Virtual</option>
-              </select>
-            </div>
-            {/* Búsqueda */}
-            <div className="relative w-full md:w-64">
+            </label>
+            <label className="inline-flex items-center gap-2 rounded-xl border border-secondary-claro/50 bg-white px-3 py-2 text-sm text-gray-800 shadow-sm">
               <input
-                type="text"
-                placeholder="Buscar evento..."
-                className="w-full border border-gray-300 rounded-md py-2 px-4 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white font-primary"
-                aria-label="Buscar evento por nombre o descripción"
+                type="checkbox"
+                checked={includePast}
+                onChange={(e) => setIncludePast(e.target.checked)}
+                className="rounded border-gray-300 text-primary focus:ring-primary/40"
               />
-            </div>
+              Incluir eventos pasados
+            </label>
           </div>
-        </div>
-      </section>
 
-      {/* Events Section */}
-      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            {/* Header */}
-            <div className="mb-8 sm:mb-10 md:mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-secondary-[bosques-nublados] font-primary">
-                Lista de Eventos
-              </h2>
-              <p className="text-gray-600 text-sm sm:text-base md:text-lg font-primary">
-                Eventos de innovación, conciencia, transformación y educación del proyecto Terrasacha.
-              </p>
+          {loadError ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+              {loadError}
             </div>
+          ) : null}
 
-            {/* Events Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-              {eventos.map((evento, index) => {
-                const isEven = index % 2 === 0;
-                return (
+          {isLoading ? (
+            <p className="text-center text-gray-600 py-16">Cargando agenda…</p>
+          ) : filteredEvents.length === 0 ? (
+            <div className="rounded-3xl border border-secondary-claro/40 bg-white p-10 text-center shadow-lg">
+              {events.length === 0 ? (
+                <>
+                  <p className="text-lg font-semibold text-secondary-bosquesNublados">No hay eventos publicados aún</p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    Cuando existan eventos con estado <strong className="font-semibold">Publicado</strong>, visibles y (si
+                    tienen fecha de publicación) ya en vigor, aparecerán aquí. Revisa en el admin que el evento no sea
+                    borrador, que esté marcado como visible y que la «publicación programada» no sea una fecha futura.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-lg font-semibold text-secondary-bosquesNublados">No hay eventos con estos filtros</p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    Prueba limpiar la búsqueda, restablecer tipo y modalidad a «Todos», o desmarca «Incluir eventos
+                    pasados» solo si quieres ver únicamente lo que aún no ha comenzado.
+                  </p>
+                </>
+              )}
+            </div>
+          ) : (
+            <ul className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {filteredEvents.map((ev) => (
+                <li key={ev.id}>
                   <article
-                    key={evento.id}
-                    className={`flex flex-col sm:flex-row bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border-[3px] ${
-                      isEven ? 'border-secondary-pradera' : 'border-primary'
-                    }`}
+                    className={`flex h-full flex-col overflow-hidden rounded-2xl border border-secondary-claro/30 shadow-md transition hover:shadow-lg ${getEventCardAccentClasses(ev.eventType)}`}
                   >
-                    {evento.image && (
-                      <div className="sm:w-2/5 h-48 sm:h-auto relative">
-                        <img
-                          src={evento.image}
-                          alt={evento.title}
-                          className="absolute inset-0 w-full h-full object-cover"
-                          loading="lazy"
-                        />
-                      </div>
-                    )}
-                    <div className="sm:w-3/5 p-4 sm:p-5 md:p-6 flex flex-col justify-between">
-                      <div>
-                        {evento.type && (
-                          <span
-                            className={`inline-block mb-3 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide border ${getEventTypeColor(
-                              evento.type
-                            )}`}
-                          >
-                            {getEventTypeLabel(evento.type)}
-                          </span>
-                        )}
-                        <div className="text-xs sm:text-sm text-gray-600 space-y-1 mb-2 font-primary">
-                          <p>
-                            <span className="inline-flex items-center gap-2">
-                              <svg
-                                className="w-4 h-4 text-primary"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                              </svg>
-                              <span>
-                                {formatDate(evento.date)}
-                                {evento.time ? `, ${evento.time}` : ''}
-                              </span>
-                            </span>
-                          </p>
-                          <p>
-                            <span className="inline-flex items-center gap-2">
-                              <svg
-                                className="w-4 h-4 text-primary"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
-                              </svg>
-                              <span>{evento.location}</span>
-                            </span>
-                          </p>
+                    <div className="relative h-44 w-full shrink-0 bg-secondary-claro/20">
+                      {ev.coverImageUrl ? (
+                        <img src={ev.coverImageUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary-pradera/25 to-secondary-claro/40 text-secondary-bosquesNublados/80 text-sm font-medium px-4 text-center">
+                          Terrasacha
                         </div>
-                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-secondary-[bosques-nublados] leading-tight mb-2">
-                          {evento.title}
-                        </h3>
-                        <p className="text-sm sm:text-base text-gray-600 line-clamp-3 font-primary">
-                          {evento.description}
+                      )}
+                      {ev.highlight ? (
+                        <span className="absolute left-3 top-3 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                          Destacado
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <p className="text-xs font-bold uppercase tracking-wide text-primary">{getEventTypeLabelEs(ev.eventType)}</p>
+                      <h3 className="mt-1 text-lg font-bold text-secondary-bosquesNublados leading-snug">{ev.title}</h3>
+                      <p className="mt-2 text-sm text-gray-600 line-clamp-3">{truncatePlainText(ev.description, 180)}</p>
+                      <p className="mt-3 text-sm font-medium text-gray-800">
+                        {formatEventDateRangeEs(ev.startDateTime, ev.endDateTime, ev.timezone)}
+                      </p>
+                      {ev.location ? (
+                        <p className="mt-1 text-xs text-gray-500">
+                          <span className="font-semibold text-gray-700">Lugar:</span> {ev.location}
+                          {ev.isOnline ? <span className="ml-1 text-primary">· En línea</span> : null}
                         </p>
-                      </div>
-                      <div className="mt-4">
-                        <button className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-5 rounded-md text-xs sm:text-sm transition-colors">
-                          Ver Detalles
+                      ) : ev.isOnline ? (
+                        <p className="mt-1 text-xs text-primary font-medium">Modalidad en línea</p>
+                      ) : null}
+                      <div className="mt-auto pt-4">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedEvent(ev)}
+                          className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 sm:w-auto"
+                        >
+                          Ver detalles
                         </button>
                       </div>
                     </div>
                   </article>
-                );
-              })}
-            </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
 
-            {/* Paginación (solo visual) */}
-            <div className="mt-10 sm:mt-12 flex justify-center">
-              <nav aria-label="Paginación de eventos" className="inline-flex rounded-md shadow-sm space-x-2">
-                <button
-                  type="button"
-                  className="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-xs sm:text-sm font-medium text-gray-500 hover:bg-gray-50 rounded-md"
-                  aria-label="Primera página"
-                >
-                  ««
-                </button>
-                <button
-                  type="button"
-                  className="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-xs sm:text-sm font-medium text-gray-500 hover:bg-gray-50 rounded-md"
-                  aria-label="Página anterior"
-                >
-                  «
-                </button>
-                <button
-                  type="button"
-                  className="relative inline-flex items-center px-4 py-2 border border-primary bg-primary text-xs sm:text-sm font-medium text-white rounded-md"
-                  aria-current="page"
-                >
-                  1
-                </button>
-                <button
-                  type="button"
-                  className="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-xs sm:text-sm font-medium text-gray-500 hover:bg-gray-50 rounded-md"
-                  aria-label="Página siguiente"
-                >
-                  »
-                </button>
-                <button
-                  type="button"
-                  className="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-xs sm:text-sm font-medium text-gray-500 hover:bg-gray-50 rounded-md"
-                  aria-label="Última página"
-                >
-                  »»
-                </button>
-              </nav>
-            </div>
-
-            {/* Call to Action */}
-            <div className="mt-10 sm:mt-12 md:mt-16 lg:mt-20 bg-gradient-to-br from-secondary-claro/20 to-secondary-pradera/20 rounded-lg sm:rounded-xl md:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-10 text-center border-l-4 border-primary">
-              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 md:mb-4 text-secondary-[bosques-nublados] font-primary">
-                ¿Quieres participar en nuestros eventos?
-              </h3>
-              <p className="text-gray-700 text-sm sm:text-base md:text-lg mb-4 sm:mb-5 md:mb-6 font-primary max-w-2xl mx-auto leading-relaxed">
-                Mantente informado sobre nuestros próximos eventos y actividades. Contáctanos para más información.
-              </p>
-              <a
-                href="/contacto"
-                className="inline-block bg-primary text-white px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-full font-semibold hover:bg-primary-dark transition-colors text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg"
+      {selectedEvent ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="agenda-modal-title"
+        >
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/55"
+            aria-label="Cerrar detalle del evento"
+            onClick={handleCloseModal}
+          />
+          <div className="relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl">
+            <div className="relative h-48 w-full shrink-0 bg-secondary-claro/30">
+              {selectedEvent.coverImageUrl ? (
+                <img src={selectedEvent.coverImageUrl} alt="" className="h-full w-full object-cover" />
+              ) : null}
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                className="absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-xl text-gray-700 shadow hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                aria-label="Cerrar"
               >
-                Contáctanos
-              </a>
+                ×
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <p className="text-xs font-bold uppercase tracking-wide text-primary">{getEventTypeLabelEs(selectedEvent.eventType)}</p>
+              <h2 id="agenda-modal-title" className="mt-2 text-2xl font-bold text-secondary-bosquesNublados">
+                {selectedEvent.title}
+              </h2>
+              <p className="mt-3 text-sm font-medium text-gray-800">
+                {formatEventDateRangeEs(selectedEvent.startDateTime, selectedEvent.endDateTime, selectedEvent.timezone)}
+              </p>
+              {selectedEvent.location ? (
+                <p className="mt-2 text-sm text-gray-700">
+                  <span className="font-semibold">Lugar:</span> {selectedEvent.location}
+                </p>
+              ) : null}
+              {selectedEvent.isOnline ? (
+                <p className="mt-1 text-sm text-primary font-medium">Incluye participación en línea</p>
+              ) : null}
+              {selectedEvent.capacity != null ? (
+                <p className="mt-2 text-sm text-gray-700">
+                  <span className="font-semibold">Cupo:</span> {selectedEvent.capacity}
+                </p>
+              ) : null}
+              <div className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">{selectedEvent.description}</div>
+              <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                {selectedEvent.registrationUrl ? (
+                  <a
+                    href={selectedEvent.registrationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex flex-1 items-center justify-center rounded-xl bg-primary px-4 py-3 text-center text-sm font-semibold text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                  >
+                    Inscripción o registro
+                  </a>
+                ) : null}
+                {selectedEvent.onlineUrl ? (
+                  <a
+                    href={selectedEvent.onlineUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex flex-1 items-center justify-center rounded-xl border border-primary/40 bg-white px-4 py-3 text-center text-sm font-semibold text-primary hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                  >
+                    Enlace del evento
+                  </a>
+                ) : null}
+              </div>
             </div>
           </div>
         </div>
-      </section>
+      ) : null}
     </main>
   );
 };
 
 export default Agenda;
-

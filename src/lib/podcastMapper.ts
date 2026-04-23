@@ -17,8 +17,9 @@ type PublicPodcast = {
 const toStringArray = (value: unknown): string[] => {
   if (!Array.isArray(value)) return [];
   return value
-    .filter((item: unknown): item is string => typeof item === 'string' && item.trim().length > 0)
-    .map((item) => item.trim());
+    .filter((item: unknown) => (typeof item === 'string' || typeof item === 'number'))
+    .map((item) => String(item).trim())
+    .filter((item) => item.length > 0);
 };
 
 export const mapAmplifyPodcastToPublic = (item: any): PublicPodcast => {

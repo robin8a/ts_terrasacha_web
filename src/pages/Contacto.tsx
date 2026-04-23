@@ -201,15 +201,6 @@ const Contacto = () => {
               </p>
               <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2.5 sm:gap-3 md:gap-4">
                 <a
-                  href="mailto:hola@terrasacha.com"
-                  className="inline-flex items-center justify-center gap-2 bg-white text-primary px-4 sm:px-5 md:px-6 lg:px-8 py-2 sm:py-2.5 md:py-3 rounded-full font-semibold hover:bg-secondary-claro/20 transition-colors text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg"
-                >
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span>Enviar Email</span>
-                </a>
-                <a
                   href="https://t.me/TerrasachaBot"
                   target="_blank"
                   rel="noreferrer"

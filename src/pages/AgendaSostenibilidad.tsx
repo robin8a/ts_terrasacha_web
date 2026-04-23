@@ -267,8 +267,8 @@ const AgendaSostenibilidad = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3 font-primary">
-              <span className="text-primary">Call to</span>{' '}
-              <span className="text-secondary-pradera">Action</span>
+              <span className="text-primary">Llamado a la</span>{' '}
+              <span className="text-secondary-pradera">Acción</span>
             </h2>
             <p className="text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto font-primary text-sm sm:text-base">
               Sé parte del cambio. Colabora y transforma el futuro con Terrasacha.

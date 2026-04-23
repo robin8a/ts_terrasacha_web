@@ -154,7 +154,7 @@ const RelatedPodcastSection = ({ relationType, relatedId }: RelatedPodcastSectio
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
                     Podcast Terrasacha
                   </p>
-                  <h3 className="mt-2 text-lg font-black leading-snug text-secondary-[bosques-nublados]">
+                  <h3 className="mt-2 text-lg font-black leading-snug text-secondary-[bosques-nublados] [overflow-wrap:anywhere]">
                     {podcast.title}
                   </h3>
                   <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-gray-600">

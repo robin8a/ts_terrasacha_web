@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+  import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Status } from '../API';
 import { getGraphqlClient } from '../lib/amplifySetup';
@@ -392,7 +392,7 @@ const Podcast = () => {
                           )}
                         </div>
 
-                      <h3 className="mt-3 line-clamp-2 text-lg font-black leading-snug text-secondary-[bosques-nublados]">
+                      <h3 className="mt-3 text-lg font-black leading-snug text-secondary-[bosques-nublados] break-words">
                           {podcast.title}
                       </h3>
                       <p className="mt-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">

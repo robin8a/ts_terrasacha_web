@@ -1,7 +1,6 @@
 import Hero from '../components/Hero';
 import StatsSection from '../components/StatsSection';
 import ObjectivesSection from '../components/ObjectivesSection';
-import BlogSection from '../components/BlogSection';
 import TrainingSection from '../components/TrainingSection';
 
 const Home = () => {
@@ -82,7 +81,7 @@ const Home = () => {
       <TrainingSection />
       <StatsSection />
       <ObjectivesSection />
-      <BlogSection />
+      {/* <BlogSection /> */}
     </main>
   );
 };

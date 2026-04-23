@@ -12,13 +12,15 @@ const ObjectivesSection = () => {
         >
           <source src="/assets/videos/bg1-1.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary-[bosques-nublados]/80 via-primary/70 to-secondary-pradera/80" />
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary-[bosques-nublados]/55 via-primary/45 to-secondary-pradera/55" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4">
         <div className="text-center mb-12">
-          <p className="text-xl text-white mb-4 font-primary font-medium">Conoce más acerca del proyecto</p>
+          <p className="text-xl text-white mb-4 font-primary font-semibold drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
+            Conoce más acerca del proyecto
+          </p>
           <h1 className="text-4xl md:text-5xl text-white mb-4 font-primary font-bold">
             Nuestros <span className="text-secondary-[amarillo-tierra]">Objetivos</span>
           </h1>

@@ -97,6 +97,16 @@ const ComunicadoDetalle = () => {
         || normalizedFirstParagraph.toLowerCase().startsWith(normalizedExcerptForCompare.toLowerCase())
       );
   const detailParagraphs = isExcerptDuplicatedInBody ? comunicado.body.slice(1) : comunicado.body;
+  const detailParagraphsWithoutContact = detailParagraphs
+    .map((paragraph) => {
+      const contactStartMatch = paragraph.match(/(?:^|\n)\s*Contacto\s*:/i);
+      if (!contactStartMatch || contactStartMatch.index === undefined) {
+        return paragraph.trim();
+      }
+
+      return paragraph.slice(0, contactStartMatch.index).trim();
+    })
+    .filter((paragraph) => paragraph.length > 0);
 
   return (
     <main className="font-primary bg-gray-50 min-h-screen py-16">
@@ -144,7 +154,7 @@ const ComunicadoDetalle = () => {
             )}
 
             <div className="mt-8 space-y-5 border-t border-gray-100 pt-8">
-              {detailParagraphs.map((paragraph, index) => (
+              {detailParagraphsWithoutContact.map((paragraph, index) => (
                 <p
                   key={`${comunicado.id}-paragraph-${index}`}
                   className="text-sm sm:text-base leading-relaxed text-gray-700"

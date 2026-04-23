@@ -70,7 +70,7 @@ const TrainingSection = () => {
 
                 {/* Texto descriptivo */}
                 <p className="text-gray-700 text-base sm:text-lg font-semibold font-primary">
-                  Cursos de formación gratuitos para comunidades de Meta y Arauca.
+                  Cursos de formación gratuitos para comunidades de los municipios de Puerto López y Puerto Gaitán en el Departamento del Meta, y de los municipios de Arauca y Tame en el Departamento de Arauca.
                 </p>
               </div>
 

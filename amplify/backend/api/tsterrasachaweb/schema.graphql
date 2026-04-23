@@ -89,6 +89,11 @@ type Event
   registrationUrl: String
   capacity: Int
 
+  # Portada en S3 (URL pública); usada en tarjetas de /agenda y en el admin.
+  coverImageUrl: String
+  # Si se define, la agenda pública solo muestra el evento cuando publishedAt <= ahora (misma lógica que noticias/comunicados).
+  publishedAt: AWSDateTime
+
   highlight: Boolean! @default(value: "false")
   status: Status! @default(value: "DRAFT")
   visible: Boolean! @default(value: "true")

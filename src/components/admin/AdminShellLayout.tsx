@@ -6,6 +6,7 @@ import AdminNewsManager from './AdminNewsManager';
 import AdminAnnouncementsManager from './AdminAnnouncementsManager';
 import AdminPodcastManager from './AdminPodcastManager';
 import AdminResearchManager from './AdminResearchManager';
+import AdminEventsManager from './AdminEventsManager';
 
 type AdminShellLayoutProps = {
   user: AdminUser;
@@ -36,7 +37,7 @@ const getInitials = (value: string): string => {
 const tabs: TabConfig[] = [
   { key: 'noticias', label: 'Noticias', upcomingText: 'Gestión de noticias.' },
   { key: 'comunicados', label: 'Comunicados', upcomingText: 'Gestión de comunicados.' },
-  { key: 'agenda', label: 'Agenda', upcomingText: 'Agenda disponible próximamente.', isComingSoon: true },
+  { key: 'agenda', label: 'Agenda', upcomingText: 'Gestión de eventos de agenda.' },
   { key: 'podcast', label: 'Podcast', upcomingText: 'Gestión de podcast.' },
   { key: 'investigacion', label: 'Investigación', upcomingText: 'Gestión de investigación.' },
 ];
@@ -162,6 +163,10 @@ const AdminShellLayout = ({ user, onSignOut }: AdminShellLayoutProps) => {
           ) : activeTab === 'comunicados' ? (
             <AdminDashboard activeTab={activeTab}>
               <AdminAnnouncementsManager />
+            </AdminDashboard>
+          ) : activeTab === 'agenda' ? (
+            <AdminDashboard activeTab={activeTab}>
+              <AdminEventsManager />
             </AdminDashboard>
           ) : activeTab === 'investigacion' ? (
             <AdminDashboard activeTab={activeTab}>

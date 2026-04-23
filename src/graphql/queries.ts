@@ -218,6 +218,8 @@ export const getEvent = /* GraphQL */ `query GetEvent($id: ID!) {
     onlineUrl
     registrationUrl
     capacity
+    coverImageUrl
+    publishedAt
     highlight
     status
     visible
@@ -248,6 +250,8 @@ export const listEvents = /* GraphQL */ `query ListEvents(
       onlineUrl
       registrationUrl
       capacity
+      coverImageUrl
+      publishedAt
       highlight
       status
       visible

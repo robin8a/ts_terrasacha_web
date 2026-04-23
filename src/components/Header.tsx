@@ -175,17 +175,6 @@ export default function Header() {
                 )}
               </div>
 
-              {/* Metodología */}
-              <Link
-                to="/metodologia"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`block py-2 ${
-                  isActive('/metodologia') ? 'text-primary font-semibold' : 'text-gray-700'
-                }`}
-              >
-                Metodología
-              </Link>
-
               {/* Ruta de Formación */}
               <Link
                 to="/ruta-de-formacion"
@@ -322,20 +311,6 @@ export default function Header() {
                     ))}
                   </div>
                 </div>
-              </li>
-
-              {/* Metodología */}
-              <li>
-                <Link
-                  to="/metodologia"
-                  className={`${
-                    isActive('/metodologia')
-                      ? 'text-primary font-semibold'
-                      : 'text-gray-700 hover:text-primary'
-                  } transition-colors`}
-                >
-                  Metodología
-                </Link>
               </li>
 
               {/* Ruta de Formación */}

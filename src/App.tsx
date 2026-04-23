@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import AdminErrorBoundary from './components/AdminErrorBoundary';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import ContactButton from './components/ContactButton';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
 import Noticias from './pages/Noticias';
@@ -68,7 +67,7 @@ const AppRoutes = () => {
         />
       </Routes>
       {!isAdminRoute && <Footer />}
-      {!isAdminRoute && <ContactButton />}
+      {/* {!isAdminRoute && <ContactButton />} */}
     </div>
   );
 };
