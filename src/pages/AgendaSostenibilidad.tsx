@@ -103,7 +103,7 @@ const AgendaSostenibilidad = () => {
             Agenda de Sostenibilidad
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-4xl mx-auto">
-            Innovación, Conciencia, Transformación y Educación para un Futuro Sostenible
+            Innovación, Conciencia, Transformación, Educación, Responsabilidad
           </p>
         </div>
       </section>

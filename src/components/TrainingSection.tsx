@@ -36,11 +36,7 @@ const TrainingSection = () => {
             <div className="grid grid-cols-1 md:grid-cols-[1.1fr,0.9fr] gap-8 md:gap-10 items-center">
               {/* Columna izquierda: CTA */}
               <div className="text-center md:text-left">
-              {/* Badge de estado */}
-              <div className="flex items-center justify-center gap-2 bg-secondary-[amarillo-tierra] text-secondary-[bosques-nublados] px-5 py-2.5 rounded-full font-bold text-sm sm:text-base uppercase tracking-wide shadow-lg mb-6 inline-flex group hover:scale-105 transition-transform duration-300">
-                <div className="w-2 h-2 bg-secondary-pradera rounded-full animate-pulse"></div>
-                <span>INSCRIPCIONES ABIERTAS</span>
-              </div>
+             El 
 
               {/* Botón principal */}
               <div className="mb-4">

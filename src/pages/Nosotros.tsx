@@ -1,30 +1,64 @@
+const involvedActorsRows = [
+  { role: 'Proponente', body: 'Universidad Cooperativa de Colombia' },
+  { role: 'Aliados', body: 'Corporación INNprende y Gobernación del Meta' },
+  {
+    role: 'Beneficiarios',
+    body:
+      'Departamento de Arauca (Arauca y Tame) y Departamento del Meta (Puerto López y Puerto Gaitán)',
+  },
+  { role: 'Recursos de financiación', body: 'Sistema General de Regalías' },
+] as const;
+
 const Nosotros = () => {
   const impactPillars = [
     {
       ods: 'ODS 9',
       title: 'Industria, Innovación e Infraestructura',
-      description: 'Enfoque en la integración de tecnología blockchain.',
-      borderColor: 'border-secondary-pradera',
+      whatWeDo:
+        'Implementamos tecnología 4.0, semilleros inteligentes y reforestación con drones para optimizar la captura de carbono.',
+      impact:
+        'Modernizamos el campo con procesos automatizados que aumentan la eficiencia y reducen costos.',
+      image: '/ods9.png',
     },
     {
       ods: 'ODS 13',
       title: 'Acción por el Clima',
-      description: 'Acciones directas para la mitigación del cambio climático.',
-      borderColor: 'border-primary',
+      whatWeDo:
+        'Mitigamos el cambio climático mediante la captura de gases de efecto invernadero y la descarbonización en Meta y Arauca.',
+      impact:
+        'Frenamos el deterioro ambiental y protegemos activos naturales estratégicos para el futuro.',
+      image: '/ods13.jpg',
     },
     {
       ods: 'ODS 15',
       title: 'Vida de Ecosistemas Terrestres',
-      description: 'Gestión sostenible de bosques y protección de la biodiversidad.',
-      borderColor: 'border-secondary-claro',
+      whatWeDo:
+        'Restauramos suelos y cuencas, frenando la expansión de la ganadería extensiva en zonas de especial interés ecológico.',
+      impact:
+        'Devolvemos la salud a los acuíferos de la cuenca del río Orinoco y protegemos la biodiversidad del suelo.',
+      image: '/ods15.png',
     },
     {
       ods: 'ODS 17',
       title: 'Alianzas para lograr los Objetivos',
-      description: 'Construcción de modelos económicos colaborativos para la conservación.',
-      borderColor: 'border-secondary-[amarillo-tierra]',
+      whatWeDo:
+        'Creamos una plataforma blockchain que permite comercializar activos ambientales de forma transparente y sin intermediarios.',
+      impact:
+        'Conectamos la inversión privada con la conservación, garantizando flujo de caja directo para quienes cuidan el bosque.',
+      image: '/ods17.png',
     },
   ];
+
+  const actorsCarouselLogos = [
+    { src: '/Universidad%20cooperativa.jpeg', alt: 'Universidad Cooperativa de Colombia' },
+    { src: '/imprende.jpeg', alt: 'Corporación INNprende' },
+    { src: '/Meta.jpeg', alt: 'Gobernación del Meta' },
+    { src: '/sistema%20general%20de%20regalias.jpeg', alt: 'Sistema General de Regalías' },
+    { src: '/tame.jpeg', alt: 'Municipio de Tame' },
+    { src: '/lopez.jpeg', alt: 'Municipio de Puerto López' },
+    { src: '/gaitan.jpeg', alt: 'Municipio de Puerto Gaitán' },
+  ];
+  const actorsCarouselTrack = [...actorsCarouselLogos, ...actorsCarouselLogos];
 
   return (
     <main className="font-primary">
@@ -50,7 +84,7 @@ const Nosotros = () => {
             NOSOTROS
           </h1>
           <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto font-light font-primary">
-            Innovación, conciencia, transformación y educación para un futuro sostenible.
+            Innovación, Conciencia, Transformación, Educación, Responsabilidad
           </p>
         </div>
       </section>
@@ -71,17 +105,17 @@ const Nosotros = () => {
               </div>
             </div>
             {/* Text Column */}
-            <div className="w-full md:w-1/2">
-              <h2 className="text-3xl sm:text-4xl font-bold text-secondary-[bosques-nublados] mb-6 font-primary">
+            <div className="w-full md:w-[55%]">
+              <h2 className="text-4xl sm:text-5xl md:text-[52px] font-bold text-secondary-[bosques-nublados] mb-6 sm:mb-7 font-primary leading-tight">
                 Sobre Terrasacha
               </h2>
-              <p className="text-gray-600 mb-6 leading-relaxed text-justify font-primary text-sm sm:text-base">
+              <p className="text-gray-700 mb-6 sm:mb-7 leading-relaxed text-justify font-primary text-base sm:text-lg md:text-[20px]">
                 Terrasacha es el nombre genérico que se le ha dado al proyecto{' '}
                 <strong className="text-secondary-[bosques-nublados]">
                   Implementación de Acciones para la Protección de Cuencas de Agua y Suelos a partir de Reforestación con Tecnologías Emergentes y Biotecnología en la Región Llanos Orientales en los Departamentos de Meta y Arauca
                 </strong>, ejecutado por la Universidad Cooperativa de Colombia y financiado con fondos del Sistema General de Regalías.
               </p>
-              <p className="text-gray-600 leading-relaxed text-justify font-primary text-sm sm:text-base">
+              <p className="text-gray-700 leading-relaxed text-justify font-primary text-base sm:text-lg md:text-[20px]">
                 Nuestro proyecto busca fortalecer los modelos de protección de los activos ambientales estratégicos y monetización de cultivos forestales comerciales para los departamentos del Meta y Arauca. A través de la implementación de tecnologías innovadoras y biotecnología aplicada, contribuimos al desarrollo sostenible de la región, protegiendo nuestros recursos naturales para las generaciones futuras.
               </p>
             </div>
@@ -93,26 +127,50 @@ const Nosotros = () => {
       <section className="bg-gray-50 py-16 sm:py-20 md:py-24 lg:py-[100px]">
         <div className="container mx-auto px-4 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-secondary-[bosques-nublados] mb-8 sm:mb-12 font-primary">
-            Pilares de Impacto Directo
+            El Aporte de Terrasacha a los Objetivos de Desarrollo Sostenible
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
-            {impactPillars.map((pillar) => (
-              <article
-                key={pillar.ods}
-                className={`bg-white p-6 sm:p-7 rounded-2xl shadow-md border-t-4 ${pillar.borderColor} hover:shadow-xl transition-shadow`}
-                style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.08)' }}
-              >
-                <p className="text-sm font-bold text-secondary-[bosques-nublados] uppercase tracking-wide mb-2 font-primary">
-                  {pillar.ods}
-                </p>
-                <h3 className="font-bold text-gray-800 mb-3 font-primary text-lg sm:text-xl">
-                  {pillar.title}
-                </h3>
-                <p className="text-sm sm:text-base text-gray-600 font-primary leading-relaxed">
-                  {pillar.description}
-                </p>
-              </article>
-            ))}
+          <div className="overflow-x-auto max-w-6xl mx-auto rounded-2xl border border-gray-300 bg-white">
+            <table className="w-full border-collapse min-w-[900px]">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="w-[140px] p-4 border border-gray-300 text-left text-sm font-bold text-gray-800 font-primary">
+                    ODS
+                  </th>
+                  <th className="p-4 border border-gray-300 text-left text-sm font-bold text-gray-800 font-primary">
+                    Objetivo de Desarrollo (ODS)
+                  </th>
+                  <th className="p-4 border border-gray-300 text-left text-sm font-bold text-gray-800 font-primary">
+                    Lo que hacemos en Terrasacha
+                  </th>
+                  <th className="p-4 border border-gray-300 text-left text-sm font-bold text-gray-800 font-primary">
+                    Impacto Real en el Territorio
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {impactPillars.map((pillar) => (
+                  <tr key={pillar.ods} className="align-top">
+                    <td className="p-4 border border-gray-300">
+                      <img
+                        src={pillar.image}
+                        alt={`Icono ${pillar.ods}`}
+                        className="w-20 h-20 object-cover rounded-2xl border border-gray-200"
+                        loading="lazy"
+                      />
+                    </td>
+                    <td className="p-4 border border-gray-300 text-gray-800 font-semibold font-primary">
+                      {pillar.ods}: {pillar.title}
+                    </td>
+                    <td className="p-4 border border-gray-300 text-gray-700 font-primary leading-relaxed">
+                      {pillar.whatWeDo}
+                    </td>
+                    <td className="p-4 border border-gray-300 text-gray-700 font-primary leading-relaxed">
+                      {pillar.impact}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -144,6 +202,82 @@ const Nosotros = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Involved Actors Section */}
+      <section className="bg-gradient-to-b from-white via-secondary-claro/10 to-[#f7f8f2] pb-16 sm:pb-20 md:pb-24 lg:pb-[100px]">
+        <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
+          <div className="text-center mb-10 sm:mb-12">
+            <p className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#e8d79a]/40 text-primary text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em]">
+              Pioneros del Mañana
+            </p>
+            <h2 className="text-3xl sm:text-4xl md:text-[46px] font-bold text-secondary-[bosques-nublados] mt-4 font-primary uppercase tracking-wide">
+              Actores Involucrados
+            </h2>
+          </div>
+
+          <div className="max-w-4xl mx-auto overflow-hidden rounded-3xl border border-secondary-claro/50 bg-white/95 shadow-md shadow-secondary-[bosques-nublados]/5 backdrop-blur-sm">
+            <div className="border-l-4 border-primary bg-gradient-to-br from-secondary-claro/25 via-white to-secondary-amarillo-tierra/10 px-5 py-5 sm:px-8 sm:py-7 md:px-10 md:py-9">
+              <dl className="divide-y divide-secondary-claro/40 font-primary">
+                {involvedActorsRows.map(({ role, body }) => (
+                  <div
+                    key={role}
+                    className="grid gap-1.5 py-4 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,11.5rem)_1fr] sm:items-start sm:gap-8 sm:py-5"
+                  >
+                    <dt className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary sm:pt-1">
+                      {role}
+                    </dt>
+                    <dd className="text-base leading-relaxed text-secondary-[bosques-nublados] sm:text-lg">
+                      {body}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+
+          <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen mt-8 sm:mt-10">
+            <div className="overflow-hidden">
+              <div className="actors-carousel-track flex items-center gap-4 sm:gap-5 w-max px-4 sm:px-6 md:px-8">
+                {actorsCarouselTrack.map((logo, index) => (
+                  <article
+                    key={`${logo.alt}-${index}`}
+                    className="shrink-0 w-[220px] h-[140px] sm:w-[250px] sm:h-[150px] rounded-2xl border border-secondary-claro/40 bg-white shadow-sm p-4 flex items-center justify-center"
+                  >
+                    <img
+                      src={logo.src}
+                      alt={logo.alt}
+                      className="max-h-full max-w-full object-contain"
+                      loading="lazy"
+                    />
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        <style>
+          {`
+            .actors-carousel-track {
+              animation: actors-carousel-scroll 28s linear infinite;
+            }
+
+            @keyframes actors-carousel-scroll {
+              0% {
+                transform: translateX(0);
+              }
+              100% {
+                transform: translateX(-50%);
+              }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+              .actors-carousel-track {
+                animation: none;
+              }
+            }
+          `}
+        </style>
       </section>
 
       {/* Partners Section */}

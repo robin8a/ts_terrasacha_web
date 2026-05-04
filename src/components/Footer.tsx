@@ -34,7 +34,7 @@ const Footer = () => {
               PIONEROS DEL MAÑANA
             </p>
             <p className="text-[#44482c]/80 text-sm leading-relaxed mb-6">
-              Innovación, conciencia, transformación y educación para un futuro sostenible.
+              Innovación, Conciencia, Transformación, Educación, Responsabilidad
             </p>
             <div className="flex items-center gap-3">
               <SocialLinks className="text-[#44482c]" iconSize="w-5 h-5" />
