@@ -36,33 +36,31 @@ const TrainingSection = () => {
             <div className="grid grid-cols-1 md:grid-cols-[1.1fr,0.9fr] gap-8 md:gap-10 items-center">
               {/* Columna izquierda: CTA */}
               <div className="text-center md:text-left">
-             El 
+                {/* Botón principal */}
+                <div className="mb-4">
+                  <a
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSecFBs5h69bQGxmwEvLU57B7bjSN6qWrmtQ3xlQwiPe5Otnug/viewform?usp=header"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-block group"
+                  >
+                    <button className="relative w-full sm:w-auto bg-gradient-to-r from-secondary-[amarillo-tierra] via-secondary-pradera to-secondary-[amarillo-tierra] text-secondary-[bosques-nublados] px-10 py-5 sm:px-12 sm:py-6 rounded-xl font-bold text-lg sm:text-xl hover:shadow-2xl transition-all duration-500 uppercase tracking-wide font-primary overflow-hidden group transform hover:scale-105">
+                      {/* Efecto de brillo animado */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
 
-              {/* Botón principal */}
-              <div className="mb-4">
-                <a
-                  href="https://docs.google.com/forms/d/e/1FAIpQLSecFBs5h69bQGxmwEvLU57B7bjSN6qWrmtQ3xlQwiPe5Otnug/viewform?usp=header"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-block group"
-                >
-                  <button className="relative w-full sm:w-auto bg-gradient-to-r from-secondary-[amarillo-tierra] via-secondary-pradera to-secondary-[amarillo-tierra] text-secondary-[bosques-nublados] px-10 py-5 sm:px-12 sm:py-6 rounded-xl font-bold text-lg sm:text-xl hover:shadow-2xl transition-all duration-500 uppercase tracking-wide font-primary overflow-hidden group transform hover:scale-105">
-                    {/* Efecto de brillo animado */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-
-                    {/* Contenido */}
-                    <span className="relative z-10 flex items-center justify-center gap-3">
-                      <svg className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                      <span>INSCRIPCIONES ABIERTAS</span>
-                      <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </span>
-                  </button>
-                </a>
-              </div>
+                      {/* Contenido */}
+                      <span className="relative z-10 flex items-center justify-center gap-3">
+                        <svg className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        <span>INSCRIPCIONES ABIERTAS</span>
+                        <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </span>
+                    </button>
+                  </a>
+                </div>
 
                 {/* Texto descriptivo */}
                 <p className="text-gray-700 text-base sm:text-lg font-semibold font-primary">
