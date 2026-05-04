@@ -90,7 +90,7 @@ const Nosotros = () => {
       </section>
 
       {/* About Section */}
-      <section className="bg-white py-16 sm:py-20 md:py-24 lg:py-[100px]">
+      <section className="bg-white py-12 sm:py-14 md:py-16 lg:py-20">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex flex-col md:flex-row items-center gap-12 sm:gap-16 md:gap-20 lg:gap-[80px]">
             {/* Image Column */}
@@ -124,7 +124,7 @@ const Nosotros = () => {
       </section>
 
       {/* Impact Pillars Section */}
-      <section className="bg-gray-50 py-16 sm:py-20 md:py-24 lg:py-[100px]">
+      <section className="bg-gray-50 py-12 sm:py-14 md:py-16 lg:py-20">
         <div className="container mx-auto px-4 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-secondary-[bosques-nublados] mb-8 sm:mb-12 font-primary">
             El Aporte de Terrasacha a los Objetivos de Desarrollo Sostenible
@@ -133,38 +133,32 @@ const Nosotros = () => {
             <table className="w-full border-collapse min-w-[900px]">
               <thead>
                 <tr className="bg-gray-100">
-                  <th className="w-[140px] p-4 border border-gray-300 text-left text-sm font-bold text-gray-800 font-primary">
+                  <th className="w-[140px] p-4 border border-gray-300 text-center text-sm font-bold text-gray-800 font-primary">
                     ODS
                   </th>
-                  <th className="p-4 border border-gray-300 text-left text-sm font-bold text-gray-800 font-primary">
-                    Objetivo de Desarrollo (ODS)
-                  </th>
-                  <th className="p-4 border border-gray-300 text-left text-sm font-bold text-gray-800 font-primary">
+                  <th className="p-4 border border-gray-300 text-center text-sm font-bold text-gray-800 font-primary">
                     Lo que hacemos en Terrasacha
                   </th>
-                  <th className="p-4 border border-gray-300 text-left text-sm font-bold text-gray-800 font-primary">
+                  <th className="p-4 border border-gray-300 text-center text-sm font-bold text-gray-800 font-primary">
                     Impacto Real en el Territorio
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {impactPillars.map((pillar) => (
-                  <tr key={pillar.ods} className="align-top">
-                    <td className="p-4 border border-gray-300">
+                  <tr key={pillar.ods} className="align-middle">
+                    <td className="p-4 border border-gray-300 text-center">
                       <img
                         src={pillar.image}
                         alt={`Icono ${pillar.ods}`}
-                        className="w-20 h-20 object-cover rounded-2xl border border-gray-200"
+                        className="w-28 h-28 object-cover rounded-2xl border border-gray-200 mx-auto"
                         loading="lazy"
                       />
                     </td>
-                    <td className="p-4 border border-gray-300 text-gray-800 font-semibold font-primary">
-                      {pillar.ods}: {pillar.title}
-                    </td>
-                    <td className="p-4 border border-gray-300 text-gray-700 font-primary leading-relaxed">
+                    <td className="p-4 border border-gray-300 text-gray-700 font-primary leading-relaxed text-center align-middle">
                       {pillar.whatWeDo}
                     </td>
-                    <td className="p-4 border border-gray-300 text-gray-700 font-primary leading-relaxed">
+                    <td className="p-4 border border-gray-300 text-gray-700 font-primary leading-relaxed text-center align-middle">
                       {pillar.impact}
                     </td>
                   </tr>
@@ -176,14 +170,14 @@ const Nosotros = () => {
       </section>
 
       {/* Mission Section */}
-      <section className="bg-white py-16 sm:py-20 md:py-24 lg:py-[100px]">
+      <section className="bg-white py-12 sm:py-14 md:py-16 lg:py-20">
         <div className="container mx-auto px-4 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-secondary-[bosques-nublados] mb-8 sm:mb-12 font-primary">
             Nuestra Misión
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Left Card */}
-            <div className="bg-secondary-claro/20 p-8 sm:p-10 shadow-inner border border-secondary-claro rounded-[20px]">
+            <div className="bg-secondary-claro/20 p-6 sm:p-8 shadow-inner border border-secondary-claro rounded-[20px]">
               <h3 className="font-bold text-secondary-[bosques-nublados] mb-4 text-xl sm:text-2xl md:text-[24px] font-primary">
                 Protección Ambiental
               </h3>
@@ -192,7 +186,7 @@ const Nosotros = () => {
               </p>
             </div>
             {/* Right Card */}
-            <div className="p-8 sm:p-10 shadow-inner border border-secondary-pradera/30 bg-secondary-pradera/10 rounded-[20px]">
+            <div className="p-6 sm:p-8 shadow-inner border border-secondary-pradera/30 bg-secondary-pradera/10 rounded-[20px]">
               <h3 className="font-bold text-secondary-[bosques-nublados] mb-4 text-xl sm:text-2xl md:text-[24px] font-primary">
                 Desarrollo Sostenible
               </h3>
@@ -205,7 +199,7 @@ const Nosotros = () => {
       </section>
 
       {/* Involved Actors Section */}
-      <section className="bg-gradient-to-b from-white via-secondary-claro/10 to-[#f7f8f2] pb-16 sm:pb-20 md:pb-24 lg:pb-[100px]">
+      <section className="bg-gradient-to-b from-white via-secondary-claro/10 to-[#f7f8f2] pb-12 sm:pb-14 md:pb-16 lg:pb-20">
         <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
           <div className="text-center mb-10 sm:mb-12">
             <p className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#e8d79a]/40 text-primary text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em]">
