@@ -4,6 +4,7 @@ import type { Status } from '../../API';
 import { Status as PodcastStatus } from '../../API';
 import { getGraphqlClient } from '../../lib/amplifySetup';
 import { buildS3PublicObjectUrl } from '../../lib/s3PublicUrl';
+import { getYouTubeEmbedUrlFromInput, normalizeYouTubeInput } from '../../lib/youtubeEmbed';
 
 type AdminPodcastItem = {
   id: string;
@@ -11,6 +12,7 @@ type AdminPodcastItem = {
   slug: string;
   description: string;
   audioUrl?: string | null;
+  externalPlayerUrl?: string | null;
   coverImageUrl?: string | null;
   relatedNewsIds?: Array<string | null> | null;
   relatedAnnouncementIds?: Array<string | null> | null;
@@ -36,16 +38,15 @@ type PodcastFormState = {
   status: Status;
   highlight: boolean;
   coverImageUrl: string | null;
-  audioUrl: string | null;
+  youtubeUrl: string;
   relatedNewsIds: string[];
   relatedAnnouncementIds: string[];
   relatedResearchIds: string[];
   coverImageFile: File | null;
-  audioFile: File | null;
 };
 
 type RelationTab = 'news' | 'announcements' | 'research';
-type UploadTarget = 'cover' | 'audio';
+type UploadTarget = 'cover';
 
 const ADMIN_LIST_PODCASTS = /* GraphQL */ `
   query AdminListPodcastEpisodes($filter: ModelPodcastEpisodeFilterInput, $limit: Int, $nextToken: String) {
@@ -56,6 +57,7 @@ const ADMIN_LIST_PODCASTS = /* GraphQL */ `
         slug
         description
         audioUrl
+        externalPlayerUrl
         coverImageUrl
         relatedNewsIds
         relatedAnnouncementIds
@@ -79,6 +81,7 @@ const ADMIN_GET_PODCAST = /* GraphQL */ `
       slug
       description
       audioUrl
+      externalPlayerUrl
       coverImageUrl
       relatedNewsIds
       relatedAnnouncementIds
@@ -209,12 +212,11 @@ const buildEmptyForm = (): PodcastFormState => ({
   status: PodcastStatus.PUBLISHED,
   highlight: false,
   coverImageUrl: null,
-  audioUrl: null,
+  youtubeUrl: '',
   relatedNewsIds: [],
   relatedAnnouncementIds: [],
   relatedResearchIds: [],
   coverImageFile: null,
-  audioFile: null,
 });
 
 const getStatusLabel = (status: Status): string => {
@@ -481,12 +483,11 @@ const AdminPodcastManager = () => {
         status: item.status ?? PodcastStatus.PUBLISHED,
         highlight: Boolean(item.highlight),
         coverImageUrl: item.coverImageUrl ?? null,
-        audioUrl: item.audioUrl ?? null,
+        youtubeUrl: item.externalPlayerUrl ?? item.audioUrl ?? '',
         relatedNewsIds: toStringArray(item.relatedNewsIds),
         relatedAnnouncementIds: toStringArray(item.relatedAnnouncementIds),
         relatedResearchIds: toStringArray(item.relatedResearchIds),
         coverImageFile: null,
-        audioFile: null,
       });
       setActiveRelationTab('news');
       setRelationSearch('');
@@ -514,32 +515,15 @@ const AdminPodcastManager = () => {
     setErrorMessage(null);
   }, []);
 
-  const handleAudioPick = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    const nextFile = event.target.files?.[0] ?? null;
-    setForm((prev) => ({ ...prev, audioFile: nextFile }));
-    setErrorMessage(null);
-  }, []);
-
-  const handleAssignDroppedFile = useCallback((target: UploadTarget, file: File | null) => {
+  const handleAssignDroppedFile = useCallback((_target: UploadTarget, file: File | null) => {
     if (!file) return;
 
-    if (target === 'cover') {
-      if (!file.type.startsWith('image/')) {
-        setErrorMessage('La portada debe ser un archivo de imagen.');
-        return;
-      }
-
-      setForm((prev) => ({ ...prev, coverImageFile: file }));
-      setErrorMessage(null);
+    if (!file.type.startsWith('image/')) {
+      setErrorMessage('La portada debe ser un archivo de imagen.');
       return;
     }
 
-    if (!file.type.startsWith('audio/')) {
-      setErrorMessage('El archivo principal debe ser un audio válido.');
-      return;
-    }
-
-    setForm((prev) => ({ ...prev, audioFile: file }));
+    setForm((prev) => ({ ...prev, coverImageFile: file }));
     setErrorMessage(null);
   }, []);
 
@@ -607,8 +591,9 @@ const AdminPodcastManager = () => {
       return;
     }
 
-    if (!form.audioUrl && !form.audioFile) {
-      setErrorMessage('Debes subir un archivo de audio.');
+    const normalizedYoutubeUrl = normalizeYouTubeInput(form.youtubeUrl);
+    if (!normalizedYoutubeUrl) {
+      setErrorMessage('Debes ingresar una URL válida de YouTube (watch, shorts o youtu.be).');
       return;
     }
 
@@ -621,14 +606,9 @@ const AdminPodcastManager = () => {
       const publishedAt = toIsoFromDateTimeLocal(form.publishedAtLocal);
 
       let coverImageUrl = form.coverImageUrl;
-      let audioUrl = form.audioUrl;
 
       if (form.coverImageFile) {
         coverImageUrl = await uploadPublicFile(form.coverImageFile, `podcast/${mediaPrefix}/cover`);
-      }
-
-      if (form.audioFile) {
-        audioUrl = await uploadPublicFile(form.audioFile, `podcast/${mediaPrefix}/audio`);
       }
 
       const input = {
@@ -636,7 +616,8 @@ const AdminPodcastManager = () => {
         title: form.title.trim(),
         slug: toSlug(form.title),
         description: form.summary.trim(),
-        audioUrl,
+        audioUrl: normalizedYoutubeUrl,
+        externalPlayerUrl: normalizedYoutubeUrl,
         coverImageUrl,
         relatedNewsIds: form.relatedNewsIds,
         relatedAnnouncementIds: form.relatedAnnouncementIds,
@@ -718,9 +699,9 @@ const AdminPodcastManager = () => {
   })), [relationTabs]);
 
   const coverFileLabel = form.coverImageFile?.name ?? getFileNameFromUrl(form.coverImageUrl);
-  const audioFileLabel = form.audioFile?.name ?? getFileNameFromUrl(form.audioUrl);
   const hasCoverFile = Boolean(form.coverImageFile || form.coverImageUrl);
-  const hasAudioFile = Boolean(form.audioFile || form.audioUrl);
+  const youtubeEmbedPreview = getYouTubeEmbedUrlFromInput(form.youtubeUrl);
+  const hasYoutubeUrl = Boolean(youtubeEmbedPreview);
 
   return (
     <div className="space-y-6">
@@ -728,7 +709,7 @@ const AdminPodcastManager = () => {
         <div>
           <h2 className="text-lg font-bold text-gray-900">Podcast</h2>
           <p className="text-sm text-gray-600">
-            Administra episodios con resumen, imagen, audio y relaciones hacia noticias, comunicados e investigación.
+            Administra episodios con resumen, portada, video de YouTube y relaciones hacia noticias, comunicados e investigación.
           </p>
         </div>
         <button
@@ -870,9 +851,9 @@ const AdminPodcastManager = () => {
                                   Programado
                                 </span>
                               )}
-                              {item.audioUrl && (
+                              {getYouTubeEmbedUrlFromInput(item.externalPlayerUrl ?? item.audioUrl) && (
                                 <span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
-                                  Audio listo
+                                  Video listo
                                 </span>
                               )}
                             </div>
@@ -932,7 +913,7 @@ const AdminPodcastManager = () => {
                   {modalMode === 'create' ? 'Nuevo podcast' : 'Editar podcast'}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Define el resumen del episodio, sube el audio y conecta el contenido relacionado.
+                  Define el resumen del episodio, enlaza el video de YouTube y conecta el contenido relacionado.
                 </p>
               </div>
               <button
@@ -1032,130 +1013,110 @@ const AdminPodcastManager = () => {
 
                 <aside className="space-y-4 xl:col-span-5">
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
-                    <p className="text-sm font-semibold text-secondary-[bosques-nublados]">Archivos del episodio</p>
+                    <p className="text-sm font-semibold text-secondary-[bosques-nublados]">Medios del episodio</p>
                     <p className="mt-1 text-xs leading-relaxed text-gray-600">
-                      Arrastra archivos aquí o haz clic para cargarlos. Solo necesitas una portada y el audio principal.
+                      Sube una portada opcional y pega la URL del video en YouTube. En el sitio se mostrará embebido.
                     </p>
 
                     <div className="mt-4 space-y-4">
-                      <div className="grid grid-cols-1 gap-4">
-                        <label
-                          htmlFor="podcastCoverImage"
-                          onDragOver={(event) => handleDragOverUploadArea(event, 'cover')}
-                          onDragLeave={handleDragLeaveUploadArea}
-                          onDrop={(event) => handleDropUploadArea(event, 'cover')}
-                          className={`block cursor-pointer rounded-2xl border-2 border-dashed p-4 transition ${
-                            dragActiveTarget === 'cover'
-                              ? 'border-primary bg-primary/5'
-                              : hasCoverFile
-                                ? 'border-emerald-300 bg-emerald-50/60'
-                                : 'border-gray-300 bg-white hover:border-primary/50 hover:bg-primary/5'
-                          }`}
-                        >
-                          <input
-                            id="podcastCoverImage"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleCoverImagePick}
-                            className="hidden"
-                          />
-                          <div className="flex items-start gap-3">
-                            <div className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${
-                              hasCoverFile ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'
-                            }`}>
-                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2 1.586-1.586a2 2 0 012.828 0L20 14m-6-10h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-semibold text-gray-900">
-                                {hasCoverFile ? 'Portada lista' : 'Imagen de portada'}
-                              </p>
-                              <p className="mt-1 text-xs leading-relaxed text-gray-600">
-                                {hasCoverFile
-                                  ? 'Puedes arrastrar otra imagen o hacer clic para reemplazar la actual.'
-                                  : 'Arrastra una imagen aquí o haz clic para seleccionarla desde tu equipo.'}
-                              </p>
-                              <div className="mt-3 flex flex-wrap items-center gap-2">
-                                <span className="inline-flex rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-gray-700">
-                                  JPG, PNG, WEBP
-                                </span>
-                                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                                  hasCoverFile
-                                    ? 'border border-emerald-200 bg-emerald-100 text-emerald-700'
-                                    : 'border border-amber-200 bg-amber-50 text-amber-700'
-                                }`}>
-                                  {hasCoverFile ? 'Cargada' : 'Pendiente'}
-                                </span>
-                              </div>
-                              {coverFileLabel && (
-                                <p className="mt-3 truncate text-xs font-medium text-gray-700">
-                                  Archivo: {coverFileLabel}
-                                </p>
-                              )}
-                            </div>
+                      <label
+                        htmlFor="podcastCoverImage"
+                        onDragOver={(event) => handleDragOverUploadArea(event, 'cover')}
+                        onDragLeave={handleDragLeaveUploadArea}
+                        onDrop={(event) => handleDropUploadArea(event, 'cover')}
+                        className={`block cursor-pointer rounded-2xl border-2 border-dashed p-4 transition ${
+                          dragActiveTarget === 'cover'
+                            ? 'border-primary bg-primary/5'
+                            : hasCoverFile
+                              ? 'border-emerald-300 bg-emerald-50/60'
+                              : 'border-gray-300 bg-white hover:border-primary/50 hover:bg-primary/5'
+                        }`}
+                      >
+                        <input
+                          id="podcastCoverImage"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleCoverImagePick}
+                          className="hidden"
+                        />
+                        <div className="flex items-start gap-3">
+                          <div className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${
+                            hasCoverFile ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'
+                          }`}>
+                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2 1.586-1.586a2 2 0 012.828 0L20 14m-6-10h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
                           </div>
-                        </label>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-gray-900">
+                              {hasCoverFile ? 'Portada lista' : 'Imagen de portada'}
+                            </p>
+                            <p className="mt-1 text-xs leading-relaxed text-gray-600">
+                              {hasCoverFile
+                                ? 'Puedes arrastrar otra imagen o hacer clic para reemplazar la actual.'
+                                : 'Arrastra una imagen aquí o haz clic para seleccionarla desde tu equipo.'}
+                            </p>
+                            <div className="mt-3 flex flex-wrap items-center gap-2">
+                              <span className="inline-flex rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-gray-700">
+                                JPG, PNG, WEBP
+                              </span>
+                              <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                                hasCoverFile
+                                  ? 'border border-emerald-200 bg-emerald-100 text-emerald-700'
+                                  : 'border border-amber-200 bg-amber-50 text-amber-700'
+                              }`}>
+                                {hasCoverFile ? 'Cargada' : 'Opcional'}
+                              </span>
+                            </div>
+                            {coverFileLabel && (
+                              <p className="mt-3 truncate text-xs font-medium text-gray-700">
+                                Archivo: {coverFileLabel}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </label>
 
-                        <label
-                          htmlFor="podcastAudioFile"
-                          onDragOver={(event) => handleDragOverUploadArea(event, 'audio')}
-                          onDragLeave={handleDragLeaveUploadArea}
-                          onDrop={(event) => handleDropUploadArea(event, 'audio')}
-                          className={`block cursor-pointer rounded-2xl border-2 border-dashed p-4 transition ${
-                            dragActiveTarget === 'audio'
-                              ? 'border-primary bg-primary/5'
-                              : hasAudioFile
-                                ? 'border-emerald-300 bg-emerald-50/60'
-                                : 'border-gray-300 bg-white hover:border-primary/50 hover:bg-primary/5'
-                          }`}
-                        >
-                          <input
-                            id="podcastAudioFile"
-                            type="file"
-                            accept="audio/*"
-                            onChange={handleAudioPick}
-                            className="hidden"
-                          />
-                          <div className="flex items-start gap-3">
-                            <div className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${
-                              hasAudioFile ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'
-                            }`}>
-                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-2v13M9 19a2 2 0 11-4 0 2 2 0 014 0zm12-2a2 2 0 11-4 0 2 2 0 014 0z" />
-                              </svg>
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-semibold text-gray-900">
-                                {hasAudioFile ? 'Audio listo' : 'Archivo de audio'}
-                              </p>
-                              <p className="mt-1 text-xs leading-relaxed text-gray-600">
-                                {hasAudioFile
-                                  ? 'Puedes arrastrar otro audio o hacer clic para reemplazar el episodio actual.'
-                                  : 'Arrastra el audio aquí o haz clic para buscarlo. Este será el archivo principal del podcast.'}
-                              </p>
-                              <div className="mt-3 flex flex-wrap items-center gap-2">
-                                <span className="inline-flex rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-gray-700">
-                                  MP3, WAV, M4A
-                                </span>
-                                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                                  hasAudioFile
-                                    ? 'border border-emerald-200 bg-emerald-100 text-emerald-700'
-                                    : 'border border-amber-200 bg-amber-50 text-amber-700'
-                                }`}>
-                                  {hasAudioFile ? 'Cargado' : 'Pendiente'}
-                                </span>
-                              </div>
-                              {audioFileLabel && (
-                                <p className="mt-3 truncate text-xs font-medium text-gray-700">
-                                  Archivo: {audioFileLabel}
-                                </p>
-                              )}
+                      <div className="rounded-2xl border border-gray-200 bg-white p-4">
+                        <label htmlFor="podcastYoutubeUrl" className="mb-1 block text-sm font-medium text-gray-700">
+                          URL de YouTube
+                        </label>
+                        <input
+                          id="podcastYoutubeUrl"
+                          type="url"
+                          value={form.youtubeUrl}
+                          onChange={(event) => handleFormChange('youtubeUrl', event.target.value)}
+                          placeholder="https://www.youtube.com/watch?v=..."
+                          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
+                        />
+                        <p className="mt-2 text-xs leading-relaxed text-gray-600">
+                          Acepta enlaces de YouTube en formato watch, shorts o youtu.be.
+                        </p>
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                            hasYoutubeUrl
+                              ? 'border border-emerald-200 bg-emerald-100 text-emerald-700'
+                              : 'border border-amber-200 bg-amber-50 text-amber-700'
+                          }`}>
+                            {hasYoutubeUrl ? 'Video válido' : 'Pendiente'}
+                          </span>
+                        </div>
+
+                        {youtubeEmbedPreview && (
+                          <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-black">
+                            <div className="relative aspect-video w-full">
+                              <iframe
+                                src={youtubeEmbedPreview}
+                                title="Vista previa del video de YouTube"
+                                className="absolute inset-0 h-full w-full"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerPolicy="strict-origin-when-cross-origin"
+                                allowFullScreen
+                              />
                             </div>
                           </div>
-                        </label>
+                        )}
                       </div>
-
                     </div>
                   </div>
 

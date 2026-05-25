@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Status } from '../API';
 import { getGraphqlClient } from '../lib/amplifySetup';
+import PodcastEpisodeShowcase from '../components/podcast/PodcastEpisodeShowcase';
 import { mapAmplifyPodcastToPublic, type PublicPodcast } from '../lib/podcastMapper';
 import { isWithinPublicationWindow } from '../lib/publicationWindow';
 
@@ -26,6 +27,7 @@ const PODCAST_BY_SLUG = /* GraphQL */ `
         slug
         description
         audioUrl
+        externalPlayerUrl
         coverImageUrl
         publishedAt
         createdAt
@@ -289,132 +291,94 @@ const PodcastDetail = () => {
           Volver a podcast
         </Link>
 
-        <article className="mt-6 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
-          <div className="grid grid-cols-1 lg:grid-cols-12">
-            <div className="relative min-h-[22rem] overflow-hidden lg:col-span-5">
-              {podcast.coverImageUrl ? (
-                <img
-                  src={podcast.coverImageUrl}
-                  alt={podcast.title}
-                  className="h-full w-full object-cover"
-                  loading="eager"
-                />
-              ) : (
-                <div className="flex h-full min-h-[22rem] items-center justify-center bg-gradient-to-br from-secondary-claro/30 to-[#e8d79a]">
-                  <span className="text-sm font-bold uppercase tracking-[0.2em] text-secondary-[bosques-nublados]">
-                    Podcast
-                  </span>
-                </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/85 via-secondary-[bosques-nublados]/15 to-transparent" />
-              <div className="absolute left-5 top-5 inline-flex rounded-full bg-secondary-[amarillo-tierra] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-secondary-[bosques-nublados]">
-                Episodio
-              </div>
-            </div>
+        <div className="mt-6">
+          <PodcastEpisodeShowcase
+            podcast={podcast}
+            badgeLabel="Episodio"
+            headingLevel="h1"
+            formatDate={(value) =>
+              value
+                ? new Date(value).toLocaleDateString('es-CO', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })
+                : ''
+            }
+          />
+        </div>
 
-            <div className="bg-gradient-to-br from-white via-white to-secondary-claro/10 p-6 sm:p-8 lg:col-span-7 lg:p-10">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                Podcast Terrasacha
-              </p>
-              <h1 className="mt-3 text-3xl font-black leading-tight text-secondary-[bosques-nublados] sm:text-4xl">
-                {podcast.title}
-              </h1>
-              <p className="mt-5 text-base leading-relaxed text-secondary-bosques-nublados">
-                {podcast.summary}
-              </p>
+        {relatedSections.length > 0 && (
+          <article className="mt-8 overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
+              <span className="text-secondary-[bosques-nublados]">CONTENIDO</span>{' '}
+              <span className="text-primary">RELACIONADO</span>
+            </h2>
 
-              {podcast.publishedAt && (
-                <div className="mt-6">
-                  <span className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700">
-                    {new Date(podcast.publishedAt).toLocaleDateString('es-CO')}
-                  </span>
-                </div>
-              )}
-
-              <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-secondary-[bosques-nublados]">
-                  Reproductor
-                </h2>
-                <audio className="mt-4 w-full" controls preload="metadata">
-                  <source src={podcast.audioUrl} />
-                  Tu navegador no soporta la reproducción de audio.
-                </audio>
-              </div>
-
-              {relatedSections.length > 0 && (
-                <div className="mt-8 border-t border-gray-100 pt-8">
-                  <h2 className="text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
-                    <span className="text-secondary-[bosques-nublados]">CONTENIDO</span>{' '}
-                    <span className="text-primary">RELACIONADO</span>
-                  </h2>
-
-                  <div className="mt-4 space-y-5">
-                    {relatedSections.map((section) => (
-                      <div key={section.key}>
-                        <div className="mb-3 flex items-center justify-between gap-3">
-                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
-                            {section.title}
-                          </p>
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleScrollRelated(section.key, 'prev')}
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:border-primary hover:text-primary"
-                              aria-label={`Desplazar ${section.title} hacia la izquierda`}
-                            >
-                              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                              </svg>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleScrollRelated(section.key, 'next')}
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:border-primary hover:text-primary"
-                              aria-label={`Desplazar ${section.title} hacia la derecha`}
-                            >
-                              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                        <div
-                          ref={(node) => {
-                            relatedCarouselsRef.current[section.key] = node;
-                          }}
-                          className="scrollbar-hide -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1"
+            <div className="mt-4 space-y-5">
+              {relatedSections.map((section) => (
+                <div key={section.key}>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
+                      {section.title}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleScrollRelated(section.key, 'prev')}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:border-primary hover:text-primary"
+                        aria-label={`Desplazar ${section.title} hacia la izquierda`}
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleScrollRelated(section.key, 'next')}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:border-primary hover:text-primary"
+                        aria-label={`Desplazar ${section.title} hacia la derecha`}
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    ref={(node) => {
+                      relatedCarouselsRef.current[section.key] = node;
+                    }}
+                    className="scrollbar-hide -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1"
+                  >
+                    {section.entries.map((entry) => (
+                      <article
+                        key={entry.id}
+                        className="w-[86%] min-w-[86%] snap-start rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-primary/40 sm:w-[48%] sm:min-w-[48%] lg:w-[37%] lg:min-w-[37%]"
+                      >
+                        <h3 className="text-sm font-bold leading-snug text-secondary-[bosques-nublados]">
+                          {entry.title}
+                        </h3>
+                        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600">
+                          {entry.summary}
+                        </p>
+                        <Link
+                          to={entry.href}
+                          className="mt-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary hover:text-primary-dark"
                         >
-                          {section.entries.map((entry) => (
-                            <article
-                              key={entry.id}
-                              className="w-[86%] min-w-[86%] snap-start rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-primary/40 sm:w-[48%] sm:min-w-[48%] lg:w-[37%] lg:min-w-[37%]"
-                            >
-                              <h3 className="text-sm font-bold leading-snug text-secondary-[bosques-nublados]">
-                                {entry.title}
-                              </h3>
-                              <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600">
-                                {entry.summary}
-                              </p>
-                              <Link
-                                to={entry.href}
-                                className="mt-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary hover:text-primary-dark"
-                              >
-                                Ver publicación
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                              </Link>
-                            </article>
-                          ))}
-                        </div>
-                      </div>
+                          Ver publicación
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </Link>
+                      </article>
                     ))}
                   </div>
                 </div>
-              )}
+              ))}
             </div>
-          </div>
-        </article>
+          </article>
+        )}
       </section>
     </main>
   );

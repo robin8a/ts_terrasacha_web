@@ -1,11 +1,14 @@
 import { stripPresignedQueryFromOurBucketUrl } from './s3PublicUrl';
+import { getYouTubeEmbedUrlFromInput } from './youtubeEmbed';
 
 type PublicPodcast = {
   id: string;
   slug: string;
   title: string;
   summary: string;
-  audioUrl: string;
+  audioUrl?: string;
+  externalPlayerUrl?: string | null;
+  youtubeEmbedUrl?: string | null;
   coverImageUrl?: string;
   publishedAt?: string | null;
   highlight: boolean;
@@ -23,7 +26,11 @@ const toStringArray = (value: unknown): string[] => {
 };
 
 export const mapAmplifyPodcastToPublic = (item: any): PublicPodcast => {
-  const audioUrl = stripPresignedQueryFromOurBucketUrl(item?.audioUrl) ?? String(item?.audioUrl ?? '');
+  const externalPlayerUrl = String(item?.externalPlayerUrl ?? '').trim() || null;
+  const rawAudioUrl = stripPresignedQueryFromOurBucketUrl(item?.audioUrl) ?? String(item?.audioUrl ?? '').trim();
+  const youtubeEmbedUrl =
+    getYouTubeEmbedUrlFromInput(externalPlayerUrl) ?? getYouTubeEmbedUrlFromInput(rawAudioUrl);
+  const audioUrl = youtubeEmbedUrl ? undefined : rawAudioUrl || undefined;
   const coverImageUrl = stripPresignedQueryFromOurBucketUrl(item?.coverImageUrl) ?? undefined;
 
   return {
@@ -32,6 +39,8 @@ export const mapAmplifyPodcastToPublic = (item: any): PublicPodcast => {
     title: String(item?.title ?? ''),
     summary: String(item?.description ?? ''),
     audioUrl,
+    externalPlayerUrl,
+    youtubeEmbedUrl,
     coverImageUrl,
     publishedAt: item?.publishedAt ?? item?.createdAt ?? null,
     highlight: Boolean(item?.highlight),

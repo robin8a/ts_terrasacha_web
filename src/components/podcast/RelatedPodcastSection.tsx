@@ -18,6 +18,7 @@ const LIST_RELATED_PODCASTS = /* GraphQL */ `
         slug
         description
         audioUrl
+        externalPlayerUrl
         coverImageUrl
         relatedNewsIds
         relatedAnnouncementIds

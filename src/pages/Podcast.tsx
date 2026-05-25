@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Status } from '../API';
 import { getGraphqlClient } from '../lib/amplifySetup';
+import PodcastEpisodeShowcase from '../components/podcast/PodcastEpisodeShowcase';
 import { mapAmplifyPodcastToPublic, type PublicPodcast } from '../lib/podcastMapper';
 import { isWithinPublicationWindow } from '../lib/publicationWindow';
 
@@ -14,6 +15,7 @@ const LIST_PUBLIC_PODCASTS = /* GraphQL */ `
         slug
         description
         audioUrl
+        externalPlayerUrl
         coverImageUrl
         publishedAt
         createdAt
@@ -208,8 +210,8 @@ const Podcast = () => {
         <section className="mt-10 sm:mt-12 lg:mt-14">
           <div className="mb-6 sm:mb-8">
             <h2 className="text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
-              <span className="text-secondary-[bosques-nublados]">REPRODUCTOR</span>{' '}
-              <span className="text-primary">PRINCIPAL</span>
+              <span className="text-secondary-[bosques-nublados]">EPISODIO</span>{' '}
+              <span className="text-primary">EN CURSO</span>
             </h2>
           </div>
 
@@ -218,64 +220,23 @@ const Podcast = () => {
               <p className="text-sm text-gray-600">Cargando episodios...</p>
             </div>
           ) : activePodcast ? (
-            <article className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
-              <div className="grid grid-cols-1 lg:grid-cols-12">
-                <div className="relative min-h-[22rem] overflow-hidden lg:col-span-5">
-                  {activePodcast.coverImageUrl ? (
-                    <img
-                      src={activePodcast.coverImageUrl}
-                      alt={activePodcast.title}
-                      className="h-full w-full object-cover"
-                      loading="eager"
-                    />
-                  ) : (
-                    <div className="flex h-full min-h-[22rem] items-center justify-center bg-gradient-to-br from-secondary-claro/30 to-[#e8d79a]">
-                      <span className="text-sm font-semibold uppercase tracking-[0.2em] text-secondary-[bosques-nublados]">
-                        Podcast
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/80 via-secondary-[bosques-nublados]/20 to-transparent" />
-                  <div className="absolute left-5 top-5 inline-flex rounded-full bg-secondary-[amarillo-tierra] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-secondary-[bosques-nublados]">
-                    En reproducción
-                  </div>
-                </div>
-
-                <div className="flex flex-col justify-center bg-gradient-to-br from-white via-white to-secondary-claro/10 p-6 sm:p-8 lg:col-span-7 lg:p-10">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                    Podcast Terrasacha
-                  </p>
-                  <h3 className="mt-4 text-2xl font-black leading-tight text-secondary-[bosques-nublados] sm:text-3xl">
-                    {activePodcast.title}
-                  </h3>
-                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
-                    Publicado: {formatPublishedDate(activePodcast.publishedAt)}
-                  </p>
-                  <p className="mt-5 text-sm leading-relaxed text-gray-600 sm:text-base">
-                    {activePodcast.summary}
-                  </p>
-
-                  <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-4">
-                    <audio className="w-full" controls preload="metadata">
-                      <source src={activePodcast.audioUrl} />
-                      Tu navegador no soporta la reproducción de audio.
-                    </audio>
-                  </div>
-
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    {featuredPodcast && activePodcast.id !== featuredPodcast.id && (
-                      <button
-                        type="button"
-                        onClick={() => setActivePodcastId(featuredPodcast.id)}
-                        className="inline-flex items-center gap-2 rounded-full border border-primary px-5 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
-                      >
-                        Volver al destacado
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </article>
+            <PodcastEpisodeShowcase
+              podcast={activePodcast}
+              badgeLabel="En reproducción"
+              headingLevel="h3"
+              formatDate={formatPublishedDate}
+              actions={
+                featuredPodcast && activePodcast.id !== featuredPodcast.id ? (
+                  <button
+                    type="button"
+                    onClick={() => setActivePodcastId(featuredPodcast.id)}
+                    className="inline-flex items-center gap-2 rounded-full border border-primary px-5 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+                  >
+                    Volver al destacado
+                  </button>
+                ) : null
+              }
+            />
           ) : (
             <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
               <p className="text-sm text-gray-600">No hay episodios de podcast publicados todavía.</p>
