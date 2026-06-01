@@ -18,35 +18,28 @@ const Footer = () => {
   return (
     <footer className="bg-[#e8d79a] text-[#44482c] font-primary">
       {/* Main Footer Content */}
-      <div className="container mx-auto px-4 lg:px-8 py-12 sm:py-16 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+      <div className="container mx-auto px-4 lg:px-8 py-8 sm:py-10">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,0.75fr)_minmax(0,0.9fr)_minmax(0,1fr)] lg:gap-x-6 lg:gap-y-6">
           {/* Brand Column */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="min-w-0">
+            <div className="mb-2">
               <img
                 src="/assets/icons/logo.svg"
                 alt="Terrasacha"
-                className="h-10 w-auto"
+                className="h-9 w-auto"
               />
-              <span className="text-xl font-bold text-[#44482c]">Terrasacha</span>
             </div>
-            <p className="text-[#44482c] text-lg sm:text-xl font-slogan tracking-slogan mb-4 uppercase">
-              PIONEROS DEL MAÑANA
-            </p>
-            <p className="text-[#44482c]/80 text-sm leading-relaxed mb-6">
+            <p className="mt-2 text-sm leading-snug text-[#44482c]/80 lg:whitespace-nowrap">
               Innovación, Conciencia, Transformación, Educación, Responsabilidad
             </p>
-            <div className="flex items-center gap-3">
-              <SocialLinks className="text-[#44482c]" iconSize="w-5 h-5" />
-            </div>
           </div>
 
           {/* Navigation Column */}
-          <div>
-            <h3 className="text-base font-bold mb-4 text-[#44482c] uppercase tracking-wide">
+          <div className="lg:pl-6 xl:pl-10">
+            <h3 className="mb-2.5 text-sm font-bold uppercase tracking-wide text-[#44482c]">
               Navegación
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-1.5">
               {navLinks.map((link) => (
                 <li key={link.path}>
                   <Link
@@ -63,10 +56,10 @@ const Footer = () => {
 
           {/* Multimedia Column */}
           <div>
-            <h3 className="text-base font-bold mb-4 text-[#44482c] uppercase tracking-wide">
+            <h3 className="mb-2.5 text-sm font-bold uppercase tracking-wide text-[#44482c]">
               Multimedia
             </h3>
-            <ul className="space-y-3 mb-6">
+            <ul className="space-y-1.5">
               {multimediaLinks.map((link) => (
                 <li key={link.path}>
                   <Link
@@ -79,85 +72,61 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-            <a
-              href="https://marketplace.terrasacha.com/"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-block"
-            >
-              <button className="bg-[#44482c] text-[#e8d79a] px-4 py-2 rounded-full hover:bg-[#44482c]/90 transition-colors text-sm font-semibold">
-                Proyectos
-              </button>
-            </a>
           </div>
 
           {/* Contact Column */}
           <div>
-            <h3 className="text-base font-bold mb-4 text-[#44482c] uppercase tracking-wide">
-              Contacto
+            <h3 className="mb-2.5 text-sm font-bold uppercase tracking-wide text-[#44482c]">
+              Conectate
             </h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <div className="flex-shrink-0 mt-1">
-                  <svg className="w-5 h-5 text-[#44482c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <ul className="space-y-2.5">
+              <li className="flex items-start gap-2.5">
+                <div className="mt-0.5 flex-shrink-0">
+                  <svg className="h-4 w-4 text-[#44482c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <div>
-                  <p className="text-[#44482c]/70 text-sm font-medium mb-1">Email</p>
+                <div className="min-w-0">
+                  <p className="mb-0.5 text-xs font-medium uppercase text-[#44482c]/70">Email</p>
                   <a
                     href="mailto:hola@terrasacha.com"
-                    className="text-[#44482c] hover:text-[#44482c]/80 transition-colors text-sm"
+                    className="break-all text-sm text-[#44482c] transition-colors hover:text-[#44482c]/80"
                   >
                     hola@terrasacha.com
                   </a>
                 </div>
               </li>
-              <li className="flex items-start gap-3">
-                <div className="flex-shrink-0 mt-1">
-                  <svg className="w-5 h-5 text-[#44482c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-[#44482c]/70 text-sm font-medium mb-1">Telegram</p>
-                  <a
-                    href="https://t.me/TerrasachaBot"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[#44482c] hover:text-[#44482c]/80 transition-colors text-sm"
-                  >
-                    @TerrasachaBot
-                  </a>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="flex-shrink-0 mt-1">
-                  <svg className="w-5 h-5 text-[#44482c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <li className="flex items-start gap-2.5">
+                <div className="mt-0.5 flex-shrink-0">
+                  <svg className="h-4 w-4 text-[#44482c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[#44482c]/70 text-sm font-medium mb-1">Website</p>
+                  <p className="mb-0.5 text-xs font-medium uppercase text-[#44482c]/70">Website</p>
                   <a
                     href="https://terrasacha.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#44482c] hover:text-[#44482c]/80 transition-colors text-sm"
+                    className="text-sm text-[#44482c] transition-colors hover:text-[#44482c]/80"
                   >
                     terrasacha.com
                   </a>
                 </div>
               </li>
             </ul>
+            <div className="mt-3 border-t border-[#44482c]/15 pt-3">
+              <p className="mb-2 text-xs font-medium uppercase text-[#44482c]/70">Redes sociales</p>
+              <SocialLinks className="text-[#44482c]" iconSize="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom Bar */}
       <div className="border-t border-[#44482c]/20 bg-[#44482c]/10">
-        <div className="container mx-auto px-4 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="container mx-auto px-4 py-4 lg:px-8">
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 md:flex-row">
             <p className="text-[#44482c]/70 text-sm text-center md:text-left">
               © {new Date().getFullYear()} Terrasacha. Todos los derechos reservados.
             </p>

@@ -135,6 +135,29 @@ const Agenda = () => {
     });
   }, [events, includePast, modalityFilter, search, typeFilter]);
 
+  const upcomingCount = useMemo(() => {
+    const now = Date.now();
+    return events.filter((ev) => new Date(ev.startDateTime).getTime() >= now).length;
+  }, [events]);
+
+  const featuredEvent = useMemo(() => {
+    if (filteredEvents.length === 0) return null;
+
+    const highlighted = filteredEvents.find((ev) => ev.highlight);
+    if (highlighted) return highlighted;
+
+    const now = Date.now();
+    const upcoming = filteredEvents.filter(
+      (ev) => new Date(ev.startDateTime).getTime() >= now,
+    );
+    return upcoming[0] ?? filteredEvents[0];
+  }, [filteredEvents]);
+
+  const gridEvents = useMemo(() => {
+    if (!featuredEvent) return filteredEvents;
+    return filteredEvents.filter((ev) => ev.id !== featuredEvent.id);
+  }, [filteredEvents, featuredEvent]);
+
   const handleCloseModal = useCallback(() => setSelectedEvent(null), []);
 
   useEffect(() => {
@@ -147,32 +170,183 @@ const Agenda = () => {
   }, [selectedEvent]);
 
   return (
-    <main className="font-primary bg-gray-50 min-h-screen">
-      <section className="relative w-full flex items-center justify-center overflow-hidden h-[320px] sm:h-[360px] md:h-[400px] bg-secondary-bosquesNublados">
-        <div className="absolute inset-0">
-          <img
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBfQ0n8xHH295DYRfaoDi9YuisSdVJz3OcK25N9XZlrEenPdsNp0bIIJb5drdB4wY9oj_sZL5zqXh2K4gFNHokA8aGDetHJ5mH1srrUogHiqmgCgAehxuDehGRMlXYwM_AlTbD2oua9zgueMUIBLzHlWeNzbClnUrOZMJUMSxU3lS_I247_cIrZiHOT4dyyIj2z77l6nAbJNzpIwSYck1F7xZHwT5kYbqTXgpsWNmlUOLDOhtkC6l_LxGw4ZQHS-_Qcs1caMUU4fQ"
-            alt="Bosque y naturaleza"
-            className="absolute inset-0 w-full h-full object-cover opacity-80"
-            loading="eager"
-          />
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
-        <div className="relative z-10 text-center px-4">
-          <h1 className="font-slogan uppercase mb-3 sm:mb-4 text-white drop-shadow-2xl text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] tracking-slogan">
-            AGENDA
-          </h1>
-          <p className="text-sm sm:text-base md:text-lg font-light text-white max-w-2xl mx-auto drop-shadow-lg">
-            Eventos de innovación, conciencia, transformación y educación del proyecto Terrasacha.
-          </p>
-        </div>
-      </section>
+    <main className="font-primary min-h-screen bg-gray-50 py-16">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl border border-[#44482c]/15 bg-[#e8d79a] px-6 py-10 shadow-sm sm:px-8 sm:py-12 lg:px-12 lg:py-16">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(68,72,44,0.16),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(132,155,80,0.2),transparent_22%)]" />
+          <div className="absolute inset-0 opacity-10 [background-image:linear-gradient(rgba(68,72,44,0.18)_1px,transparent_1px),linear-gradient(90deg,rgba(68,72,44,0.12)_1px,transparent_1px)] [background-size:32px_32px]" />
+          <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/20 blur-3xl" />
+          <div className="absolute -bottom-20 left-0 h-64 w-64 rounded-full bg-secondary-claro/25 blur-3xl" />
 
-      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+          <div className="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#44482c]/15 bg-[#44482c] px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-[#e8d79a]">
+                Eventos Terrasacha
+              </div>
+
+              <h1 className="mt-5 text-4xl font-black uppercase tracking-tight text-[#44482c] sm:text-5xl lg:text-6xl">
+                Agenda
+              </h1>
+
+              <p className="mt-5 max-w-3xl text-sm leading-relaxed text-[#44482c]/90 sm:text-base md:text-lg">
+                Eventos de innovación, conciencia, transformación y educación del proyecto
+                Terrasacha.
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-[#44482c]">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#44482c]/10 bg-white/35 px-4 py-2">
+                  <span className="h-2 w-2 rounded-full bg-secondary-[amarillo-tierra]" />
+                  Innovación y educación
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#44482c]/10 bg-white/35 px-4 py-2">
+                  <span className="h-2 w-2 rounded-full bg-secondary-claro" />
+                  Presencial y en línea
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-4">
+              <div className="rounded-2xl border border-[#44482c]/12 bg-white/35 p-5 backdrop-blur-sm sm:p-6">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#44482c]">
+                  Panorama
+                </p>
+                <div className="mt-5 grid grid-cols-2 gap-4">
+                  <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
+                    <p className="text-2xl font-black text-[#e8d79a]">{events.length}</p>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
+                      Eventos
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
+                    <p className="text-2xl font-black text-[#e8d79a]">{upcomingCount}</p>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
+                      Próximos
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-2xl border border-[#44482c]/10 bg-white/45 p-4">
+                  <p className="text-sm leading-relaxed text-[#44482c]/90">
+                    Consulta el evento destacado y explora el resto de actividades con filtros por
+                    tipo, modalidad o palabra clave.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section className="mt-10 sm:mt-12 lg:mt-14">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-sm font-bold uppercase tracking-wide sm:text-base md:text-lg">
+              <span className="text-secondary-[bosques-nublados]">EVENTO</span>{' '}
+              <span className="text-primary">DESTACADO</span>
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-gray-600 sm:text-base">
+              Actividad priorizada para facilitar el acceso a fechas, modalidad y detalle completo
+              del evento.
+            </p>
+          </div>
+
+          {isLoading ? (
+            <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
+              <p className="text-sm text-gray-600">Cargando agenda…</p>
+            </div>
+          ) : featuredEvent ? (
+            <article className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+              <div className="group grid grid-cols-1 lg:grid-cols-12">
+                <div className="relative min-h-[24rem] h-80 overflow-hidden lg:col-span-7 lg:h-full">
+                  {featuredEvent.coverImageUrl ? (
+                    <img
+                      src={featuredEvent.coverImageUrl}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="eager"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary-pradera/25 to-secondary-claro/40 text-secondary-[bosques-nublados]/80">
+                      Terrasacha
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/85 via-secondary-[bosques-nublados]/30 to-transparent" />
+                  <div className="absolute left-5 top-5 inline-flex rounded-full bg-secondary-[amarillo-tierra] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-secondary-[bosques-nublados]">
+                    Evento destacado
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-center bg-gradient-to-br from-white via-white to-secondary-claro/10 p-6 sm:p-8 lg:col-span-5 lg:p-10">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary sm:text-sm">
+                    {getEventTypeLabelEs(featuredEvent.eventType)}
+                  </p>
+                  <h3 className="mt-4 text-2xl font-black leading-tight text-secondary-[bosques-nublados] sm:text-3xl lg:text-[2rem]">
+                    {featuredEvent.title}
+                  </h3>
+                  <p className="mt-5 text-sm leading-relaxed text-gray-600 sm:text-base">
+                    {truncatePlainText(featuredEvent.description, 220)}
+                  </p>
+                  <div className="mt-6 rounded-2xl border border-gray-100 bg-gray-50/80 p-4">
+                    <p className="text-sm font-medium text-gray-800">
+                      {formatEventDateRangeEs(
+                        featuredEvent.startDateTime,
+                        featuredEvent.endDateTime,
+                        featuredEvent.timezone,
+                      )}
+                    </p>
+                    {featuredEvent.location ? (
+                      <p className="mt-2 text-sm text-gray-700">
+                        <span className="font-semibold">Lugar:</span> {featuredEvent.location}
+                        {featuredEvent.isOnline ? (
+                          <span className="ml-1 text-primary">· En línea</span>
+                        ) : null}
+                      </p>
+                    ) : featuredEvent.isOnline ? (
+                      <p className="mt-2 text-sm font-medium text-primary">Modalidad en línea</p>
+                    ) : null}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedEvent(featuredEvent)}
+                    className="mt-8 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-primary transition-colors hover:text-primary-dark"
+                  >
+                    Ver detalles del evento
+                    <svg
+                      className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          ) : !loadError ? (
+            <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
+              <p className="text-sm text-gray-600">
+                {events.length === 0
+                  ? 'No hay eventos publicados todavía.'
+                  : 'No hay eventos con estos filtros para mostrar un destacado.'}
+              </p>
+            </div>
+          ) : null}
+        </section>
+
+        <section className="mt-10 sm:mt-12 lg:mt-14">
           <div className="mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-secondary-bosquesNublados">Próximas actividades</h2>
-            <p className="mt-1 text-sm text-gray-600">Filtra por tipo, modalidad o palabra clave.</p>
+            <h2 className="text-sm font-bold uppercase tracking-wide sm:text-base md:text-lg">
+              <span className="text-secondary-[bosques-nublados]">MÁS</span>{' '}
+              <span className="text-primary">EVENTOS</span>
+            </h2>
+            <p className="mt-2 text-sm text-gray-600 sm:text-base">
+              Filtra por tipo, modalidad o palabra clave.
+            </p>
           </div>
 
           <div className="mb-8 flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
@@ -232,9 +406,7 @@ const Agenda = () => {
             </div>
           ) : null}
 
-          {isLoading ? (
-            <p className="text-center text-gray-600 py-16">Cargando agenda…</p>
-          ) : filteredEvents.length === 0 ? (
+          {!isLoading && filteredEvents.length === 0 ? (
             <div className="rounded-3xl border border-secondary-claro/40 bg-white p-10 text-center shadow-lg">
               {events.length === 0 ? (
                 <>
@@ -255,9 +427,9 @@ const Agenda = () => {
                 </>
               )}
             </div>
-          ) : (
+          ) : !isLoading ? (
             <ul className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {filteredEvents.map((ev) => (
+              {gridEvents.map((ev) => (
                 <li key={ev.id}>
                   <article
                     className={`flex h-full flex-col overflow-hidden rounded-2xl border border-secondary-claro/30 shadow-md transition hover:shadow-lg ${getEventCardAccentClasses(ev.eventType)}`}
@@ -305,8 +477,8 @@ const Agenda = () => {
                 </li>
               ))}
             </ul>
-          )}
-        </div>
+          ) : null}
+        </section>
       </section>
 
       {selectedEvent ? (

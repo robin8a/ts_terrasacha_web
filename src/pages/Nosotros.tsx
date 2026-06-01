@@ -53,6 +53,7 @@ const Nosotros = () => {
     { src: '/Universidad%20cooperativa.jpeg', alt: 'Universidad Cooperativa de Colombia' },
     { src: '/imprende.jpeg', alt: 'Corporación INNprende' },
     { src: '/Meta.jpeg', alt: 'Gobernación del Meta' },
+    { src: '/aracuca.png', alt: 'Gobernación de Arauca' },
     { src: '/sistema%20general%20de%20regalias.jpeg', alt: 'Sistema General de Regalías' },
     { src: '/tame.jpeg', alt: 'Municipio de Tame' },
     { src: '/lopez.jpeg', alt: 'Municipio de Puerto López' },
@@ -84,7 +85,7 @@ const Nosotros = () => {
             NOSOTROS
           </h1>
           <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto font-light font-primary">
-            Innovación, Conciencia, Transformación, Educación, Responsabilidad
+            Ciencia y Naturaleza en perfecta armonía
           </p>
         </div>
       </section>
@@ -202,10 +203,7 @@ const Nosotros = () => {
       <section className="bg-gradient-to-b from-white via-secondary-claro/10 to-[#f7f8f2] pb-12 sm:pb-14 md:pb-16 lg:pb-20">
         <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
           <div className="text-center mb-10 sm:mb-12">
-            <p className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#e8d79a]/40 text-primary text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em]">
-              Pioneros del Mañana
-            </p>
-            <h2 className="text-3xl sm:text-4xl md:text-[46px] font-bold text-secondary-[bosques-nublados] mt-4 font-primary uppercase tracking-wide">
+            <h2 className="text-3xl sm:text-4xl md:text-[46px] font-bold text-secondary-[bosques-nublados] font-primary uppercase tracking-wide">
               Actores Involucrados
             </h2>
           </div>

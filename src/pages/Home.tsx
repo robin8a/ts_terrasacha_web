@@ -33,13 +33,6 @@ const Home = () => {
 
               {/* Texto mejorado */}
               <div className="w-full md:w-1/2">
-                {/* Badge */}
-                <div className="mb-4">
-                  <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold border border-primary/20">
-                    Sobre el Proyecto
-                  </span>
-                </div>
-                
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 uppercase tracking-tight">
                   <span className="text-secondary-[bosques-nublados]">Quiénes</span>{' '}
                   <span className="text-primary">Somos</span>

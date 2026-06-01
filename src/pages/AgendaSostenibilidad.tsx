@@ -95,16 +95,58 @@ const AgendaSostenibilidad = () => {
   };
 
   return (
-    <main className="font-primary bg-gray-50">
-      {/* Hero Section */}
-      <section className="py-10 sm:py-12 md:py-16 text-center">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-secondary-[bosques-nublados] uppercase tracking-wide mb-4">
-            Agenda de Sostenibilidad
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-4xl mx-auto">
-            Innovación, Conciencia, Transformación, Educación, Responsabilidad
-          </p>
+    <main className="font-primary min-h-screen bg-gray-50 py-16">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl border border-[#44482c]/15 bg-[#f5f2e7] px-6 py-10 shadow-sm sm:px-8 sm:py-12 lg:px-12 lg:py-16">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(177,193,129,0.28),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(68,72,44,0.16),transparent_22%)]" />
+          <div className="absolute inset-0 opacity-10 [background-image:linear-gradient(rgba(68,72,44,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(68,72,44,0.1)_1px,transparent_1px)] [background-size:32px_32px]" />
+
+          <div className="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#44482c]/15 bg-[#44482c] px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-[#e8d79a]">
+                Sostenibilidad Terrasacha
+              </div>
+
+              <h1 className="mt-5 text-4xl font-black tracking-tight text-[#44482c] sm:text-5xl lg:text-6xl">
+                Agenda de Sostenibilidad
+              </h1>
+
+              <p className="mt-5 max-w-3xl text-sm leading-relaxed text-[#44482c]/90 sm:text-base md:text-lg">
+                Ciencia y Naturaleza en perfecta armonía. Iniciativas y proyectos enfocados en la
+                protección ambiental, reforestación y desarrollo sostenible en los Llanos Orientales.
+              </p>
+            </div>
+
+            <div className="lg:col-span-4">
+              <div className="rounded-2xl border border-[#44482c]/12 bg-white/60 p-5 backdrop-blur-sm sm:p-6">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#44482c]">
+                  Panorama
+                </p>
+
+                <div className="mt-5 grid grid-cols-2 gap-4">
+                  <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
+                    <p className="text-2xl font-black text-[#e8d79a]">{iniciativas.length}</p>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
+                      Iniciativas
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
+                    <p className="text-2xl font-black text-[#e8d79a]">{objetivos.length}</p>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
+                      Objetivos
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-2xl border border-[#44482c]/10 bg-white/75 p-4">
+                  <p className="text-sm leading-relaxed text-[#44482c]/90">
+                    Acciones concretas para la protección de cuencas, suelos y ecosistemas, con
+                    tecnologías emergentes y biotecnología al servicio del territorio.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

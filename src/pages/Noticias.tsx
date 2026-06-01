@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Noticia } from '../data/noticias';
 import { listNews } from '../graphql/queries';
@@ -8,19 +8,6 @@ import { isWithinPublicationWindow } from '../lib/publicationWindow';
 import { extractYoutubeVideoId } from '../lib/youtube';
 import { Status } from '../API';
 
-type FeaturedMediaItem =
-  | {
-      kind: 'youtube';
-      embedUrl: string;
-      thumbnailUrl: string;
-      title: string;
-    }
-  | {
-      kind: 'image';
-      src: string;
-      title: string;
-    };
-
 const EMOJI_REGEX = /\p{Extended_Pictographic}/gu;
 
 const sanitizeNewsText = (value?: string) => {
@@ -28,15 +15,21 @@ const sanitizeNewsText = (value?: string) => {
   return value.replace(EMOJI_REGEX, '').replace(/\s{2,}/g, ' ').trim();
 };
 
+const getFeaturedCoverImage = (noticia: Noticia): string | undefined => {
+  if (noticia.image) return noticia.image;
+
+  const youtubeVideoId = extractYoutubeVideoId(noticia.youtubeEmbedUrl);
+  if (youtubeVideoId) {
+    return `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg`;
+  }
+
+  return noticia.gallery?.[0];
+};
+
 const Noticias = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
-  const [activeFeaturedMediaIndex, setActiveFeaturedMediaIndex] = useState(0);
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const formatDate = (dateString: string) => {
-    return dateString;
-  };
 
   useEffect(() => {
     let cancelled = false;
@@ -65,7 +58,6 @@ const Noticias = () => {
           nextToken = res?.data?.listNews?.nextToken ?? null;
         } while (nextToken);
 
-        // Ordenamos para que la destacada sea la más reciente.
         const visibleItems = allItems.filter((item) => isWithinPublicationWindow(item));
 
         const sorted = visibleItems.sort((a, b) => {
@@ -101,45 +93,11 @@ const Noticias = () => {
   }, []);
 
   const featured = noticias[0];
-  const sidebarItems = noticias.slice(1, 4);
-  const remaining = noticias.slice(1); // Para \"Todas las noticias\" mostramos todas menos la destacada
-  const featuredMedia = useMemo<FeaturedMediaItem[]>(() => {
-    if (!featured) {
-      return [];
-    }
-
-    const images = [
-      ...(featured.image ? [featured.image] : []),
-      ...(featured.gallery ?? []),
-    ].filter((image, index, current) => current.indexOf(image) === index);
-
-    const media: FeaturedMediaItem[] = [];
-    const youtubeVideoId = extractYoutubeVideoId(featured.youtubeEmbedUrl);
-
-    if (featured.youtubeEmbedUrl && youtubeVideoId) {
-      media.push({
-        kind: 'youtube',
-        embedUrl: featured.youtubeEmbedUrl,
-        thumbnailUrl: `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg`,
-        title: featured.title,
-      });
-    }
-
-    images.forEach((image) => {
-      media.push({
-        kind: 'image',
-        src: image,
-        title: featured.title,
-      });
-    });
-
-    return media;
-  }, [featured]);
-  const hasMultipleFeaturedMedia = featuredMedia.length > 1;
-
-  useEffect(() => {
-    setActiveFeaturedMediaIndex(0);
-  }, [featured?.id]);
+  const remaining = noticias.slice(1);
+  const featuredCoverImage = featured ? getFeaturedCoverImage(featured) : undefined;
+  const featuredPreview = featured
+    ? sanitizeNewsText(featured.content?.[0] ?? featured.excerpt)
+    : '';
 
   const handleCarouselNavigation = (direction: 'previous' | 'next') => {
     if (!carouselRef.current) {
@@ -155,327 +113,285 @@ const Noticias = () => {
     });
   };
 
-  const handlePreviousFeaturedMedia = () => {
-    if (!hasMultipleFeaturedMedia) {
-      return;
-    }
-
-    setActiveFeaturedMediaIndex((currentIndex) => (
-      currentIndex === 0 ? featuredMedia.length - 1 : currentIndex - 1
-    ));
-  };
-
-  const handleNextFeaturedMedia = () => {
-    if (!hasMultipleFeaturedMedia) {
-      return;
-    }
-
-    setActiveFeaturedMediaIndex((currentIndex) => (
-      currentIndex === featuredMedia.length - 1 ? 0 : currentIndex + 1
-    ));
-  };
-
-  const handleSelectFeaturedMedia = (selectedIndex: number) => {
-    setActiveFeaturedMediaIndex(selectedIndex);
-  };
-
   return (
-    <main className="font-primary bg-gray-50 min-h-screen">
-      {isLoading && noticias.length === 0 ? (
-        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
-          <p className="text-sm text-gray-600">Cargando noticias...</p>
-        </section>
-      ) : (
-      <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
-        {/* Título de página */}
-        <h1 className="text-4xl sm:text-5xl lg:text-5xl font-black mb-10 sm:mb-12 tracking-tight">
-          <span className="text-primary">NOTICIAS</span>
-        </h1>
+    <main className="font-primary min-h-screen bg-gray-50 py-16">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl border border-[#44482c]/15 bg-[#e8d79a] px-6 py-10 shadow-sm sm:px-8 sm:py-12 lg:px-12 lg:py-16">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(68,72,44,0.16),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(132,155,80,0.2),transparent_22%)]" />
+          <div className="absolute inset-0 opacity-10 [background-image:linear-gradient(rgba(68,72,44,0.18)_1px,transparent_1px),linear-gradient(90deg,rgba(68,72,44,0.12)_1px,transparent_1px)] [background-size:32px_32px]" />
+          <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/20 blur-3xl" />
+          <div className="absolute -bottom-20 left-0 h-64 w-64 rounded-full bg-secondary-claro/25 blur-3xl" />
 
-        {/* Sección superior: destacada + sidebar */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-12 lg:mb-16">
-          {/* Noticia destacada */}
-          {featured && (
-            <article
-              id={`noticia-${featured.id}`}
-              className="lg:col-span-8 bg-white rounded-xl sm:rounded-2xl shadow-sm overflow-hidden border border-gray-100 h-full"
-            >
-              {featuredMedia.length > 0 && (
-                <div className="border-b border-gray-100 bg-gray-950/5">
-                  <div className="relative h-72 sm:h-80 lg:h-[26rem] overflow-hidden">
-                    {featuredMedia[activeFeaturedMediaIndex]?.kind === 'youtube' ? (
-                      <iframe
-                        className="absolute inset-0 h-full w-full"
-                        src={featuredMedia[activeFeaturedMediaIndex].embedUrl}
-                        title={`Video de YouTube de ${featured.title}`}
-                        loading="eager"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <img
-                        src={featuredMedia[activeFeaturedMediaIndex]?.kind === 'image' ? featuredMedia[activeFeaturedMediaIndex].src : ''}
-                        alt={`${featured.title} - imagen ${activeFeaturedMediaIndex + 1}`}
-                        className="absolute inset-0 h-full w-full object-cover"
-                        loading="eager"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/80 via-secondary-[bosques-nublados]/20 to-transparent" />
-                    {hasMultipleFeaturedMedia && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={handlePreviousFeaturedMedia}
-                          className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-secondary-[bosques-nublados] shadow-md transition-all hover:bg-white"
-                          aria-label="Ver elemento anterior de la noticia principal"
-                        >
-                          <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15 19l-7-7 7-7"
-                            />
-                          </svg>
-                        </button>
+          <div className="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#44482c]/15 bg-[#44482c] px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-[#e8d79a]">
+                Actualidad Terrasacha
+              </div>
 
-                        <button
-                          type="button"
-                          onClick={handleNextFeaturedMedia}
-                          className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-secondary-[bosques-nublados] shadow-md transition-all hover:bg-white"
-                          aria-label="Ver elemento siguiente de la noticia principal"
-                        >
-                          <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </button>
+              <h1 className="mt-5 text-4xl font-black uppercase tracking-tight text-[#44482c] sm:text-5xl lg:text-6xl">
+                Noticias
+              </h1>
 
-                        <div className="absolute bottom-5 right-5 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white">
-                          {activeFeaturedMediaIndex + 1} / {featuredMedia.length}
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {hasMultipleFeaturedMedia && (
-                    <div className="scrollbar-hide flex gap-3 overflow-x-auto px-4 py-4 sm:px-6">
-                      {featuredMedia.map((media, index) => {
-                        const isActive = index === activeFeaturedMediaIndex;
-
-                        return (
-                          <button
-                            key={`${featured.id}-featured-thumbnail-${index}`}
-                            type="button"
-                            onClick={() => handleSelectFeaturedMedia(index)}
-                            className={`relative h-20 w-24 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
-                              isActive
-                                ? 'border-primary shadow-md'
-                                : 'border-transparent opacity-80 hover:opacity-100'
-                            }`}
-                            aria-label={
-                              media.kind === 'youtube'
-                                ? `Ver video ${index + 1} de la noticia principal`
-                                : `Ver imagen ${index + 1} de la noticia principal`
-                            }
-                          >
-                            <img
-                              src={media.kind === 'youtube' ? media.thumbnailUrl : media.src}
-                              alt={`${featured.title} - miniatura ${index + 1}`}
-                              className="h-full w-full object-cover"
-                              loading="lazy"
-                            />
-                            {media.kind === 'youtube' && (
-                              <div className="absolute inset-0 flex items-center justify-center bg-black/35">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-primary shadow-md">
-                                  <svg className="ml-0.5 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z" />
-                                  </svg>
-                                </div>
-                              </div>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {(featured.content || featured.excerpt) && (
-                <div className="bg-gradient-to-b from-white to-gray-50/80 px-5 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8">
-                  <div className="border-b border-gray-100 pb-6">
-                    <p className="text-xs sm:text-sm text-gray-500 font-primary">
-                      {formatDate(featured.date)}
-                    </p>
-                    <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-black text-secondary-[bosques-nublados] leading-tight">
-                      {featured.title}
-                    </h2>
-                    <p className="mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-gray-700 font-primary max-w-4xl">
-                      {sanitizeNewsText(featured.excerpt)}
-                    </p>
-                  </div>
-
-                  {featured.content && (
-                    <div className="mt-6 space-y-4">
-                      {featured.content.map((paragraph, index) => (
-                        <p
-                          key={`${featured.id}-paragraph-${index}`}
-                          className="text-sm sm:text-base text-gray-700 leading-relaxed font-primary"
-                        >
-                          {sanitizeNewsText(paragraph)}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </article>
-          )}
-
-          {/* Sidebar Más Noticias */}
-          <aside className="lg:col-span-4 rounded-xl sm:rounded-2xl border border-gray-100 bg-gradient-to-br from-white via-white to-secondary-claro/10 p-5 sm:p-6 shadow-sm flex flex-col h-full">
-            <div className="mb-5 sm:mb-6 border-b border-gray-100 pb-5">
-              <h3 className="mt-4 text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
-                <span className="text-secondary-[bosques-nublados]">MÁS</span>{' '}
-                <span className="text-secondary-pradera">NOTICIAS</span>
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-gray-600 font-primary">
-                Explora otras publicaciones recientes del proyecto Terrasacha y
-                accede a su detalle completo.
+              <p className="mt-5 max-w-3xl text-sm leading-relaxed text-[#44482c]/90 sm:text-base md:text-lg">
+                Actualidad, ciencia y tecnología aplicada a la conservación. Sigue de cerca las
+                novedades, eventos y artículos que están transformando el futuro sostenible de
+                nuestros ecosistemas.
               </p>
+
+              <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-[#44482c]">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#44482c]/10 bg-white/35 px-4 py-2">
+                  <span className="h-2 w-2 rounded-full bg-secondary-[amarillo-tierra]" />
+                  Ciencia y tecnología aplicada
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#44482c]/10 bg-white/35 px-4 py-2">
+                  <span className="h-2 w-2 rounded-full bg-secondary-claro" />
+                  Consulta por noticia individual
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-4 flex-grow">
-              {sidebarItems.map((noticia) => (
-                <Link
-                  key={noticia.id}
-                  to={`/noticias/${noticia.id}`}
-                  className="group block overflow-hidden rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/20 hover:shadow-md"
-                >
-                  <div className="flex gap-3">
-                    {noticia.image && (
-                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl">
+            <div className="lg:col-span-4">
+              <div className="rounded-2xl border border-[#44482c]/12 bg-white/35 p-5 backdrop-blur-sm sm:p-6">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#44482c]">
+                  Panorama
+                </p>
+                <div className="mt-5 grid grid-cols-2 gap-4">
+                  <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
+                    <p className="text-2xl font-black text-[#e8d79a]">{noticias.length}</p>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
+                      Noticias
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-[#44482c]/10 bg-[#44482c] p-4">
+                    <p className="text-2xl font-black text-[#e8d79a]">{featured ? 1 : 0}</p>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-[#e8d79a]/75">
+                      Destacada
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-2xl border border-[#44482c]/10 bg-white/45 p-4">
+                  <p className="text-sm leading-relaxed text-[#44482c]/90">
+                    La sección prioriza la noticia más reciente y facilita el acceso al detalle
+                    completo de cada publicación.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section className="mt-10 sm:mt-12 lg:mt-14">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-sm font-bold uppercase tracking-wide sm:text-base md:text-lg">
+              <span className="text-secondary-[bosques-nublados]">NOTICIA</span>{' '}
+              <span className="text-primary">DESTACADA</span>
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-gray-600 sm:text-base">
+              Publicación priorizada para facilitar la lectura, fortalecer la jerarquía del
+              contenido y mejorar el acceso a cada noticia del proyecto.
+            </p>
+          </div>
+
+          {isLoading ? (
+            <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
+              <p className="text-sm text-gray-600">Cargando noticias...</p>
+            </div>
+          ) : featured ? (
+            <article className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+              <Link
+                to={`/noticias/${featured.id}`}
+                className="group grid grid-cols-1 lg:grid-cols-12"
+              >
+                <div className="relative min-h-[24rem] h-80 overflow-hidden lg:col-span-7 lg:h-full">
+                  {featuredCoverImage ? (
+                    <img
+                      src={featuredCoverImage}
+                      alt={featured.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="eager"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary-pradera/25 to-secondary-claro/40 text-secondary-[bosques-nublados]/80">
+                      Terrasacha
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/85 via-secondary-[bosques-nublados]/30 to-transparent" />
+                  <div className="absolute left-5 top-5 inline-flex rounded-full bg-secondary-[amarillo-tierra] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-secondary-[bosques-nublados]">
+                    Noticia destacada
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-center bg-gradient-to-br from-white via-white to-secondary-claro/10 p-6 sm:p-8 lg:col-span-5 lg:p-10">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary sm:text-sm">
+                    {featured.category ?? 'Noticias'}
+                  </p>
+                  {featured.date ? (
+                    <p className="mt-2 text-xs text-gray-500 sm:text-sm">{featured.date}</p>
+                  ) : null}
+                  <h3 className="mt-4 text-2xl font-black leading-tight text-secondary-[bosques-nublados] transition-colors group-hover:text-primary sm:text-3xl lg:text-[2rem]">
+                    {featured.title}
+                  </h3>
+                  <p className="mt-5 text-sm leading-relaxed text-gray-600 sm:text-base">
+                    {sanitizeNewsText(featured.excerpt)}
+                  </p>
+                  {featuredPreview ? (
+                    <div className="mt-6 rounded-2xl border border-gray-100 bg-gray-50/80 p-4">
+                      <p className="text-sm leading-relaxed text-gray-700 line-clamp-4">
+                        {featuredPreview}
+                      </p>
+                    </div>
+                  ) : null}
+
+                  <div className="mt-8 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-primary">
+                    Leer noticia
+                    <svg
+                      className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+            </article>
+          ) : (
+            <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
+              <p className="text-sm text-gray-600">No hay noticias publicadas todavía.</p>
+            </div>
+          )}
+
+          <div className="mt-10 sm:mt-12">
+            <div className="mb-5 flex flex-col gap-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wide sm:text-base md:text-lg">
+                  <span className="text-secondary-[bosques-nublados]">MÁS</span>{' '}
+                  <span className="text-primary">NOTICIAS</span>
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-600 sm:text-base">
+                  Navega el resto de publicaciones en un formato más práctico y continuo.
+                </p>
+              </div>
+
+              {remaining.length > 0 ? (
+                <div className="flex items-center gap-3 self-end sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => handleCarouselNavigation('previous')}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-secondary-[bosques-nublados] shadow-sm transition-all hover:border-primary hover:text-primary"
+                    aria-label="Ver noticias anteriores"
+                  >
+                    <svg
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCarouselNavigation('next')}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-secondary-[bosques-nublados] shadow-sm transition-all hover:border-primary hover:text-primary"
+                    aria-label="Ver noticias siguientes"
+                  >
+                    <svg
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
+            {remaining.length > 0 ? (
+              <div
+                ref={carouselRef}
+                className="scrollbar-hide flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-4"
+              >
+                {remaining.map((noticia) => (
+                  <Link
+                    key={noticia.id}
+                    to={`/noticias/${noticia.id}`}
+                    className="group max-w-[360px] min-w-[290px] snap-start overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg sm:min-w-[340px] lg:min-w-[360px]"
+                  >
+                    {noticia.image ? (
+                      <div className="relative h-52 overflow-hidden">
                         <img
                           src={noticia.image}
                           alt={noticia.title}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                           loading="lazy"
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-secondary-[bosques-nublados]/80 via-secondary-[bosques-nublados]/10 to-transparent" />
+                        <div className="absolute left-4 top-4 inline-flex rounded-full bg-secondary-[amarillo-tierra] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-secondary-[bosques-nublados]">
+                          Noticia
+                        </div>
                       </div>
-                    )}
+                    ) : null}
 
-                    <div className="min-w-0 flex-1">
-                      <div className="mb-2 flex flex-wrap items-center gap-2">
-                        <span className="text-[11px] sm:text-xs text-gray-500 font-primary">
-                          {formatDate(noticia.date)}
-                        </span>
-                      </div>
-
-                      <p className="text-sm sm:text-[15px] font-bold text-secondary-[bosques-nublados] leading-snug transition-colors group-hover:text-primary">
+                    <div className="p-5 sm:p-6">
+                      {noticia.date ? (
+                        <p className="text-[11px] text-gray-500 sm:text-xs">{noticia.date}</p>
+                      ) : null}
+                      <h4 className="mt-3 text-lg font-black leading-snug text-secondary-[bosques-nublados] transition-colors group-hover:text-primary sm:text-xl">
                         {noticia.title}
-                      </p>
-
-                      <p className="mt-2 line-clamp-2 text-xs sm:text-sm leading-relaxed text-gray-600 font-primary">
+                      </h4>
+                      <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-gray-600">
                         {noticia.excerpt}
                       </p>
 
-                      <div className="mt-3 inline-flex items-center text-xs font-semibold uppercase tracking-wide text-primary">
-                        Ver detalle
+                      <div className="mt-5 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                        Leer noticia
+                        <svg
+                          className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </aside>
-        </section>
-
-        {/* Sección inferior: todas las noticias */}
-        <section>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-5 sm:mb-6">
-            <h3 className="text-sm sm:text-base md:text-lg font-bold uppercase tracking-wide">
-              <span className="text-secondary-[bosques-nublados]">TODAS LAS</span>{' '}
-              <span className="text-primary">NOTICIAS</span>
-            </h3>
-
-            <div className="flex items-center gap-3 self-end sm:self-auto">
-              <button
-                type="button"
-                onClick={() => handleCarouselNavigation('previous')}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-secondary-[bosques-nublados] shadow-sm transition-all hover:border-primary hover:text-primary"
-                aria-label="Ver noticias anteriores"
-              >
-                <span className="text-[10px] font-bold uppercase tracking-wide">Ant</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleCarouselNavigation('next')}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-secondary-[bosques-nublados] shadow-sm transition-all hover:border-primary hover:text-primary"
-                aria-label="Ver noticias siguientes"
-              >
-                <span className="text-[10px] font-bold uppercase tracking-wide">Sig</span>
-              </button>
-            </div>
-          </div>
-
-          <div
-            ref={carouselRef}
-            className="scrollbar-hide flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4"
-          >
-            {remaining.map((noticia) => (
-              <Link
-                key={noticia.id}
-                id={`noticia-${noticia.id}`}
-                to={`/noticias/${noticia.id}`}
-                className="min-w-[280px] sm:min-w-[320px] lg:min-w-[340px] max-w-[340px] snap-start bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all"
-              >
-                {noticia.image && (
-                  <div className="h-40 sm:h-44 md:h-48 relative">
-                    <img
-                      src={noticia.image}
-                      alt={noticia.title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </div>
-                )}
-                <div className="p-5 flex flex-col flex-grow">
-                  <span className="text-[11px] sm:text-xs text-gray-500 mb-2 block font-primary">
-                    {formatDate(noticia.date)}
-                  </span>
-                  <h4 className="text-base sm:text-lg font-bold text-secondary-[bosques-nublados] mb-2 leading-snug">
-                    {noticia.title}
-                  </h4>
-                  <p className="text-sm text-gray-600 line-clamp-3 mb-1 flex-grow font-primary">
-                    {noticia.excerpt}
-                  </p>
-                </div>
-              </Link>
-            ))}
+                  </Link>
+                ))}
+              </div>
+            ) : !isLoading && featured ? (
+              <p className="text-sm text-gray-600">No hay más noticias por el momento.</p>
+            ) : null}
           </div>
         </section>
       </section>
-      )}
     </main>
   );
 };
 
 export default Noticias;
-

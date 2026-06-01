@@ -12,7 +12,11 @@ const ObjectivesSection = () => {
         >
           <source src="/assets/videos/bg1-1.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary-[bosques-nublados]/55 via-primary/45 to-secondary-pradera/55" />
+        <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-secondary-[bosques-nublados]/80 via-primary/65 to-secondary-pradera/75"
+          aria-hidden="true"
+        />
       </div>
 
       {/* Content */}

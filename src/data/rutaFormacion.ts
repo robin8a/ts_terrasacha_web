@@ -119,7 +119,7 @@ export const rutaFormacionContent: RutaFormacionContent = {
   subtitle: 'De los fundamentos al pilotaje experto, con una ruta progresiva enfocada en capacidades tecnológicas y aplicación territorial.',
   introduction:
     'La Ruta de Formación organiza el aprendizaje por niveles para que participantes de Meta y Arauca puedan recorrer contenidos base, profundizar en gestión y monitoreo, y acceder a una fase avanzada de pilotaje especializado.',
-  valueSectionTitle: '¿Por qué hace parte de esta ruta?',
+  valueSectionTitle: '¿Por qué hacer parte de esta ruta?',
   valueSectionBody:
     'El Proyecto Terrasacha te invita a ser parte de un ciclo de formación único, diseñado para potenciar tus habilidades y abrirte las puertas a nuevas oportunidades en el sector agroforestal. Esta es tu oportunidad de adquirir conocimientos de vanguardia, obtener certificaciones de alto valor y, lo más importante, convertirte en un agente de cambio para tu comunidad.',
   valueHighlights: [

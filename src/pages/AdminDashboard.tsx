@@ -26,7 +26,7 @@ const AdminDashboard = ({ activeTab, children }: AdminDashboardProps) => {
   return (
     <section aria-label="Contenido de administración">
       <div className="rounded-xl bg-white p-6 shadow-sm">
-        {title ? <h1 className="mb-6 text-xl font-semibold text-gray-900">{title}</h1> : null}
+        {title ? <h1 className="mb-6 text-xl font-semibold uppercase text-gray-900">{title}</h1> : null}
         {children}
       </div>
     </section>
