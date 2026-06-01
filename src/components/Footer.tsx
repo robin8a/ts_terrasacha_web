@@ -19,9 +19,9 @@ const Footer = () => {
     <footer className="bg-[#e8d79a] text-[#44482c] font-primary">
       {/* Main Footer Content */}
       <div className="container mx-auto px-4 lg:px-8 py-8 sm:py-10">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,0.75fr)_minmax(0,0.9fr)_minmax(0,1fr)] lg:gap-x-6 lg:gap-y-6">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-10 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-4 lg:gap-x-10 xl:gap-x-14">
           {/* Brand Column */}
-          <div className="min-w-0">
+          <div className="min-w-0 sm:col-span-2 lg:col-span-1 lg:max-w-[17rem]">
             <div className="mb-2">
               <img
                 src="/assets/icons/logo.svg"
@@ -29,14 +29,14 @@ const Footer = () => {
                 className="h-9 w-auto"
               />
             </div>
-            <p className="mt-2 text-sm leading-snug text-[#44482c]/80 lg:whitespace-nowrap">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-[#44482c]/80">
               Innovación, Conciencia, Transformación, Educación, Responsabilidad
             </p>
           </div>
 
           {/* Navigation Column */}
-          <div className="lg:pl-6 xl:pl-10">
-            <h3 className="mb-2.5 text-sm font-bold uppercase tracking-wide text-[#44482c]">
+          <div className="min-w-0">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-[#44482c]">
               Navegación
             </h3>
             <ul className="space-y-1.5">
@@ -55,8 +55,8 @@ const Footer = () => {
           </div>
 
           {/* Multimedia Column */}
-          <div>
-            <h3 className="mb-2.5 text-sm font-bold uppercase tracking-wide text-[#44482c]">
+          <div className="min-w-0">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-[#44482c]">
               Multimedia
             </h3>
             <ul className="space-y-1.5">
@@ -75,8 +75,8 @@ const Footer = () => {
           </div>
 
           {/* Contact Column */}
-          <div>
-            <h3 className="mb-2.5 text-sm font-bold uppercase tracking-wide text-[#44482c]">
+          <div className="min-w-0 sm:col-span-2 lg:col-span-1">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-[#44482c]">
               Conectate
             </h3>
             <ul className="space-y-2.5">
