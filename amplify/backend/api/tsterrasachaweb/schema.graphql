@@ -12,12 +12,15 @@ enum EventType {
   OTHER
 }
 
-# Legal | Social | Investigativo | Tec científico (valores editoriales en español).
+# Contexto editorial de cápsulas (UI: Legal, Social, Investigativo, Tec científico).
+# REGULATORIO y MIXTO se conservan para registros creados antes del renombre.
 enum CapsuleContextType {
   LEGAL
   SOCIAL
   INVESTIGATIVO
   TEC_CIENTIFICO
+  REGULATORIO
+  MIXTO
 }
 
 type News
@@ -174,7 +177,7 @@ type ResearchItem
   updatedAt: AWSDateTime
 }
 
-# Cápsulas informativas: contexto legal, regulatorio e investigativo (sección Actualidad).
+# Cápsulas informativas: contexto legal, social, investigativo y tec. científico (/capsulas-informativas).
 type InformativeCapsule
   @model
   @auth(rules: [
@@ -210,7 +213,7 @@ type InformativeCapsule
   updatedAt: AWSDateTime
 }
 
-# Videoclips educativos cortos (YouTube; sección Actualidad).
+# Videoclips educativos en YouTube con relaciones cruzadas (/videoclips-educativos).
 type EducationalVideoclip
   @model
   @auth(rules: [

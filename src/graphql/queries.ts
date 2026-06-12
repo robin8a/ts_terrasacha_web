@@ -605,7 +605,6 @@ export const getEducationalVideoclip = /* GraphQL */ `query GetEducationalVideoc
     slug
     description
     youtubeUrl
-    tiktokUrl
     topicCategory
     tags
     coverImageUrl
@@ -643,7 +642,6 @@ export const listEducationalVideoclips = /* GraphQL */ `query ListEducationalVid
       slug
       description
       youtubeUrl
-      tiktokUrl
       topicCategory
       tags
       coverImageUrl
@@ -688,7 +686,6 @@ export const educationalVideoclipBySlug = /* GraphQL */ `query EducationalVideoc
       slug
       description
       youtubeUrl
-      tiktokUrl
       topicCategory
       tags
       coverImageUrl

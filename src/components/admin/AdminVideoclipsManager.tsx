@@ -6,14 +6,18 @@ import {
 } from './AdminFileUploadField';
 import { Status } from '../../API';
 import {
-  CREATE_EDUCATIONAL_VIDEOCLIP,
-  DELETE_EDUCATIONAL_VIDEOCLIP,
-  GET_EDUCATIONAL_VIDEOCLIP,
-  LIST_EDUCATIONAL_VIDEOCLIPS,
-  LIST_INFORMATIVE_CAPSULES,
-  UPDATE_EDUCATIONAL_VIDEOCLIP,
-} from '../../graphql/capsulesVideoclips';
-import { listAnnouncements, listNews, listResearchItems } from '../../graphql/queries';
+  createEducationalVideoclip,
+  deleteEducationalVideoclip,
+  updateEducationalVideoclip,
+} from '../../graphql/mutations';
+import {
+  getEducationalVideoclip,
+  listAnnouncements,
+  listEducationalVideoclips,
+  listInformativeCapsules,
+  listNews,
+  listResearchItems,
+} from '../../graphql/queries';
 import {
   formatPublishedDateEs,
   toDateTimeLocalValue,
@@ -196,7 +200,7 @@ const AdminVideoclipsManager = () => {
 
       do {
         const response: any = await client.graphql({
-          query: LIST_EDUCATIONAL_VIDEOCLIPS,
+          query: listEducationalVideoclips,
           variables: {
             filter: titleSearch.trim() ? { title: { contains: titleSearch.trim() } } : undefined,
             limit: 1000,
@@ -226,7 +230,7 @@ const AdminVideoclipsManager = () => {
         fetchAllOptions(listNews, 'listNews'),
         fetchAllOptions(listAnnouncements, 'listAnnouncements'),
         fetchAllOptions(listResearchItems, 'listResearchItems'),
-        fetchAllOptions(LIST_INFORMATIVE_CAPSULES, 'listInformativeCapsules'),
+        fetchAllOptions(listInformativeCapsules, 'listInformativeCapsules'),
         fetchAllOptions(LIST_PODCAST_OPTIONS, 'listPodcastEpisodes'),
       ]);
       setNewsOptions(news);
@@ -255,7 +259,7 @@ const AdminVideoclipsManager = () => {
     try {
       const client = getGraphqlClient();
       const response: any = await client.graphql({
-        query: GET_EDUCATIONAL_VIDEOCLIP,
+        query: getEducationalVideoclip,
         variables: { id },
         authMode: 'userPool',
       });
@@ -355,11 +359,11 @@ const AdminVideoclipsManager = () => {
 
       const client = getGraphqlClient();
       if (modalMode === 'create') {
-        await client.graphql({ query: CREATE_EDUCATIONAL_VIDEOCLIP, variables: { input }, authMode: 'userPool' });
+        await client.graphql({ query: createEducationalVideoclip, variables: { input }, authMode: 'userPool' });
         setSuccessMessage('Videoclip creado.');
       } else if (form.id) {
         await client.graphql({
-          query: UPDATE_EDUCATIONAL_VIDEOCLIP,
+          query: updateEducationalVideoclip,
           variables: { input: { id: form.id, ...input } },
           authMode: 'userPool',
         });
@@ -379,7 +383,7 @@ const AdminVideoclipsManager = () => {
     if (!window.confirm('¿Eliminar este videoclip?')) return;
     try {
       const client = getGraphqlClient();
-      await client.graphql({ query: DELETE_EDUCATIONAL_VIDEOCLIP, variables: { input: { id } }, authMode: 'userPool' });
+      await client.graphql({ query: deleteEducationalVideoclip, variables: { input: { id } }, authMode: 'userPool' });
       setSuccessMessage('Videoclip eliminado.');
       void fetchItems();
     } catch (error) {

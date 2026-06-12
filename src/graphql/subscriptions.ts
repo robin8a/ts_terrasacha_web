@@ -542,7 +542,6 @@ export const onCreateEducationalVideoclip = /* GraphQL */ `subscription OnCreate
     slug
     description
     youtubeUrl
-    tiktokUrl
     topicCategory
     tags
     coverImageUrl
@@ -573,7 +572,6 @@ export const onUpdateEducationalVideoclip = /* GraphQL */ `subscription OnUpdate
     slug
     description
     youtubeUrl
-    tiktokUrl
     topicCategory
     tags
     coverImageUrl
@@ -604,7 +602,6 @@ export const onDeleteEducationalVideoclip = /* GraphQL */ `subscription OnDelete
     slug
     description
     youtubeUrl
-    tiktokUrl
     topicCategory
     tags
     coverImageUrl

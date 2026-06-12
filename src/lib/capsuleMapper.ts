@@ -1,3 +1,4 @@
+import { CapsuleContextType as ApiCapsuleContextType } from '../API';
 import { stripPresignedQueryFromOurBucketUrl } from './s3PublicUrl';
 
 export type CapsuleContextType = 'Legal' | 'Social' | 'Investigativo' | 'Tec científico';
@@ -29,15 +30,15 @@ const API_CONTEXT_TO_PUBLIC: Record<string, CapsuleContextType> = {
   MIXTO: 'Tec científico',
 };
 
-const PUBLIC_CONTEXT_TO_API: Record<CapsuleContextType, string> = {
-  Legal: 'LEGAL',
-  Social: 'SOCIAL',
-  Investigativo: 'INVESTIGATIVO',
-  'Tec científico': 'TEC_CIENTIFICO',
+const PUBLIC_CONTEXT_TO_API: Record<CapsuleContextType, ApiCapsuleContextType> = {
+  Legal: ApiCapsuleContextType.LEGAL,
+  Social: ApiCapsuleContextType.SOCIAL,
+  Investigativo: ApiCapsuleContextType.INVESTIGATIVO,
+  'Tec científico': ApiCapsuleContextType.TEC_CIENTIFICO,
 };
 
-export const toApiCapsuleContextType = (value: CapsuleContextType): string =>
-  PUBLIC_CONTEXT_TO_API[value] ?? 'TEC_CIENTIFICO';
+export const toApiCapsuleContextType = (value: CapsuleContextType): ApiCapsuleContextType =>
+  PUBLIC_CONTEXT_TO_API[value] ?? ApiCapsuleContextType.TEC_CIENTIFICO;
 
 const normalizeContextType = (value: unknown): CapsuleContextType => {
   const raw = typeof value === 'string' ? value.trim() : '';
@@ -87,7 +88,7 @@ export const mapAmplifyCapsuleToPublic = (item: any): PublicCapsule => ({
   attachmentUrls: Array.isArray(item?.attachmentUrls)
     ? item.attachmentUrls
         .filter((url: unknown): url is string => typeof url === 'string')
-        .map((url) => stripPresignedQueryFromOurBucketUrl(url) ?? url)
+        .map((url: string) => stripPresignedQueryFromOurBucketUrl(url) ?? url)
     : [],
   publishedAt: item?.publishedAt ?? item?.createdAt ?? null,
   highlight: Boolean(item?.highlight),

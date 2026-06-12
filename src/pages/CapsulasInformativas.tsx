@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Status } from '../API';
-import { LIST_INFORMATIVE_CAPSULES } from '../graphql/capsulesVideoclips';
+import { listInformativeCapsules } from '../graphql/queries';
 import { formatPublishedDateEs } from '../lib/adminHelpers';
 import { getGraphqlClient } from '../lib/amplifySetup';
 import {
@@ -111,7 +111,7 @@ const CapsulasInformativas = () => {
 
         do {
           const response: any = await client.graphql({
-            query: LIST_INFORMATIVE_CAPSULES,
+            query: listInformativeCapsules,
             variables: {
               filter: { status: { eq: Status.PUBLISHED } },
               limit: 1000,

@@ -5,7 +5,7 @@ import VideoclipFeedToolbar, { type VideoclipFeedFilter } from '../components/vi
 import VideoclipMediaPlayer from '../components/videoclip/VideoclipMediaPlayer';
 import VideoclipReelViewer from '../components/videoclip/VideoclipReelViewer';
 import VideoclipsHero from '../components/videoclip/VideoclipsHero';
-import { LIST_EDUCATIONAL_VIDEOCLIPS } from '../graphql/capsulesVideoclips';
+import { listEducationalVideoclips } from '../graphql/queries';
 import { formatPublishedDateEs } from '../lib/adminHelpers';
 import { getGraphqlClient } from '../lib/amplifySetup';
 import { isWithinPublicationWindow } from '../lib/publicationWindow';
@@ -30,7 +30,7 @@ const VideoclipsEducativos = () => {
 
         do {
           const response: any = await client.graphql({
-            query: LIST_EDUCATIONAL_VIDEOCLIPS,
+            query: listEducationalVideoclips,
             variables: {
               filter: { status: { eq: Status.PUBLISHED } },
               limit: 1000,

@@ -33,7 +33,7 @@ const VideoclipReelViewer = ({
   }, [currentIndex, hasNext, onIndexChange]);
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === 'ArrowLeft') {
         handlePrevious();
         return;
@@ -68,13 +68,13 @@ const VideoclipReelViewer = ({
 
     if (deltaX > 0) {
       handlePrevious();
-    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      return;
     }
 
     handleNext();
   };
 
-  const handleQueueItemKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+  const handleQueueItemKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>, index: number) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     onIndexChange(index);
@@ -118,7 +118,7 @@ const VideoclipReelViewer = ({
           </header>
 
           <div className="bg-secondary-[bosques-nublados] px-4 py-5 sm:px-6 sm:py-6">
-            <VideoclipMediaPlayer videoclip={currentVideoclip} autoplay onDark />
+            <VideoclipMediaPlayer videoclip={currentVideoclip} autoplay />
           </div>
 
           <div className="px-5 pb-6 pt-5 sm:px-8 sm:pb-8">
@@ -137,10 +137,7 @@ const VideoclipReelViewer = ({
         </article>
       </div>
 
-      <aside
-        className="min-w-0 lg:col-span-4"
-        aria-label="Cola de videoclips"
-      >
+      <aside className="min-w-0 lg:col-span-4" aria-label="Cola de videoclips">
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_1px_3px_0_rgba(68,72,44,0.06)]">
           <div className="border-b border-gray-100 px-4 py-3 sm:px-5">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500">En cola</p>
@@ -150,7 +147,7 @@ const VideoclipReelViewer = ({
           </div>
 
           <div className="max-h-[28rem] space-y-1 overflow-y-auto p-2 sm:max-h-[32rem] lg:max-h-[calc(100vh-14rem)]">
-  const handleQueueItemKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>, index: number) => {
+            {videoclips.map((videoclip, index) => {
               const isActive = index === currentIndex;
 
               return (

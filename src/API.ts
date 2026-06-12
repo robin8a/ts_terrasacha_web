@@ -570,6 +570,215 @@ export type DeleteResearchItemInput = {
   id: string,
 };
 
+export type CreateInformativeCapsuleInput = {
+  id?: string | null,
+  title: string,
+  slug: string,
+  summary: string,
+  body: string,
+  contextType?: CapsuleContextType | null,
+  legalReference?: string | null,
+  institution?: string | null,
+  category?: string | null,
+  tags?: Array< string | null > | null,
+  coverImageUrl?: string | null,
+  attachmentUrls?: Array< string | null > | null,
+  relatedNewsIds?: Array< string | null > | null,
+  relatedResearchIds?: Array< string | null > | null,
+  status: Status,
+  highlight: boolean,
+  authorName?: string | null,
+  publishedAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+};
+
+export enum CapsuleContextType {
+  LEGAL = "LEGAL",
+  SOCIAL = "SOCIAL",
+  INVESTIGATIVO = "INVESTIGATIVO",
+  TEC_CIENTIFICO = "TEC_CIENTIFICO",
+  REGULATORIO = "REGULATORIO",
+  MIXTO = "MIXTO",
+}
+
+
+export type ModelInformativeCapsuleConditionInput = {
+  title?: ModelStringInput | null,
+  slug?: ModelStringInput | null,
+  summary?: ModelStringInput | null,
+  body?: ModelStringInput | null,
+  contextType?: ModelCapsuleContextTypeInput | null,
+  legalReference?: ModelStringInput | null,
+  institution?: ModelStringInput | null,
+  category?: ModelStringInput | null,
+  tags?: ModelStringInput | null,
+  coverImageUrl?: ModelStringInput | null,
+  attachmentUrls?: ModelStringInput | null,
+  relatedNewsIds?: ModelIDInput | null,
+  relatedResearchIds?: ModelIDInput | null,
+  status?: ModelStatusInput | null,
+  highlight?: ModelBooleanInput | null,
+  authorName?: ModelStringInput | null,
+  publishedAt?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelInformativeCapsuleConditionInput | null > | null,
+  or?: Array< ModelInformativeCapsuleConditionInput | null > | null,
+  not?: ModelInformativeCapsuleConditionInput | null,
+};
+
+export type ModelCapsuleContextTypeInput = {
+  eq?: CapsuleContextType | null,
+  ne?: CapsuleContextType | null,
+};
+
+export type InformativeCapsule = {
+  __typename: "InformativeCapsule",
+  id: string,
+  title: string,
+  slug: string,
+  summary: string,
+  body: string,
+  contextType?: CapsuleContextType | null,
+  legalReference?: string | null,
+  institution?: string | null,
+  category?: string | null,
+  tags?: Array< string | null > | null,
+  coverImageUrl?: string | null,
+  attachmentUrls?: Array< string | null > | null,
+  relatedNewsIds?: Array< string | null > | null,
+  relatedResearchIds?: Array< string | null > | null,
+  status: Status,
+  highlight: boolean,
+  authorName?: string | null,
+  publishedAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+};
+
+export type UpdateInformativeCapsuleInput = {
+  id: string,
+  title?: string | null,
+  slug?: string | null,
+  summary?: string | null,
+  body?: string | null,
+  contextType?: CapsuleContextType | null,
+  legalReference?: string | null,
+  institution?: string | null,
+  category?: string | null,
+  tags?: Array< string | null > | null,
+  coverImageUrl?: string | null,
+  attachmentUrls?: Array< string | null > | null,
+  relatedNewsIds?: Array< string | null > | null,
+  relatedResearchIds?: Array< string | null > | null,
+  status?: Status | null,
+  highlight?: boolean | null,
+  authorName?: string | null,
+  publishedAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+};
+
+export type DeleteInformativeCapsuleInput = {
+  id: string,
+};
+
+export type CreateEducationalVideoclipInput = {
+  id?: string | null,
+  title: string,
+  slug: string,
+  description: string,
+  youtubeUrl: string,
+  topicCategory?: string | null,
+  tags?: Array< string | null > | null,
+  coverImageUrl?: string | null,
+  durationSeconds?: number | null,
+  relatedNewsIds?: Array< string | null > | null,
+  relatedAnnouncementIds?: Array< string | null > | null,
+  relatedResearchIds?: Array< string | null > | null,
+  relatedCapsuleIds?: Array< string | null > | null,
+  relatedPodcastIds?: Array< string | null > | null,
+  status: Status,
+  highlight: boolean,
+  publishedAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+};
+
+export type ModelEducationalVideoclipConditionInput = {
+  title?: ModelStringInput | null,
+  slug?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  youtubeUrl?: ModelStringInput | null,
+  topicCategory?: ModelStringInput | null,
+  tags?: ModelStringInput | null,
+  coverImageUrl?: ModelStringInput | null,
+  durationSeconds?: ModelIntInput | null,
+  relatedNewsIds?: ModelIDInput | null,
+  relatedAnnouncementIds?: ModelIDInput | null,
+  relatedResearchIds?: ModelIDInput | null,
+  relatedCapsuleIds?: ModelIDInput | null,
+  relatedPodcastIds?: ModelIDInput | null,
+  status?: ModelStatusInput | null,
+  highlight?: ModelBooleanInput | null,
+  publishedAt?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelEducationalVideoclipConditionInput | null > | null,
+  or?: Array< ModelEducationalVideoclipConditionInput | null > | null,
+  not?: ModelEducationalVideoclipConditionInput | null,
+};
+
+export type EducationalVideoclip = {
+  __typename: "EducationalVideoclip",
+  id: string,
+  title: string,
+  slug: string,
+  description: string,
+  youtubeUrl: string,
+  topicCategory?: string | null,
+  tags?: Array< string | null > | null,
+  coverImageUrl?: string | null,
+  durationSeconds?: number | null,
+  relatedNewsIds?: Array< string | null > | null,
+  relatedAnnouncementIds?: Array< string | null > | null,
+  relatedResearchIds?: Array< string | null > | null,
+  relatedCapsuleIds?: Array< string | null > | null,
+  relatedPodcastIds?: Array< string | null > | null,
+  status: Status,
+  highlight: boolean,
+  publishedAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+};
+
+export type UpdateEducationalVideoclipInput = {
+  id: string,
+  title?: string | null,
+  slug?: string | null,
+  description?: string | null,
+  youtubeUrl?: string | null,
+  topicCategory?: string | null,
+  tags?: Array< string | null > | null,
+  coverImageUrl?: string | null,
+  durationSeconds?: number | null,
+  relatedNewsIds?: Array< string | null > | null,
+  relatedAnnouncementIds?: Array< string | null > | null,
+  relatedResearchIds?: Array< string | null > | null,
+  relatedCapsuleIds?: Array< string | null > | null,
+  relatedPodcastIds?: Array< string | null > | null,
+  status?: Status | null,
+  highlight?: boolean | null,
+  publishedAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+};
+
+export type DeleteEducationalVideoclipInput = {
+  id: string,
+};
+
 export type ModelNewsFilterInput = {
   id?: ModelIDInput | null,
   title?: ModelStringInput | null,
@@ -726,6 +935,69 @@ export type ModelResearchItemFilterInput = {
 export type ModelResearchItemConnection = {
   __typename: "ModelResearchItemConnection",
   items:  Array<ResearchItem | null >,
+  nextToken?: string | null,
+};
+
+export type ModelInformativeCapsuleFilterInput = {
+  id?: ModelIDInput | null,
+  title?: ModelStringInput | null,
+  slug?: ModelStringInput | null,
+  summary?: ModelStringInput | null,
+  body?: ModelStringInput | null,
+  contextType?: ModelCapsuleContextTypeInput | null,
+  legalReference?: ModelStringInput | null,
+  institution?: ModelStringInput | null,
+  category?: ModelStringInput | null,
+  tags?: ModelStringInput | null,
+  coverImageUrl?: ModelStringInput | null,
+  attachmentUrls?: ModelStringInput | null,
+  relatedNewsIds?: ModelIDInput | null,
+  relatedResearchIds?: ModelIDInput | null,
+  status?: ModelStatusInput | null,
+  highlight?: ModelBooleanInput | null,
+  authorName?: ModelStringInput | null,
+  publishedAt?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelInformativeCapsuleFilterInput | null > | null,
+  or?: Array< ModelInformativeCapsuleFilterInput | null > | null,
+  not?: ModelInformativeCapsuleFilterInput | null,
+};
+
+export type ModelInformativeCapsuleConnection = {
+  __typename: "ModelInformativeCapsuleConnection",
+  items:  Array<InformativeCapsule | null >,
+  nextToken?: string | null,
+};
+
+export type ModelEducationalVideoclipFilterInput = {
+  id?: ModelIDInput | null,
+  title?: ModelStringInput | null,
+  slug?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  youtubeUrl?: ModelStringInput | null,
+  topicCategory?: ModelStringInput | null,
+  tags?: ModelStringInput | null,
+  coverImageUrl?: ModelStringInput | null,
+  durationSeconds?: ModelIntInput | null,
+  relatedNewsIds?: ModelIDInput | null,
+  relatedAnnouncementIds?: ModelIDInput | null,
+  relatedResearchIds?: ModelIDInput | null,
+  relatedCapsuleIds?: ModelIDInput | null,
+  relatedPodcastIds?: ModelIDInput | null,
+  status?: ModelStatusInput | null,
+  highlight?: ModelBooleanInput | null,
+  publishedAt?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelEducationalVideoclipFilterInput | null > | null,
+  or?: Array< ModelEducationalVideoclipFilterInput | null > | null,
+  not?: ModelEducationalVideoclipFilterInput | null,
+};
+
+export type ModelEducationalVideoclipConnection = {
+  __typename: "ModelEducationalVideoclipConnection",
+  items:  Array<EducationalVideoclip | null >,
   nextToken?: string | null,
 };
 
@@ -892,6 +1164,55 @@ export type ModelSubscriptionResearchItemFilterInput = {
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionResearchItemFilterInput | null > | null,
   or?: Array< ModelSubscriptionResearchItemFilterInput | null > | null,
+};
+
+export type ModelSubscriptionInformativeCapsuleFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  title?: ModelSubscriptionStringInput | null,
+  slug?: ModelSubscriptionStringInput | null,
+  summary?: ModelSubscriptionStringInput | null,
+  body?: ModelSubscriptionStringInput | null,
+  contextType?: ModelSubscriptionStringInput | null,
+  legalReference?: ModelSubscriptionStringInput | null,
+  institution?: ModelSubscriptionStringInput | null,
+  category?: ModelSubscriptionStringInput | null,
+  tags?: ModelSubscriptionStringInput | null,
+  coverImageUrl?: ModelSubscriptionStringInput | null,
+  attachmentUrls?: ModelSubscriptionStringInput | null,
+  relatedNewsIds?: ModelSubscriptionIDInput | null,
+  relatedResearchIds?: ModelSubscriptionIDInput | null,
+  status?: ModelSubscriptionStringInput | null,
+  highlight?: ModelSubscriptionBooleanInput | null,
+  authorName?: ModelSubscriptionStringInput | null,
+  publishedAt?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionInformativeCapsuleFilterInput | null > | null,
+  or?: Array< ModelSubscriptionInformativeCapsuleFilterInput | null > | null,
+};
+
+export type ModelSubscriptionEducationalVideoclipFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  title?: ModelSubscriptionStringInput | null,
+  slug?: ModelSubscriptionStringInput | null,
+  description?: ModelSubscriptionStringInput | null,
+  youtubeUrl?: ModelSubscriptionStringInput | null,
+  topicCategory?: ModelSubscriptionStringInput | null,
+  tags?: ModelSubscriptionStringInput | null,
+  coverImageUrl?: ModelSubscriptionStringInput | null,
+  durationSeconds?: ModelSubscriptionIntInput | null,
+  relatedNewsIds?: ModelSubscriptionIDInput | null,
+  relatedAnnouncementIds?: ModelSubscriptionIDInput | null,
+  relatedResearchIds?: ModelSubscriptionIDInput | null,
+  relatedCapsuleIds?: ModelSubscriptionIDInput | null,
+  relatedPodcastIds?: ModelSubscriptionIDInput | null,
+  status?: ModelSubscriptionStringInput | null,
+  highlight?: ModelSubscriptionBooleanInput | null,
+  publishedAt?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionEducationalVideoclipFilterInput | null > | null,
+  or?: Array< ModelSubscriptionEducationalVideoclipFilterInput | null > | null,
 };
 
 export type CreateNewsMutationVariables = {
@@ -1332,6 +1653,189 @@ export type DeleteResearchItemMutation = {
     highlight: boolean,
     authorName?: string | null,
     institution?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type CreateInformativeCapsuleMutationVariables = {
+  input: CreateInformativeCapsuleInput,
+  condition?: ModelInformativeCapsuleConditionInput | null,
+};
+
+export type CreateInformativeCapsuleMutation = {
+  createInformativeCapsule?:  {
+    __typename: "InformativeCapsule",
+    id: string,
+    title: string,
+    slug: string,
+    summary: string,
+    body: string,
+    contextType?: CapsuleContextType | null,
+    legalReference?: string | null,
+    institution?: string | null,
+    category?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    attachmentUrls?: Array< string | null > | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    authorName?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type UpdateInformativeCapsuleMutationVariables = {
+  input: UpdateInformativeCapsuleInput,
+  condition?: ModelInformativeCapsuleConditionInput | null,
+};
+
+export type UpdateInformativeCapsuleMutation = {
+  updateInformativeCapsule?:  {
+    __typename: "InformativeCapsule",
+    id: string,
+    title: string,
+    slug: string,
+    summary: string,
+    body: string,
+    contextType?: CapsuleContextType | null,
+    legalReference?: string | null,
+    institution?: string | null,
+    category?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    attachmentUrls?: Array< string | null > | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    authorName?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type DeleteInformativeCapsuleMutationVariables = {
+  input: DeleteInformativeCapsuleInput,
+  condition?: ModelInformativeCapsuleConditionInput | null,
+};
+
+export type DeleteInformativeCapsuleMutation = {
+  deleteInformativeCapsule?:  {
+    __typename: "InformativeCapsule",
+    id: string,
+    title: string,
+    slug: string,
+    summary: string,
+    body: string,
+    contextType?: CapsuleContextType | null,
+    legalReference?: string | null,
+    institution?: string | null,
+    category?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    attachmentUrls?: Array< string | null > | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    authorName?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type CreateEducationalVideoclipMutationVariables = {
+  input: CreateEducationalVideoclipInput,
+  condition?: ModelEducationalVideoclipConditionInput | null,
+};
+
+export type CreateEducationalVideoclipMutation = {
+  createEducationalVideoclip?:  {
+    __typename: "EducationalVideoclip",
+    id: string,
+    title: string,
+    slug: string,
+    description: string,
+    youtubeUrl: string,
+    topicCategory?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    durationSeconds?: number | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedAnnouncementIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    relatedCapsuleIds?: Array< string | null > | null,
+    relatedPodcastIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type UpdateEducationalVideoclipMutationVariables = {
+  input: UpdateEducationalVideoclipInput,
+  condition?: ModelEducationalVideoclipConditionInput | null,
+};
+
+export type UpdateEducationalVideoclipMutation = {
+  updateEducationalVideoclip?:  {
+    __typename: "EducationalVideoclip",
+    id: string,
+    title: string,
+    slug: string,
+    description: string,
+    youtubeUrl: string,
+    topicCategory?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    durationSeconds?: number | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedAnnouncementIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    relatedCapsuleIds?: Array< string | null > | null,
+    relatedPodcastIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type DeleteEducationalVideoclipMutationVariables = {
+  input: DeleteEducationalVideoclipInput,
+  condition?: ModelEducationalVideoclipConditionInput | null,
+};
+
+export type DeleteEducationalVideoclipMutation = {
+  deleteEducationalVideoclip?:  {
+    __typename: "EducationalVideoclip",
+    id: string,
+    title: string,
+    slug: string,
+    description: string,
+    youtubeUrl: string,
+    topicCategory?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    durationSeconds?: number | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedAnnouncementIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    relatedCapsuleIds?: Array< string | null > | null,
+    relatedPodcastIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
     publishedAt?: string | null,
     createdAt?: string | null,
     updatedAt?: string | null,
@@ -1798,6 +2302,211 @@ export type ResearchItemBySlugQuery = {
   } | null,
 };
 
+export type GetInformativeCapsuleQueryVariables = {
+  id: string,
+};
+
+export type GetInformativeCapsuleQuery = {
+  getInformativeCapsule?:  {
+    __typename: "InformativeCapsule",
+    id: string,
+    title: string,
+    slug: string,
+    summary: string,
+    body: string,
+    contextType?: CapsuleContextType | null,
+    legalReference?: string | null,
+    institution?: string | null,
+    category?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    attachmentUrls?: Array< string | null > | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    authorName?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type ListInformativeCapsulesQueryVariables = {
+  filter?: ModelInformativeCapsuleFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListInformativeCapsulesQuery = {
+  listInformativeCapsules?:  {
+    __typename: "ModelInformativeCapsuleConnection",
+    items:  Array< {
+      __typename: "InformativeCapsule",
+      id: string,
+      title: string,
+      slug: string,
+      summary: string,
+      body: string,
+      contextType?: CapsuleContextType | null,
+      legalReference?: string | null,
+      institution?: string | null,
+      category?: string | null,
+      tags?: Array< string | null > | null,
+      coverImageUrl?: string | null,
+      attachmentUrls?: Array< string | null > | null,
+      relatedNewsIds?: Array< string | null > | null,
+      relatedResearchIds?: Array< string | null > | null,
+      status: Status,
+      highlight: boolean,
+      authorName?: string | null,
+      publishedAt?: string | null,
+      createdAt?: string | null,
+      updatedAt?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type InformativeCapsuleBySlugQueryVariables = {
+  slug: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelInformativeCapsuleFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type InformativeCapsuleBySlugQuery = {
+  informativeCapsuleBySlug?:  {
+    __typename: "ModelInformativeCapsuleConnection",
+    items:  Array< {
+      __typename: "InformativeCapsule",
+      id: string,
+      title: string,
+      slug: string,
+      summary: string,
+      body: string,
+      contextType?: CapsuleContextType | null,
+      legalReference?: string | null,
+      institution?: string | null,
+      category?: string | null,
+      tags?: Array< string | null > | null,
+      coverImageUrl?: string | null,
+      attachmentUrls?: Array< string | null > | null,
+      relatedNewsIds?: Array< string | null > | null,
+      relatedResearchIds?: Array< string | null > | null,
+      status: Status,
+      highlight: boolean,
+      authorName?: string | null,
+      publishedAt?: string | null,
+      createdAt?: string | null,
+      updatedAt?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetEducationalVideoclipQueryVariables = {
+  id: string,
+};
+
+export type GetEducationalVideoclipQuery = {
+  getEducationalVideoclip?:  {
+    __typename: "EducationalVideoclip",
+    id: string,
+    title: string,
+    slug: string,
+    description: string,
+    youtubeUrl: string,
+    topicCategory?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    durationSeconds?: number | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedAnnouncementIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    relatedCapsuleIds?: Array< string | null > | null,
+    relatedPodcastIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type ListEducationalVideoclipsQueryVariables = {
+  filter?: ModelEducationalVideoclipFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListEducationalVideoclipsQuery = {
+  listEducationalVideoclips?:  {
+    __typename: "ModelEducationalVideoclipConnection",
+    items:  Array< {
+      __typename: "EducationalVideoclip",
+      id: string,
+      title: string,
+      slug: string,
+      description: string,
+      youtubeUrl: string,
+      topicCategory?: string | null,
+      tags?: Array< string | null > | null,
+      coverImageUrl?: string | null,
+      durationSeconds?: number | null,
+      relatedNewsIds?: Array< string | null > | null,
+      relatedAnnouncementIds?: Array< string | null > | null,
+      relatedResearchIds?: Array< string | null > | null,
+      relatedCapsuleIds?: Array< string | null > | null,
+      relatedPodcastIds?: Array< string | null > | null,
+      status: Status,
+      highlight: boolean,
+      publishedAt?: string | null,
+      createdAt?: string | null,
+      updatedAt?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type EducationalVideoclipBySlugQueryVariables = {
+  slug: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelEducationalVideoclipFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type EducationalVideoclipBySlugQuery = {
+  educationalVideoclipBySlug?:  {
+    __typename: "ModelEducationalVideoclipConnection",
+    items:  Array< {
+      __typename: "EducationalVideoclip",
+      id: string,
+      title: string,
+      slug: string,
+      description: string,
+      youtubeUrl: string,
+      topicCategory?: string | null,
+      tags?: Array< string | null > | null,
+      coverImageUrl?: string | null,
+      durationSeconds?: number | null,
+      relatedNewsIds?: Array< string | null > | null,
+      relatedAnnouncementIds?: Array< string | null > | null,
+      relatedResearchIds?: Array< string | null > | null,
+      relatedCapsuleIds?: Array< string | null > | null,
+      relatedPodcastIds?: Array< string | null > | null,
+      status: Status,
+      highlight: boolean,
+      publishedAt?: string | null,
+      createdAt?: string | null,
+      updatedAt?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type OnCreateNewsSubscriptionVariables = {
   filter?: ModelSubscriptionNewsFilterInput | null,
 };
@@ -2221,6 +2930,183 @@ export type OnDeleteResearchItemSubscription = {
     highlight: boolean,
     authorName?: string | null,
     institution?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type OnCreateInformativeCapsuleSubscriptionVariables = {
+  filter?: ModelSubscriptionInformativeCapsuleFilterInput | null,
+};
+
+export type OnCreateInformativeCapsuleSubscription = {
+  onCreateInformativeCapsule?:  {
+    __typename: "InformativeCapsule",
+    id: string,
+    title: string,
+    slug: string,
+    summary: string,
+    body: string,
+    contextType?: CapsuleContextType | null,
+    legalReference?: string | null,
+    institution?: string | null,
+    category?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    attachmentUrls?: Array< string | null > | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    authorName?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type OnUpdateInformativeCapsuleSubscriptionVariables = {
+  filter?: ModelSubscriptionInformativeCapsuleFilterInput | null,
+};
+
+export type OnUpdateInformativeCapsuleSubscription = {
+  onUpdateInformativeCapsule?:  {
+    __typename: "InformativeCapsule",
+    id: string,
+    title: string,
+    slug: string,
+    summary: string,
+    body: string,
+    contextType?: CapsuleContextType | null,
+    legalReference?: string | null,
+    institution?: string | null,
+    category?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    attachmentUrls?: Array< string | null > | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    authorName?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type OnDeleteInformativeCapsuleSubscriptionVariables = {
+  filter?: ModelSubscriptionInformativeCapsuleFilterInput | null,
+};
+
+export type OnDeleteInformativeCapsuleSubscription = {
+  onDeleteInformativeCapsule?:  {
+    __typename: "InformativeCapsule",
+    id: string,
+    title: string,
+    slug: string,
+    summary: string,
+    body: string,
+    contextType?: CapsuleContextType | null,
+    legalReference?: string | null,
+    institution?: string | null,
+    category?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    attachmentUrls?: Array< string | null > | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    authorName?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type OnCreateEducationalVideoclipSubscriptionVariables = {
+  filter?: ModelSubscriptionEducationalVideoclipFilterInput | null,
+};
+
+export type OnCreateEducationalVideoclipSubscription = {
+  onCreateEducationalVideoclip?:  {
+    __typename: "EducationalVideoclip",
+    id: string,
+    title: string,
+    slug: string,
+    description: string,
+    youtubeUrl: string,
+    topicCategory?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    durationSeconds?: number | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedAnnouncementIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    relatedCapsuleIds?: Array< string | null > | null,
+    relatedPodcastIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type OnUpdateEducationalVideoclipSubscriptionVariables = {
+  filter?: ModelSubscriptionEducationalVideoclipFilterInput | null,
+};
+
+export type OnUpdateEducationalVideoclipSubscription = {
+  onUpdateEducationalVideoclip?:  {
+    __typename: "EducationalVideoclip",
+    id: string,
+    title: string,
+    slug: string,
+    description: string,
+    youtubeUrl: string,
+    topicCategory?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    durationSeconds?: number | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedAnnouncementIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    relatedCapsuleIds?: Array< string | null > | null,
+    relatedPodcastIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+  } | null,
+};
+
+export type OnDeleteEducationalVideoclipSubscriptionVariables = {
+  filter?: ModelSubscriptionEducationalVideoclipFilterInput | null,
+};
+
+export type OnDeleteEducationalVideoclipSubscription = {
+  onDeleteEducationalVideoclip?:  {
+    __typename: "EducationalVideoclip",
+    id: string,
+    title: string,
+    slug: string,
+    description: string,
+    youtubeUrl: string,
+    topicCategory?: string | null,
+    tags?: Array< string | null > | null,
+    coverImageUrl?: string | null,
+    durationSeconds?: number | null,
+    relatedNewsIds?: Array< string | null > | null,
+    relatedAnnouncementIds?: Array< string | null > | null,
+    relatedResearchIds?: Array< string | null > | null,
+    relatedCapsuleIds?: Array< string | null > | null,
+    relatedPodcastIds?: Array< string | null > | null,
+    status: Status,
+    highlight: boolean,
     publishedAt?: string | null,
     createdAt?: string | null,
     updatedAt?: string | null,

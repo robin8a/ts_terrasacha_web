@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Status } from '../API';
 import VideoclipMediaPlayer from '../components/videoclip/VideoclipMediaPlayer';
-import { EDUCATIONAL_VIDEOCLIP_BY_SLUG } from '../graphql/capsulesVideoclips';
+import { educationalVideoclipBySlug } from '../graphql/queries';
 import { formatPublishedDateEs } from '../lib/adminHelpers';
 import { getGraphqlClient } from '../lib/amplifySetup';
 import { isWithinPublicationWindow } from '../lib/publicationWindow';
@@ -26,7 +26,7 @@ const VideoclipDetalle = () => {
 
         const client = getGraphqlClient();
         const response: any = await client.graphql({
-          query: EDUCATIONAL_VIDEOCLIP_BY_SLUG,
+          query: educationalVideoclipBySlug,
           variables: {
             slug: videoclipSlug,
             filter: { status: { eq: Status.PUBLISHED } },

@@ -573,7 +573,6 @@ export const createEducationalVideoclip = /* GraphQL */ `mutation CreateEducatio
     slug
     description
     youtubeUrl
-    tiktokUrl
     topicCategory
     tags
     coverImageUrl
@@ -605,7 +604,6 @@ export const updateEducationalVideoclip = /* GraphQL */ `mutation UpdateEducatio
     slug
     description
     youtubeUrl
-    tiktokUrl
     topicCategory
     tags
     coverImageUrl
@@ -637,7 +635,6 @@ export const deleteEducationalVideoclip = /* GraphQL */ `mutation DeleteEducatio
     slug
     description
     youtubeUrl
-    tiktokUrl
     topicCategory
     tags
     coverImageUrl

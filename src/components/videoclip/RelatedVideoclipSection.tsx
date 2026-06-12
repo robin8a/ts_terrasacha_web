@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Status } from '../../API';
-import { LIST_EDUCATIONAL_VIDEOCLIPS } from '../../graphql/capsulesVideoclips';
+import { listEducationalVideoclips } from '../../graphql/queries';
 import { getGraphqlClient } from '../../lib/amplifySetup';
 import { isWithinPublicationWindow } from '../../lib/publicationWindow';
 import {
@@ -36,7 +36,7 @@ const RelatedVideoclipSection = ({ relationType, relatedId }: RelatedVideoclipSe
 
         do {
           const response: any = await client.graphql({
-            query: LIST_EDUCATIONAL_VIDEOCLIPS,
+            query: listEducationalVideoclips,
             variables: {
               filter: { status: { eq: Status.PUBLISHED } },
               limit: 1000,

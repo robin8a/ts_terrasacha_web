@@ -7,12 +7,11 @@ import {
 } from './AdminFileUploadField';
 import { Status } from '../../API';
 import {
-  CREATE_INFORMATIVE_CAPSULE,
-  DELETE_INFORMATIVE_CAPSULE,
-  GET_INFORMATIVE_CAPSULE,
-  LIST_INFORMATIVE_CAPSULES,
-  UPDATE_INFORMATIVE_CAPSULE,
-} from '../../graphql/capsulesVideoclips';
+  createInformativeCapsule,
+  deleteInformativeCapsule,
+  updateInformativeCapsule,
+} from '../../graphql/mutations';
+import { getInformativeCapsule, listInformativeCapsules } from '../../graphql/queries';
 import {
   formatPublishedDateEs,
   toDateTimeLocalValue,
@@ -117,7 +116,7 @@ const AdminCapsulesManager = () => {
 
       do {
         const response: any = await client.graphql({
-          query: LIST_INFORMATIVE_CAPSULES,
+          query: listInformativeCapsules,
           variables: {
             filter: titleSearch.trim() ? { title: { contains: titleSearch.trim() } } : undefined,
             limit: 1000,
@@ -170,7 +169,7 @@ const AdminCapsulesManager = () => {
     try {
       const client = getGraphqlClient();
       const response: any = await client.graphql({
-        query: GET_INFORMATIVE_CAPSULE,
+        query: getInformativeCapsule,
         variables: { id },
         authMode: 'userPool',
       });
@@ -294,14 +293,14 @@ const AdminCapsulesManager = () => {
       const client = getGraphqlClient();
       if (modalMode === 'create') {
         await client.graphql({
-          query: CREATE_INFORMATIVE_CAPSULE,
+          query: createInformativeCapsule,
           variables: { input },
           authMode: 'userPool',
         });
         setSuccessMessage('Cápsula creada.');
       } else if (form.id) {
         await client.graphql({
-          query: UPDATE_INFORMATIVE_CAPSULE,
+          query: updateInformativeCapsule,
           variables: { input: { id: form.id, ...input } },
           authMode: 'userPool',
         });
@@ -322,7 +321,7 @@ const AdminCapsulesManager = () => {
     try {
       const client = getGraphqlClient();
       await client.graphql({
-        query: DELETE_INFORMATIVE_CAPSULE,
+        query: deleteInformativeCapsule,
         variables: { input: { id } },
         authMode: 'userPool',
       });
