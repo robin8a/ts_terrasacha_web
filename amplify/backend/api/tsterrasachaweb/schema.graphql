@@ -12,6 +12,14 @@ enum EventType {
   OTHER
 }
 
+# Legal | Social | Investigativo | Tec científico (valores editoriales en español).
+enum CapsuleContextType {
+  LEGAL
+  SOCIAL
+  INVESTIGATIVO
+  TEC_CIENTIFICO
+}
+
 type News
   @model
   @auth(rules: [
@@ -160,6 +168,76 @@ type ResearchItem
   highlight: Boolean! @default(value: "false")
   authorName: String
   institution: String
+  publishedAt: AWSDateTime
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# Cápsulas informativas: contexto legal, regulatorio e investigativo (sección Actualidad).
+type InformativeCapsule
+  @model
+  @auth(rules: [
+    { allow: public, provider: apiKey, operations: [read] }
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [create, update, delete, read] }
+  ])
+{
+  id: ID!
+  title: String!
+  slug: String! @index(name: "bySlug", queryField: "informativeCapsuleBySlug")
+  summary: String!
+  body: String!
+
+  # Tipo editorial de la cápsula (filtro en /capsulas-informativas).
+  contextType: CapsuleContextType @default(value: "TEC_CIENTIFICO")
+  legalReference: String
+  institution: String
+  category: String
+  tags: [String]
+
+  coverImageUrl: String
+  attachmentUrls: [String]
+
+  relatedNewsIds: [ID]
+  relatedResearchIds: [ID]
+
+  status: Status! @default(value: "DRAFT")
+  highlight: Boolean! @default(value: "false")
+  authorName: String
+  publishedAt: AWSDateTime
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# Videoclips educativos cortos (YouTube; sección Actualidad).
+type EducationalVideoclip
+  @model
+  @auth(rules: [
+    { allow: public, provider: apiKey, operations: [read] }
+    { allow: groups, groups: ["Admin"], provider: userPools, operations: [create, update, delete, read] }
+  ])
+{
+  id: ID!
+  title: String!
+  slug: String! @index(name: "bySlug", queryField: "educationalVideoclipBySlug")
+  description: String!
+
+  youtubeUrl: String!
+
+  topicCategory: String
+  tags: [String]
+  coverImageUrl: String
+  durationSeconds: Int
+
+  relatedNewsIds: [ID]
+  relatedAnnouncementIds: [ID]
+  relatedResearchIds: [ID]
+  relatedCapsuleIds: [ID]
+  relatedPodcastIds: [ID]
+
+  status: Status! @default(value: "DRAFT")
+  highlight: Boolean! @default(value: "false")
   publishedAt: AWSDateTime
 
   createdAt: AWSDateTime

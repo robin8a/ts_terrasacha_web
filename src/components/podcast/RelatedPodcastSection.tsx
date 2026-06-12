@@ -131,10 +131,10 @@ const RelatedPodcastSection = ({ relationType, relatedId }: RelatedPodcastSectio
           {podcasts.map((podcast) => (
             <article
               key={podcast.id}
-              className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
+              className="flex h-full min-h-[12.5rem] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-[120px_minmax(0,1fr)]">
-                <div className="h-40 sm:h-full">
+              <div className="flex h-full w-full flex-col sm:flex-row">
+                <div className="h-40 w-full shrink-0 sm:h-auto sm:w-[7.5rem] sm:self-stretch">
                   {podcast.coverImageUrl ? (
                     <img
                       src={podcast.coverImageUrl}
@@ -143,7 +143,7 @@ const RelatedPodcastSection = ({ relationType, relatedId }: RelatedPodcastSectio
                       loading="lazy"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center bg-gradient-to-br from-secondary-claro/30 to-[#e8d79a]">
+                    <div className="flex h-full min-h-[10rem] items-center justify-center bg-gradient-to-br from-secondary-claro/30 to-[#e8d79a] sm:min-h-full">
                       <span className="text-xs font-bold uppercase tracking-[0.2em] text-secondary-[bosques-nublados]">
                         Podcast
                       </span>
@@ -151,19 +151,19 @@ const RelatedPodcastSection = ({ relationType, relatedId }: RelatedPodcastSectio
                   )}
                 </div>
 
-                <div className="p-4">
+                <div className="flex min-h-0 flex-1 flex-col p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
                     Podcast Terrasacha
                   </p>
-                  <h3 className="mt-2 text-lg font-black leading-snug text-secondary-[bosques-nublados] [overflow-wrap:anywhere]">
+                  <h3 className="mt-2 line-clamp-2 text-lg font-black leading-snug text-secondary-[bosques-nublados] [overflow-wrap:anywhere]">
                     {podcast.title}
                   </h3>
-                  <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-gray-600">
+                  <p className="mt-3 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600">
                     {podcast.summary}
                   </p>
                   <Link
                     to={`/podcast/${podcast.slug}`}
-                    className="mt-4 inline-flex rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+                    className="mt-auto inline-flex w-fit rounded-full border border-primary px-4 py-2 pt-4 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
                   >
                     Escuchar podcast
                   </Link>

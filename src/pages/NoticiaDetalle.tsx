@@ -5,6 +5,7 @@ import { getGraphqlClient } from '../lib/amplifySetup';
 import { mapAmplifyNewsToNoticia } from '../lib/newsMapper';
 import { isWithinPublicationWindow } from '../lib/publicationWindow';
 import RelatedPodcastSection from '../components/podcast/RelatedPodcastSection';
+import RelatedVideoclipSection from '../components/videoclip/RelatedVideoclipSection';
 import type { Noticia } from '../data/noticias';
 
 const HASHTAG_ONLY_LINE_REGEX = /^(?:#[^\s#.,;:!?()[\]{}"']+\s*)+$/;
@@ -89,7 +90,7 @@ const NoticiaDetalle = () => {
   if (noticia === undefined) {
     return (
       <main className="font-primary bg-gray-50 min-h-screen py-16">
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
               Noticias
@@ -106,7 +107,7 @@ const NoticiaDetalle = () => {
   if (!noticia) {
     return (
       <main className="font-primary bg-gray-50 min-h-screen py-16">
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
               Noticias
@@ -155,7 +156,7 @@ const NoticiaDetalle = () => {
 
   return (
     <main className="font-primary bg-gray-50 min-h-screen py-16">
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <Link
           to="/noticias"
           className="inline-flex items-center text-sm font-semibold text-primary transition-colors hover:text-primary-dark"
@@ -284,6 +285,7 @@ const NoticiaDetalle = () => {
             )}
 
             <RelatedPodcastSection relationType="news" relatedId={String(noticia.id)} />
+            <RelatedVideoclipSection relationType="news" relatedId={String(noticia.id)} />
           </div>
         </article>
       </section>

@@ -6,6 +6,9 @@ const Footer = () => {
     { path: '/', label: 'Inicio' },
     { path: '/nosotros', label: 'Nosotros' },
     { path: '/noticias', label: 'Noticias' },
+    { path: '/comunicados', label: 'Comunicados' },
+    { path: '/capsulas-informativas', label: 'Cápsula Informativa' },
+    { path: '/videoclips-educativos', label: 'Videoclips Educativo' },
     { path: '/agenda', label: 'Agenda' },
     { path: '/contacto', label: 'Contacto' },
   ];

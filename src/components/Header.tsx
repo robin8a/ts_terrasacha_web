@@ -18,6 +18,8 @@ export default function Header() {
   const actualidadSubmenu = [
     { path: '/noticias', label: 'Noticias' },
     { path: '/comunicados', label: 'Comunicados' },
+    { path: '/capsulas-informativas', label: 'Cápsula Informativa' },
+    { path: '/videoclips-educativos', label: 'Videoclips Educativo' },
     { path: '/agenda', label: 'Agenda' },
     { path: '/investigacion', label: 'Investigación' },
   ];

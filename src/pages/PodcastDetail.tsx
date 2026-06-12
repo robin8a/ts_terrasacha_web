@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Status } from '../API';
 import { getGraphqlClient } from '../lib/amplifySetup';
 import PodcastEpisodeShowcase from '../components/podcast/PodcastEpisodeShowcase';
+import RelatedVideoclipSection from '../components/videoclip/RelatedVideoclipSection';
 import { mapAmplifyPodcastToPublic, type PublicPodcast } from '../lib/podcastMapper';
 import { isWithinPublicationWindow } from '../lib/publicationWindow';
 
@@ -307,6 +308,8 @@ const PodcastDetail = () => {
             }
           />
         </div>
+
+        <RelatedVideoclipSection relationType="podcast" relatedId={podcast.id} />
 
         {relatedSections.length > 0 && (
           <article className="mt-8 overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8">

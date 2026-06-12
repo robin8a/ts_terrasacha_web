@@ -483,3 +483,233 @@ export const researchItemBySlug = /* GraphQL */ `query ResearchItemBySlug(
   APITypes.ResearchItemBySlugQueryVariables,
   APITypes.ResearchItemBySlugQuery
 >;
+export const getInformativeCapsule = /* GraphQL */ `query GetInformativeCapsule($id: ID!) {
+  getInformativeCapsule(id: $id) {
+    id
+    title
+    slug
+    summary
+    body
+    contextType
+    legalReference
+    institution
+    category
+    tags
+    coverImageUrl
+    attachmentUrls
+    relatedNewsIds
+    relatedResearchIds
+    status
+    highlight
+    authorName
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetInformativeCapsuleQueryVariables,
+  APITypes.GetInformativeCapsuleQuery
+>;
+export const listInformativeCapsules = /* GraphQL */ `query ListInformativeCapsules(
+  $filter: ModelInformativeCapsuleFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listInformativeCapsules(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      title
+      slug
+      summary
+      body
+      contextType
+      legalReference
+      institution
+      category
+      tags
+      coverImageUrl
+      attachmentUrls
+      relatedNewsIds
+      relatedResearchIds
+      status
+      highlight
+      authorName
+      publishedAt
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListInformativeCapsulesQueryVariables,
+  APITypes.ListInformativeCapsulesQuery
+>;
+export const informativeCapsuleBySlug = /* GraphQL */ `query InformativeCapsuleBySlug(
+  $slug: String!
+  $sortDirection: ModelSortDirection
+  $filter: ModelInformativeCapsuleFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  informativeCapsuleBySlug(
+    slug: $slug
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      title
+      slug
+      summary
+      body
+      contextType
+      legalReference
+      institution
+      category
+      tags
+      coverImageUrl
+      attachmentUrls
+      relatedNewsIds
+      relatedResearchIds
+      status
+      highlight
+      authorName
+      publishedAt
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.InformativeCapsuleBySlugQueryVariables,
+  APITypes.InformativeCapsuleBySlugQuery
+>;
+export const getEducationalVideoclip = /* GraphQL */ `query GetEducationalVideoclip($id: ID!) {
+  getEducationalVideoclip(id: $id) {
+    id
+    title
+    slug
+    description
+    youtubeUrl
+    tiktokUrl
+    topicCategory
+    tags
+    coverImageUrl
+    durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
+    relatedCapsuleIds
+    relatedPodcastIds
+    status
+    highlight
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetEducationalVideoclipQueryVariables,
+  APITypes.GetEducationalVideoclipQuery
+>;
+export const listEducationalVideoclips = /* GraphQL */ `query ListEducationalVideoclips(
+  $filter: ModelEducationalVideoclipFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listEducationalVideoclips(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      title
+      slug
+      description
+      youtubeUrl
+      tiktokUrl
+      topicCategory
+      tags
+      coverImageUrl
+      durationSeconds
+      relatedNewsIds
+      relatedAnnouncementIds
+      relatedResearchIds
+      relatedCapsuleIds
+      relatedPodcastIds
+      status
+      highlight
+      publishedAt
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListEducationalVideoclipsQueryVariables,
+  APITypes.ListEducationalVideoclipsQuery
+>;
+export const educationalVideoclipBySlug = /* GraphQL */ `query EducationalVideoclipBySlug(
+  $slug: String!
+  $sortDirection: ModelSortDirection
+  $filter: ModelEducationalVideoclipFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  educationalVideoclipBySlug(
+    slug: $slug
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      title
+      slug
+      description
+      youtubeUrl
+      tiktokUrl
+      topicCategory
+      tags
+      coverImageUrl
+      durationSeconds
+      relatedNewsIds
+      relatedAnnouncementIds
+      relatedResearchIds
+      relatedCapsuleIds
+      relatedPodcastIds
+      status
+      highlight
+      publishedAt
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.EducationalVideoclipBySlugQueryVariables,
+  APITypes.EducationalVideoclipBySlugQuery
+>;

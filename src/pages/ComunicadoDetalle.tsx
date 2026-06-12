@@ -5,6 +5,7 @@ import { getGraphqlClient } from '../lib/amplifySetup';
 import { mapAmplifyAnnouncementToPublic, type PublicAnnouncement } from '../lib/announcementMapper';
 import { isWithinPublicationWindow } from '../lib/publicationWindow';
 import RelatedPodcastSection from '../components/podcast/RelatedPodcastSection';
+import RelatedVideoclipSection from '../components/videoclip/RelatedVideoclipSection';
 
 const ComunicadoDetalle = () => {
   const { id } = useParams();
@@ -185,6 +186,7 @@ const ComunicadoDetalle = () => {
             </div>
 
             <RelatedPodcastSection relationType="announcement" relatedId={comunicado.id} />
+            <RelatedVideoclipSection relationType="announcement" relatedId={comunicado.id} />
           </div>
         </article>
       </section>

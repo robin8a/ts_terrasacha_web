@@ -1,4 +1,9 @@
-import { type ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  AdminFileUploadField,
+  AdminImagePreview,
+  getFileNameFromUrl,
+} from './AdminFileUploadField';
 import { Link } from 'react-router-dom';
 import { uploadData } from 'aws-amplify/storage';
 import { createEvent, deleteEvent, updateEvent } from '../../graphql/mutations';
@@ -365,9 +370,8 @@ const AdminEventsManager = () => {
     setForm((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  const handleCoverPick = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
+  const handleCoverPick = useCallback((files: File[]) => {
+    const file = files[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       setErrorMessage('Solo se permiten imágenes para la portada.');
@@ -511,6 +515,8 @@ const AdminEventsManager = () => {
   }, [form.coverImageFile]);
 
   const coverPreviewUrl = coverObjectUrl ?? form.coverImageUrl;
+  const hasCoverContent = Boolean(coverPreviewUrl || form.coverImageFile);
+  const coverFileLabel = form.coverImageFile?.name ?? getFileNameFromUrl(form.coverImageUrl);
 
   return (
     <div className="space-y-6">
@@ -902,21 +908,32 @@ const AdminEventsManager = () => {
                   </label>
                 </div>
               </div>
-              <div>
-                <p className="text-xs font-medium text-gray-700 mb-1">Imagen de portada</p>
-                {coverPreviewUrl ? (
-                  <div className="relative inline-block">
-                    <img src={coverPreviewUrl} alt="" className="max-h-40 rounded-lg border object-cover" />
-                    <button
-                      type="button"
-                      onClick={handleRemoveCover}
-                      className="mt-2 text-xs font-semibold text-red-700 hover:underline"
-                    >
-                      Quitar imagen
-                    </button>
-                  </div>
-                ) : null}
-                <input type="file" accept="image/*" onChange={handleCoverPick} className="mt-2 block text-sm" />
+              <div className="space-y-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <p className="text-sm font-semibold text-gray-900">Imagen de portada</p>
+                <p className="text-xs leading-relaxed text-gray-600">
+                  Arrastra una imagen o haz clic para seleccionar la portada del evento.
+                </p>
+
+                <AdminFileUploadField
+                  id="eventCoverImage"
+                  title="Portada del evento"
+                  description="Arrastra una imagen aquí o haz clic para seleccionarla desde tu equipo."
+                  descriptionWhenReady="Puedes arrastrar otra imagen o hacer clic para reemplazar la actual."
+                  accept="image/*"
+                  disabled={isSaving}
+                  hasContent={hasCoverContent}
+                  fileName={coverFileLabel}
+                  formatBadge="JPG, PNG, WEBP"
+                  pendingStatusLabel="Opcional"
+                  onFilesSelected={handleCoverPick}
+                />
+
+                <AdminImagePreview
+                  src={coverPreviewUrl}
+                  alt="Vista previa de portada del evento"
+                  onRemove={hasCoverContent ? handleRemoveCover : undefined}
+                  disabled={isSaving}
+                />
               </div>
             </div>
             <div className="flex justify-end gap-2 border-t border-gray-100 px-4 py-3">

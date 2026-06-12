@@ -2,6 +2,7 @@ import { type ReactElement, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Status } from '../API';
 import RelatedPodcastSection from '../components/podcast/RelatedPodcastSection';
+import RelatedVideoclipSection from '../components/videoclip/RelatedVideoclipSection';
 import { researchItemBySlug } from '../graphql/queries';
 import { getGraphqlClient } from '../lib/amplifySetup';
 import { isWithinPublicationWindow } from '../lib/publicationWindow';
@@ -832,6 +833,7 @@ const ResearchDetail = () => {
 
           <div className="px-6 pb-6 sm:px-8 lg:px-10 lg:pb-10">
             <RelatedPodcastSection relationType="research" relatedId={researchItem.id} />
+            <RelatedVideoclipSection relationType="research" relatedId={researchItem.id} />
           </div>
         </article>
       </section>

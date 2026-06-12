@@ -1,6 +1,13 @@
 import type { ReactNode } from 'react';
 
-export type AdminTab = 'noticias' | 'comunicados' | 'agenda' | 'podcast' | 'investigacion';
+export type AdminTab =
+  | 'noticias'
+  | 'comunicados'
+  | 'capsulas'
+  | 'videoclips'
+  | 'agenda'
+  | 'podcast'
+  | 'investigacion';
 
 type AdminDashboardProps = {
   activeTab: AdminTab;
@@ -12,6 +19,10 @@ const AdminDashboard = ({ activeTab, children }: AdminDashboardProps) => {
     switch (activeTab) {
       case 'comunicados':
         return 'Administración de Comunicados';
+      case 'capsulas':
+        return 'Administración de Cápsulas Informativas';
+      case 'videoclips':
+        return 'Administración de Videoclips Educativos';
       case 'agenda':
         return 'Administración de Agenda';
       case 'podcast':

@@ -20,6 +20,10 @@ import Oraculo from './pages/Oraculo';
 import AppPage from './pages/AppPage';
 import Metodologia from './pages/Metodologia';
 import RutaFormacion from './pages/RutaFormacion';
+import CapsulasInformativas from './pages/CapsulasInformativas';
+import CapsulaDetalle from './pages/CapsulaDetalle';
+import VideoclipsEducativos from './pages/VideoclipsEducativos';
+import VideoclipDetalle from './pages/VideoclipDetalle';
 
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 
@@ -43,6 +47,10 @@ const AppRoutes = () => {
         <Route path="/podcast/:slug" element={<PodcastDetail />} />
         <Route path="/comunicados" element={<Comunicados />} />
         <Route path="/comunicados/:id" element={<ComunicadoDetalle />} />
+        <Route path="/capsulas-informativas" element={<CapsulasInformativas />} />
+        <Route path="/capsulas-informativas/:id" element={<CapsulaDetalle />} />
+        <Route path="/videoclips-educativos" element={<VideoclipsEducativos />} />
+        <Route path="/videoclips-educativos/:slug" element={<VideoclipDetalle />} />
         <Route path="/investigacion" element={<Investigacion />} />
         <Route path="/investigacion/:slug" element={<ResearchDetail />} />
         <Route path="/oraculo" element={<Oraculo />} />

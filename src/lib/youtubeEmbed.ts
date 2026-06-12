@@ -55,8 +55,11 @@ export const parseYouTubeVideoId = (url: string): string | null => {
 
 export const buildYouTubeWatchUrl = (videoId: string): string => `https://www.youtube.com/watch?v=${videoId}`;
 
-export const buildYouTubeEmbedUrl = (videoId: string): string =>
-  `https://www.youtube-nocookie.com/embed/${videoId}?rel=0`;
+export const buildYouTubeEmbedUrl = (videoId: string, options?: { autoplay?: boolean }): string => {
+  const params = new URLSearchParams({ rel: '0' });
+  if (options?.autoplay) params.set('autoplay', '1');
+  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+};
 
 export const normalizeYouTubeInput = (value: string): string | null => {
   const videoId = parseYouTubeVideoId(value);

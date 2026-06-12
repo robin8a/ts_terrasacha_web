@@ -467,3 +467,195 @@ export const deleteResearchItem = /* GraphQL */ `mutation DeleteResearchItem(
   APITypes.DeleteResearchItemMutationVariables,
   APITypes.DeleteResearchItemMutation
 >;
+export const createInformativeCapsule = /* GraphQL */ `mutation CreateInformativeCapsule(
+  $input: CreateInformativeCapsuleInput!
+  $condition: ModelInformativeCapsuleConditionInput
+) {
+  createInformativeCapsule(input: $input, condition: $condition) {
+    id
+    title
+    slug
+    summary
+    body
+    contextType
+    legalReference
+    institution
+    category
+    tags
+    coverImageUrl
+    attachmentUrls
+    relatedNewsIds
+    relatedResearchIds
+    status
+    highlight
+    authorName
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateInformativeCapsuleMutationVariables,
+  APITypes.CreateInformativeCapsuleMutation
+>;
+export const updateInformativeCapsule = /* GraphQL */ `mutation UpdateInformativeCapsule(
+  $input: UpdateInformativeCapsuleInput!
+  $condition: ModelInformativeCapsuleConditionInput
+) {
+  updateInformativeCapsule(input: $input, condition: $condition) {
+    id
+    title
+    slug
+    summary
+    body
+    contextType
+    legalReference
+    institution
+    category
+    tags
+    coverImageUrl
+    attachmentUrls
+    relatedNewsIds
+    relatedResearchIds
+    status
+    highlight
+    authorName
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateInformativeCapsuleMutationVariables,
+  APITypes.UpdateInformativeCapsuleMutation
+>;
+export const deleteInformativeCapsule = /* GraphQL */ `mutation DeleteInformativeCapsule(
+  $input: DeleteInformativeCapsuleInput!
+  $condition: ModelInformativeCapsuleConditionInput
+) {
+  deleteInformativeCapsule(input: $input, condition: $condition) {
+    id
+    title
+    slug
+    summary
+    body
+    contextType
+    legalReference
+    institution
+    category
+    tags
+    coverImageUrl
+    attachmentUrls
+    relatedNewsIds
+    relatedResearchIds
+    status
+    highlight
+    authorName
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteInformativeCapsuleMutationVariables,
+  APITypes.DeleteInformativeCapsuleMutation
+>;
+export const createEducationalVideoclip = /* GraphQL */ `mutation CreateEducationalVideoclip(
+  $input: CreateEducationalVideoclipInput!
+  $condition: ModelEducationalVideoclipConditionInput
+) {
+  createEducationalVideoclip(input: $input, condition: $condition) {
+    id
+    title
+    slug
+    description
+    youtubeUrl
+    tiktokUrl
+    topicCategory
+    tags
+    coverImageUrl
+    durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
+    relatedCapsuleIds
+    relatedPodcastIds
+    status
+    highlight
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateEducationalVideoclipMutationVariables,
+  APITypes.CreateEducationalVideoclipMutation
+>;
+export const updateEducationalVideoclip = /* GraphQL */ `mutation UpdateEducationalVideoclip(
+  $input: UpdateEducationalVideoclipInput!
+  $condition: ModelEducationalVideoclipConditionInput
+) {
+  updateEducationalVideoclip(input: $input, condition: $condition) {
+    id
+    title
+    slug
+    description
+    youtubeUrl
+    tiktokUrl
+    topicCategory
+    tags
+    coverImageUrl
+    durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
+    relatedCapsuleIds
+    relatedPodcastIds
+    status
+    highlight
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateEducationalVideoclipMutationVariables,
+  APITypes.UpdateEducationalVideoclipMutation
+>;
+export const deleteEducationalVideoclip = /* GraphQL */ `mutation DeleteEducationalVideoclip(
+  $input: DeleteEducationalVideoclipInput!
+  $condition: ModelEducationalVideoclipConditionInput
+) {
+  deleteEducationalVideoclip(input: $input, condition: $condition) {
+    id
+    title
+    slug
+    description
+    youtubeUrl
+    tiktokUrl
+    topicCategory
+    tags
+    coverImageUrl
+    durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
+    relatedCapsuleIds
+    relatedPodcastIds
+    status
+    highlight
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteEducationalVideoclipMutationVariables,
+  APITypes.DeleteEducationalVideoclipMutation
+>;

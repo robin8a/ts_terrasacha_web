@@ -440,3 +440,189 @@ export const onDeleteResearchItem = /* GraphQL */ `subscription OnDeleteResearch
   APITypes.OnDeleteResearchItemSubscriptionVariables,
   APITypes.OnDeleteResearchItemSubscription
 >;
+export const onCreateInformativeCapsule = /* GraphQL */ `subscription OnCreateInformativeCapsule(
+  $filter: ModelSubscriptionInformativeCapsuleFilterInput
+) {
+  onCreateInformativeCapsule(filter: $filter) {
+    id
+    title
+    slug
+    summary
+    body
+    contextType
+    legalReference
+    institution
+    category
+    tags
+    coverImageUrl
+    attachmentUrls
+    relatedNewsIds
+    relatedResearchIds
+    status
+    highlight
+    authorName
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateInformativeCapsuleSubscriptionVariables,
+  APITypes.OnCreateInformativeCapsuleSubscription
+>;
+export const onUpdateInformativeCapsule = /* GraphQL */ `subscription OnUpdateInformativeCapsule(
+  $filter: ModelSubscriptionInformativeCapsuleFilterInput
+) {
+  onUpdateInformativeCapsule(filter: $filter) {
+    id
+    title
+    slug
+    summary
+    body
+    contextType
+    legalReference
+    institution
+    category
+    tags
+    coverImageUrl
+    attachmentUrls
+    relatedNewsIds
+    relatedResearchIds
+    status
+    highlight
+    authorName
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateInformativeCapsuleSubscriptionVariables,
+  APITypes.OnUpdateInformativeCapsuleSubscription
+>;
+export const onDeleteInformativeCapsule = /* GraphQL */ `subscription OnDeleteInformativeCapsule(
+  $filter: ModelSubscriptionInformativeCapsuleFilterInput
+) {
+  onDeleteInformativeCapsule(filter: $filter) {
+    id
+    title
+    slug
+    summary
+    body
+    contextType
+    legalReference
+    institution
+    category
+    tags
+    coverImageUrl
+    attachmentUrls
+    relatedNewsIds
+    relatedResearchIds
+    status
+    highlight
+    authorName
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteInformativeCapsuleSubscriptionVariables,
+  APITypes.OnDeleteInformativeCapsuleSubscription
+>;
+export const onCreateEducationalVideoclip = /* GraphQL */ `subscription OnCreateEducationalVideoclip(
+  $filter: ModelSubscriptionEducationalVideoclipFilterInput
+) {
+  onCreateEducationalVideoclip(filter: $filter) {
+    id
+    title
+    slug
+    description
+    youtubeUrl
+    tiktokUrl
+    topicCategory
+    tags
+    coverImageUrl
+    durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
+    relatedCapsuleIds
+    relatedPodcastIds
+    status
+    highlight
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateEducationalVideoclipSubscriptionVariables,
+  APITypes.OnCreateEducationalVideoclipSubscription
+>;
+export const onUpdateEducationalVideoclip = /* GraphQL */ `subscription OnUpdateEducationalVideoclip(
+  $filter: ModelSubscriptionEducationalVideoclipFilterInput
+) {
+  onUpdateEducationalVideoclip(filter: $filter) {
+    id
+    title
+    slug
+    description
+    youtubeUrl
+    tiktokUrl
+    topicCategory
+    tags
+    coverImageUrl
+    durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
+    relatedCapsuleIds
+    relatedPodcastIds
+    status
+    highlight
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateEducationalVideoclipSubscriptionVariables,
+  APITypes.OnUpdateEducationalVideoclipSubscription
+>;
+export const onDeleteEducationalVideoclip = /* GraphQL */ `subscription OnDeleteEducationalVideoclip(
+  $filter: ModelSubscriptionEducationalVideoclipFilterInput
+) {
+  onDeleteEducationalVideoclip(filter: $filter) {
+    id
+    title
+    slug
+    description
+    youtubeUrl
+    tiktokUrl
+    topicCategory
+    tags
+    coverImageUrl
+    durationSeconds
+    relatedNewsIds
+    relatedAnnouncementIds
+    relatedResearchIds
+    relatedCapsuleIds
+    relatedPodcastIds
+    status
+    highlight
+    publishedAt
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteEducationalVideoclipSubscriptionVariables,
+  APITypes.OnDeleteEducationalVideoclipSubscription
+>;
