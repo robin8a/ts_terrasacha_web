@@ -24,6 +24,8 @@ import CapsulasInformativas from './pages/CapsulasInformativas';
 import CapsulaDetalle from './pages/CapsulaDetalle';
 import VideoclipsEducativos from './pages/VideoclipsEducativos';
 import VideoclipDetalle from './pages/VideoclipDetalle';
+import TerminosYCondiciones from './pages/TerminosYCondiciones';
+import PoliticaPrivacidad from './pages/PoliticaPrivacidad';
 
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 
@@ -57,6 +59,8 @@ const AppRoutes = () => {
         <Route path="/app" element={<AppPage />} />
         <Route path="/metodologia" element={<Metodologia />} />
         <Route path="/ruta-de-formacion" element={<RutaFormacion />} />
+        <Route path="/terminos-y-condiciones" element={<TerminosYCondiciones />} />
+        <Route path="/politica-de-privacidad" element={<PoliticaPrivacidad />} />
         <Route
           path="/admin"
           element={

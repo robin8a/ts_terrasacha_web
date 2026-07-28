@@ -134,18 +134,18 @@ const Footer = () => {
               © {new Date().getFullYear()} Terrasacha. Todos los derechos reservados.
             </p>
             <div className="flex items-center gap-6 text-sm">
-              <a
-                href="#"
+              <Link
+                to="/politica-de-privacidad"
                 className="text-[#44482c]/70 hover:text-[#44482c] transition-colors"
               >
                 Política de Privacidad
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/terminos-y-condiciones"
                 className="text-[#44482c]/70 hover:text-[#44482c] transition-colors"
               >
                 Términos y Condiciones
-              </a>
+              </Link>
             </div>
           </div>
         </div>
