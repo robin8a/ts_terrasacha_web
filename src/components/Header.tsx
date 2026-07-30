@@ -29,7 +29,7 @@ export default function Header() {
   const plataformasSubmenu = [
     { href: 'https://internal-marketplace.terrasacha.com/', label: 'Marketplace', external: true },
     { href: 'https://oraculoterrasacha.vercel.app/', label: 'Oraculo', external: true },
-    { href: 'https://internal-platform.terrasacha.com/', label: 'Plataforma', external: true },
+    { href: 'https://internal-platform.terrasacha.com/', label: 'Blockchain', external: true },
   ];
 
   const toggleSubmenu = (menu: string) => {
