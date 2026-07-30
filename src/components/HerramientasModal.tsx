@@ -5,8 +5,8 @@ type ToolCard = {
   title: string;
   description: string;
   href: string;
-  accent: 'tierra' | 'pradera';
-  icon: 'docs' | 'drone';
+  accent: 'tierra' | 'pradera' | 'claro';
+  icon: 'docs' | 'drone' | 'ai';
 };
 
 const TOOLS: ToolCard[] = [
@@ -25,6 +25,14 @@ const TOOLS: ToolCard[] = [
     href: 'https://master.d2yaf6u7gkp21.amplifyapp.com/login/',
     accent: 'pradera',
     icon: 'drone',
+  },
+  {
+    id: 'modelaimanager',
+    title: 'ModelAI Manager',
+    description: 'Gestión y operación de modelos de inteligencia artificial del ecosistema.',
+    href: 'https://dev.d254k2v3xo5tl7.amplifyapp.com/',
+    accent: 'claro',
+    icon: 'ai',
   },
 ];
 
@@ -53,6 +61,19 @@ const DroneIcon = () => (
       d="M4.5 8.5l3-3h2l1.5 1.5H13L14.5 5.5h2l3 3M7.5 5.5V4m9 1.5V4M12 11v2m-4 5h8m-8 0a2 2 0 01-2-2v-2.5a2 2 0 012-2h8a2 2 0 012 2V16a2 2 0 01-2 2m-8 0v2m8-2v2"
     />
     <circle cx="12" cy="15" r="1.25" strokeWidth={1.6} />
+  </svg>
+);
+
+const AiIcon = () => (
+  <svg className="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.6}
+      d="M9.75 3.5h4.5M12 3.5v2.25m5.25 1.5l1.5-1.5M6.75 7.25l-1.5-1.5M18.5 12H20m-16 0h1.5m12.75 4.75l1.5 1.5M6.75 16.75l-1.5 1.5M9.75 20.5h4.5M12 18.25V20.5"
+    />
+    <circle cx="12" cy="12" r="4.25" strokeWidth={1.6} />
+    <circle cx="12" cy="12" r="1.25" strokeWidth={1.6} />
   </svg>
 );
 
@@ -95,7 +116,7 @@ const HerramientasModal = ({ isOpen, onClose }: HerramientasModalProps) => {
         onClick={onClose}
       />
 
-      <div className="relative z-10 w-full max-w-3xl overflow-hidden rounded-3xl border border-[#44482c]/10 bg-gradient-to-b from-[#f7f4ea] via-white to-[#b1c181]/20 shadow-2xl">
+      <div className="relative z-10 w-full max-w-5xl overflow-hidden rounded-3xl border border-[#44482c]/10 bg-gradient-to-b from-[#f7f4ea] via-white to-[#b1c181]/20 shadow-2xl">
         <div className="relative border-b border-[#44482c]/10 bg-[#e8d79a] px-6 py-6 sm:px-8">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.45),transparent_55%)]" />
           <div className="relative flex items-start justify-between gap-4">
@@ -109,8 +130,8 @@ const HerramientasModal = ({ isOpen, onClose }: HerramientasModalProps) => {
               >
                 Herramientas
               </h2>
-              <p className="mt-2 max-w-md text-sm leading-relaxed text-[#44482c]/80">
-                Accede a las aplicaciones internas para documentos legales y gestión de datos con dron.
+              <p className="mt-2 max-w-lg text-sm leading-relaxed text-[#44482c]/80">
+                Accede a las aplicaciones internas de documentos legales, datos con dron y modelos de IA.
               </p>
             </div>
             <button
@@ -126,9 +147,18 @@ const HerramientasModal = ({ isOpen, onClose }: HerramientasModalProps) => {
           </div>
         </div>
 
-        <div className="grid gap-4 p-5 sm:grid-cols-2 sm:gap-5 sm:p-8">
+        <div className="grid gap-4 p-5 sm:grid-cols-2 sm:gap-5 sm:p-8 lg:grid-cols-3">
           {TOOLS.map((tool) => {
-            const isTierra = tool.accent === 'tierra';
+            const accentClass =
+              tool.accent === 'tierra'
+                ? 'bg-[#e8d79a]/70 text-[#44482c]'
+                : tool.accent === 'pradera'
+                  ? 'bg-[#849b50]/20 text-primary'
+                  : 'bg-[#b1c181]/35 text-[#44482c]';
+
+            const ToolIcon =
+              tool.icon === 'docs' ? DocsIcon : tool.icon === 'drone' ? DroneIcon : AiIcon;
+
             return (
               <button
                 key={tool.id}
@@ -145,13 +175,9 @@ const HerramientasModal = ({ isOpen, onClose }: HerramientasModalProps) => {
                 className="group flex min-h-[220px] flex-col items-start rounded-2xl border border-[#44482c]/10 bg-white p-6 text-left shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 <span
-                  className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl ${
-                    isTierra
-                      ? 'bg-[#e8d79a]/70 text-[#44482c]'
-                      : 'bg-[#849b50]/20 text-primary'
-                  } transition-transform duration-200 group-hover:scale-105`}
+                  className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl ${accentClass} transition-transform duration-200 group-hover:scale-105`}
                 >
-                  {tool.icon === 'docs' ? <DocsIcon /> : <DroneIcon />}
+                  <ToolIcon />
                 </span>
 
                 <h3 className="mt-5 text-xl font-bold text-[#44482c]">{tool.title}</h3>
