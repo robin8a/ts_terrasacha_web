@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import HerramientasModal from './HerramientasModal';
 import SocialLinks from './SocialLinks';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const [isHerramientasOpen, setIsHerramientasOpen] = useState(false);
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -32,6 +34,16 @@ export default function Header() {
 
   const toggleSubmenu = (menu: string) => {
     setOpenSubmenu(openSubmenu === menu ? null : menu);
+  };
+
+  const handleOpenHerramientas = () => {
+    setIsHerramientasOpen(true);
+    setMobileMenuOpen(false);
+    setOpenSubmenu(null);
+  };
+
+  const handleCloseHerramientas = () => {
+    setIsHerramientasOpen(false);
   };
 
   return (
@@ -172,6 +184,14 @@ export default function Header() {
                         </Link>
                       )
                     ))}
+                    <button
+                      type="button"
+                      onClick={handleOpenHerramientas}
+                      className="block w-full py-2 text-left text-sm text-gray-600"
+                      aria-label="Abrir herramientas"
+                    >
+                      Herramientas
+                    </button>
                   </div>
                 )}
               </div>
@@ -310,6 +330,18 @@ export default function Header() {
                         </Link>
                       )
                     ))}
+                    <button
+                      type="button"
+                      onMouseDown={(event) => {
+                        event.preventDefault();
+                        handleOpenHerramientas();
+                      }}
+                      onClick={handleOpenHerramientas}
+                      className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50"
+                      aria-label="Abrir herramientas"
+                    >
+                      Herramientas
+                    </button>
                   </div>
                 </div>
               </li>
@@ -361,6 +393,8 @@ export default function Header() {
 
       {/* Spacer for fixed header */}
       <div className="h-16 lg:h-20" />
+
+      <HerramientasModal isOpen={isHerramientasOpen} onClose={handleCloseHerramientas} />
     </>
   );
 }
