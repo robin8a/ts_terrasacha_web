@@ -26,6 +26,8 @@ import VideoclipsEducativos from './pages/VideoclipsEducativos';
 import VideoclipDetalle from './pages/VideoclipDetalle';
 import TerminosYCondiciones from './pages/TerminosYCondiciones';
 import PoliticaPrivacidad from './pages/PoliticaPrivacidad';
+import PreguntasFrecuentes from './pages/PreguntasFrecuentes';
+import Glosario from './pages/Glosario';
 
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 
@@ -44,6 +46,8 @@ const AppRoutes = () => {
         <Route path="/noticias/:id" element={<NoticiaDetalle />} />
         <Route path="/agenda" element={<Agenda />} />
         <Route path="/contacto" element={<Contacto />} />
+        <Route path="/preguntas-frecuentes" element={<PreguntasFrecuentes />} />
+        <Route path="/glosario" element={<Glosario />} />
         <Route path="/agenda-de-sostenibilidad" element={<AgendaSostenibilidad />} />
         <Route path="/podcast" element={<Podcast />} />
         <Route path="/podcast/:slug" element={<PodcastDetail />} />

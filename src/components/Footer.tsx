@@ -10,6 +10,8 @@ const Footer = () => {
     { path: '/capsulas-informativas', label: 'Cápsula Informativa' },
     { path: '/videoclips-educativos', label: 'Videoclips Educativo' },
     { path: '/agenda', label: 'Agenda' },
+    { path: '/preguntas-frecuentes', label: 'Preguntas frecuentes' },
+    { path: '/glosario', label: 'Glosario' },
     { path: '/contacto', label: 'Contacto' },
   ];
 
